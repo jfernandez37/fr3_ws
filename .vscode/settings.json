@@ -1,0 +1,14 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/jtf4/fr3_ws/install/realsense2_camera_msgs/local/lib/python3.10/dist-packages",
+        "/home/jtf4/fr3_ws/install/find_object/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/jtf4/fr3_ws/install/realsense2_camera_msgs/local/lib/python3.10/dist-packages",
+        "/home/jtf4/fr3_ws/install/find_object/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}
