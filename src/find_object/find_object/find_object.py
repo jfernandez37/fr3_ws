@@ -28,6 +28,11 @@ class FindObject(Node):
         areas = [cv2.contourArea(cnt) for cnt in contours]
         return areas.index(max(areas))
     
+    def remove_non_circles(self, contours : tuple):
+        new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
+        return new_contours
+                
+    
     def listener_callback(self, msg):
         thresh_value = self.get_parameter('thresh_value').get_parameter_value().integer_value
         self.cv_image = self.bridge.imgmsg_to_cv2(msg, 'bgra8')#[110:400, 170:600]#y,x
@@ -36,6 +41,9 @@ class FindObject(Node):
         blurred_img = cv2.blur(gray_img, (5,5))
         _,self.thresh_image = cv2.threshold(blurred_img,thresh_value,255,0)
         contours, _ = cv2.findContours(self.thresh_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        print(type(contours))
+        print(len(contours))
+        contours = self.remove_non_circles(contours)
         print(len(contours))
         cv2.drawContours(self.cv_image, contours, -1, (0,255,0), 3)
         cnt = contours[self.find_correct_contour(contours)]
