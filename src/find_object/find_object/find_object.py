@@ -26,11 +26,11 @@ class FindObject(Node):
     def closest_to_circle(self, contours):
         circle_areas = []
         areas = [cv2.contourArea(cnt) for cnt in contours]
+        print(areas)
         for cnt in contours:
             (x,y),radius = cv2.minEnclosingCircle(cnt)
             circle_areas.append(__import__("math").pi * radius**2)
         diffs = [circle_areas[i]-areas[i] for i in range(len(areas))]
-        print(diffs)
         return diffs.index(min(diffs))
             
     def find_correct_contour(self, contours):
@@ -38,7 +38,7 @@ class FindObject(Node):
         return areas.index(max(areas))
     
     def remove_bad_contours(self, contours : tuple):
-        minimum_area = 400
+        minimum_area = 1000
         new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
         filtered_contours=[]
         for cnt in new_contours:
