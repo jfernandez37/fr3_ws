@@ -34,7 +34,7 @@ class FindObject(Node):
         for cnt in new_contours:
             epsilon = 0.01*cv2.arcLength(cnt, True)
             approx = cv2.approxPolyDP(cnt, epsilon, True)
-            if len(approx)>15:
+            if len(approx)>10:
                 only_circles.append(cnt)
         return only_circles
                 
@@ -58,7 +58,7 @@ class FindObject(Node):
             cx = int(M['m10']/M['m00'])
             cy = int(M['m01']/M['m00'])
             # print("x:",cx," y:",cy)
-            img_w_center = cv2.circle(self.cv_image, (cx,cy), radius=5, color=(0,0,255), thickness=-1)
+            img_w_center = cv2.circle(self.cv_image, (cx,cy), radius=10, color=(0,0,255), thickness=-1)
         except:
             print("Error: Contour does not form a single shape")
         
