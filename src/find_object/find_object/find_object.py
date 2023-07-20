@@ -12,6 +12,7 @@ class FindObject(Node):
     def __init__(self):
         super().__init__('find_object')
         self.thresh_image = None
+        self.blurred_image = None
         self.bridge = CvBridge()
         self.cv_image = None
         self.declare_parameter('thresh_value', 160)
@@ -41,13 +42,13 @@ class FindObject(Node):
         thresh_value = self.get_parameter('thresh_value').get_parameter_value().integer_value
         self.cv_image = self.bridge.imgmsg_to_cv2(msg, 'bgra8')#[110:400, 170:600]#y,x
         gray_img = cv2.cvtColor(self.cv_image,cv2.COLOR_BGR2GRAY)
-        blurred_img = cv2.GaussianBlur(gray_img,(5,5),0)
+        blurred_img = cv2.GaussianBlur(gray_img,(7,7),0)
+        self.blurred_image = blurred_img
         _,self.thresh_image = cv2.threshold(blurred_img,thresh_value,255,0)
         contours, _ = cv2.findContours(self.thresh_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        print(type(contours))
-        print(len(contours))
+        before_remove = len(contours)
         contours = self.remove_non_circles(contours)
-        print(len(contours))
+        print(len(contours)-before_remove, " non_circular contours were removed")
         cv2.drawContours(self.cv_image, contours, -1, (0,255,0), 3)
         M = cv2.moments(contours[self.find_correct_contour(contours)])
         # print( M )
