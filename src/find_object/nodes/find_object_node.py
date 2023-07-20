@@ -12,8 +12,8 @@ def main(args=None):
     while find_object.cv_image is None:
         rclpy.spin_once(find_object)
     cv2.imshow("Blurred", find_object.blurred_image)
-    cv2.imshow("Thresh", find_object.thresh_image)
     cv2.imshow("Image", find_object.cv_image)
+    cv2.imshow("Thresh", find_object.thresh_image)
     cv2.waitKey(0)
 
     find_object.destroy_node()
