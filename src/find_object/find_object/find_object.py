@@ -30,21 +30,20 @@ class FindObject(Node):
         for cnt in contours:
             (x,y),radius = cv2.minEnclosingCircle(cnt)
             circle_areas.append(__import__("math").pi * radius**2)
-        diffs = [circle_areas[i]-areas[i] for i in range(len(areas))]
-        return diffs.index(min(diffs))
+        diffs = [areas[i]/circle_areas[i] for i in range(len(areas))]
+        return diffs.index(max(diffs))
             
     def find_correct_contour(self, contours):
         areas = [cv2.contourArea(cnt) for cnt in contours]
         return areas.index(max(areas))
     
     def remove_bad_contours(self, contours : tuple):
-        minimum_area = 1000
         new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
         filtered_contours=[]
         for cnt in new_contours:
             epsilon = 0.01*cv2.arcLength(cnt, True)
             approx = cv2.approxPolyDP(cnt, epsilon, True)
-            if len(approx)>10 and cv2.contourArea(cnt)>=minimum_area:
+            if len(approx)>10:
                 filtered_contours.append(cnt)
         return filtered_contours
                 
@@ -60,11 +59,11 @@ class FindObject(Node):
         before_remove = len(contours)
         contours = self.remove_bad_contours(contours)
         print(before_remove-len(contours), " contours were removed")
-        for cnt in contours:
-            (x,y),radius = cv2.minEnclosingCircle(cnt)
-            center = (int(x),int(y))
-            radius = int(radius)
-            cv2.circle(self.cv_image,center,radius,(0,255,0),2)
+        # for cnt in contours:
+        #     (x,y),radius = cv2.minEnclosingCircle(cnt)
+        #     center = (int(x),int(y))
+        #     radius = int(radius)
+        #     cv2.circle(self.cv_image,center,radius,(0,255,0),2)
         cv2.drawContours(self.cv_image, contours, -1, (0,255,0), 3)
         # M = cv2.moments(contours[self.find_correct_contour(contours)]) # Finds contour with largest area
         M = cv2.moments(contours[self.closest_to_circle(contours)]) #Finds the contour that is closest to a circle
