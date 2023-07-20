@@ -1,9 +1,7 @@
 import cv2
 import rclpy
 from rclpy.node import Node
-from rclpy.time import Duration
-from rclpy.logging import LoggingSeverity
-from ament_index_python.packages import get_package_share_directory, PackageNotFoundError
+# from ament_index_python.packages import get_package_share_directory, PackageNotFoundError
 
 from sensor_msgs.msg import Image
 
