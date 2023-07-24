@@ -125,7 +125,6 @@ private:
   bool attempt_install(double, double);
   void open_gripper();
   void grasp_object(double);
-  bool random_search(int object_type, double search_radius, int iterations);
   void set_default_behavior();
   geometry_msgs::msg::Pose solve_fk();
 

@@ -290,50 +290,6 @@ void RobotCommander::move_cartesian_cb_(
   response->success = true;
 }
 
-bool RobotCommander::random_search(int type, double search_radius, int iterations)
-{
-  geometry_msgs::msg::Pose pose_i = solve_fk(); 
-  double x_i = pose_i.position.x;
-  double y_i = pose_i.position.x;
-
-  if (type == gmcs_interfaces::msg::AssemblyObject::CIRCLE_PEG)
-  {
-    for (int i = 0; i < iterations; i++)
-    {
-      try
-      {
-        if (attempt_install(6.0, 0.01))
-        {
-          RCLCPP_INFO_STREAM(get_logger(),"Install successful");
-          return true;
-        }
-
-        // Generate new point in search radius
-        double r = ((double)std::rand() / RAND_MAX) * search_radius;
-        double angle = ((double)std::rand() / RAND_MAX) * M_2_PI; 
-
-        double x_t = x_i + r * std::cos(angle);
-        double y_t = y_i + r * std::sin(angle);
-
-        // Move to new target in search radius
-        geometry_msgs::msg::Pose current_pose = solve_fk();
-        RCLCPP_INFO_STREAM(get_logger(), "x target: "<<std::to_string(x_t) << " y target: "<< std::to_string(y_t));
-        move_robot_cartesian(x_t - current_pose.position.x, y_t - current_pose.position.y, 0, 0.01, 0.05);
-
-        // RCLCPP_INFO_STREAM(get_logger(), "X value: "<<std::to_string(r * std::cos(angle))<<" Y value: "<<std::to_string(r * std::sin(angle)));
-        // RCLCPP_INFO_STREAM(get_logger(), "r value: "<<std::to_string(r)<<" angle value: "<<std::to_string(angle));
-
-      }
-      catch (CommanderError &e)
-      {
-        throw e;
-      }
-    }
-  }
-
-  return false;
-}
-
 KDL::Frame RobotCommander::kdl_frame_from_franka_transform(std::array<double, 16UL> transform)
 {
   double xx, yx, zx, xy, yy, zy, xz, yz, zz, tx, ty, tz;
