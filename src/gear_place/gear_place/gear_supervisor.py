@@ -24,17 +24,6 @@ from transform_utils import (
     build_pose,
 )
 
-from gmcs_interfaces.msg import AssemblyObject
-from gmcs_interfaces.srv import (
-    AddObjectToPlanningScene,
-    GetFiducialPose,
-    MoveObjectToBoard,
-    MoveToNamedPose,
-    MoveToPosition,
-    PickObject,
-    AssembleObject
-)
-
 class Error(Exception):
     def __init__(self, value: str):
         self.value = value
