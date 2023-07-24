@@ -34,12 +34,13 @@ class FindObject(Node):
         return diffs.index(max(diffs))
     
     def remove_bad_contours(self, contours : tuple):
+        minimum_contour_area = 500
         new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
         filtered_contours=[]
         for cnt in new_contours:
             epsilon = 0.01*cv2.arcLength(cnt, True)
             approx = cv2.approxPolyDP(cnt, epsilon, True)
-            if len(approx)>10:
+            if len(approx)>10 and cv2.contourArea(cnt)> minimum_contour_area:
                 filtered_contours.append(cnt)
         return filtered_contours
                 
