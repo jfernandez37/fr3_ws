@@ -32,10 +32,6 @@ class FindObject(Node):
             circle_areas.append(__import__("math").pi * radius**2)
         diffs = [areas[i]/circle_areas[i] for i in range(len(areas))]
         return diffs.index(max(diffs))
-            
-    def find_correct_contour(self, contours):
-        areas = [cv2.contourArea(cnt) for cnt in contours]
-        return areas.index(max(areas))
     
     def remove_bad_contours(self, contours : tuple):
         new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
