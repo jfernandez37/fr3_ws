@@ -188,43 +188,6 @@ void RobotCommander::pick_object_cb_(
   response->success = true;
 }
 
-void RobotCommander::move_object_to_board_cb_(
-    const std::shared_ptr<gmcs_interfaces::srv::MoveObjectToBoard::Request> request,
-    std::shared_ptr<gmcs_interfaces::srv::MoveObjectToBoard::Response> response)
-{
-  double offset_height = 0.2;
-  double surface_offset = 0.005;
-
-  geometry_msgs::msg::Pose assembly_pose = robot_transformations::MultiplyPose(
-      request->assembly_pose,
-      robot_transformations::PoseFromTransform(request->object.grasp_transform));
-
-  KDL::Frame above_assembly_frame(
-      KDL::Rotation::RPY(M_PI, 0.0, 0.1),
-      KDL::Vector(assembly_pose.position.x, assembly_pose.position.y, assembly_pose.position.z + offset_height));
-
-  try
-  {
-    // Move robot to position above asssembly 
-    move_robot_to_frame(above_assembly_frame);
-    
-    // Move down most of the way to the board
-    move_robot_cartesian(0, 0, -offset_height + surface_offset, default_velocity_, default_acceleration_);
-
-    // Slowly move down to touch the board
-    move_robot_cartesian(0.0, 0.0, -surface_offset, 0.01, 0.05);
-  }
-  catch (CommanderError &e)
-  {
-    std::string err = e.what();
-    RCLCPP_ERROR(get_logger(), err.c_str());
-    response->success = false;
-    return;
-  }
-
-  response->success = true;
-}
-
 void RobotCommander::assemble_object_cb_(
     const std::shared_ptr<gmcs_interfaces::srv::AssembleObject::Request> request,
     std::shared_ptr<gmcs_interfaces::srv::AssembleObject::Response> response)

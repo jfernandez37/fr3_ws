@@ -121,7 +121,6 @@ private:
                            std::shared_ptr<gmcs_interfaces::srv::AssembleObject::Response> response);
 
   // Methods
-  void move_robot_to_frame(KDL::Frame);
   void move_robot_cartesian(double, double, double, double, double);
   bool attempt_install(double, double);
   void open_gripper();
