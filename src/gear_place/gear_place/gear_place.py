@@ -77,7 +77,7 @@ class GearPlace(Node):
             self.get_logger().error(f'Unable to move to pose: {named_pose}')
             raise Error("Unable to move to pose")
     
-    def _move_cartesian(self, x,y,z,v_max, acc):
+    def _move_cartesian_service(self, x,y,z,v_max, acc):
         self.get_logger().info(f"Moving {x},{y},{z}")
         
         request = MoveCartesian.Request()
