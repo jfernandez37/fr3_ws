@@ -17,10 +17,8 @@ def main(args=None):
         print("x: "+str(object_depth.dist_x),end="\t")
         print("y: "+str(object_depth.dist_y),end="\t")
         print("z: "+str(object_depth.dist_z)+"\n")
-        # cv2.imshow("Blurred", find_object.blurred_image)
-        # cv2.imshow("Thresh", find_object.thresh_image)
-        # cv2.imshow("Image", find_object.cv_image)
         __import__("time").sleep(3)
+        object_depth.destroy_node()
 
     find_object.destroy_node()
     rclpy.shutdown()
