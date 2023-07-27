@@ -60,8 +60,8 @@ private:
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr ee_pose_pub_;
 
-  rclcpp::Service<gmcs_interfaces::srv::MoveToNamedPose>::SharedPtr move_to_named_pose_srv_;
-  rclcpp::Service<gmcs_interfaces::srv::MoveCartesian>::SharedPtr move_cartesian_srv_;
+  rclcpp::Service<gear_place_interfaces::srv::MoveToNamedPose>::SharedPtr move_to_named_pose_srv_;
+  rclcpp::Service<gear_place_interfaces::srv::MoveCartesian>::SharedPtr move_cartesian_srv_;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
@@ -99,10 +99,10 @@ private:
   void joint_state_publish_timer_cb_();
   void ee_pose_publish_timer_cb_();
 
-  void move_to_named_pose_cb_(const std::shared_ptr<gmcs_interfaces::srv::MoveToNamedPose::Request> request,
-                              std::shared_ptr<gmcs_interfaces::srv::MoveToNamedPose::Response> response);
-  void move_cartesian_cb_(const std::shared_ptr<gmcs_interfaces::srv::MoveCartesian::Request> request,
-                          std::shared_ptr<gmcs_interfaces::srv::MoveCartesian::Response> response);
+  void move_to_named_pose_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Request> request,
+                              std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Response> response);
+  void move_cartesian_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Request> request,
+                          std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Response> response);
 
   // Methods
   void move_robot_cartesian(double, double, double, double, double);

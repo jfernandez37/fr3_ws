@@ -59,13 +59,13 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       publisher_cb_group_);
 
   // ROS Services
-  move_to_named_pose_srv_ = this->create_service<gmcs_interfaces::srv::MoveToNamedPose>(
+  move_to_named_pose_srv_ = this->create_service<gear_place_interfaces::srv::MoveToNamedPose>(
       "move_to_named_pose",
       std::bind(
           &RobotCommander::move_to_named_pose_cb_, this,
           std::placeholders::_1, std::placeholders::_2));
 
-  move_cartesian_srv_ = this->create_service<gmcs_interfaces::srv::MoveCartesian>(
+  move_cartesian_srv_ = this->create_service<gear_place_interfaces::srv::MoveCartesian>(
       "move_cart",
       std::bind(&RobotCommander::move_cartesian_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
@@ -75,8 +75,8 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
 
 
 void RobotCommander::move_to_named_pose_cb_(
-    const std::shared_ptr<gmcs_interfaces::srv::MoveToNamedPose::Request> request,
-    std::shared_ptr<gmcs_interfaces::srv::MoveToNamedPose::Response> response)
+    const std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Request> request,
+    std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Response> response)
 {
   if (named_joint_positions_.find(request->pose) != named_joint_positions_.end())
   {
@@ -168,8 +168,8 @@ geometry_msgs::msg::Pose RobotCommander::solve_fk()
 }
 
 void RobotCommander::move_cartesian_cb_(
-    const std::shared_ptr<gmcs_interfaces::srv::MoveCartesian::Request> request,
-    std::shared_ptr<gmcs_interfaces::srv::MoveCartesian::Response> response)
+    const std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Request> request,
+    std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Response> response)
 {
   try
   {
