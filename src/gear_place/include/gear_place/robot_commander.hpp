@@ -1,14 +1,10 @@
 #include <rclcpp/rclcpp.hpp>
 
-#include <gmcs_panda_task_board/robot_transformations.hpp>
-#include <gmcs_panda_task_board/motion_generators.hpp>
+#include <gear_place/robot_transformations.hpp>
+#include <gear_place/motion_generators.hpp>
 
-#include <gmcs_interfaces/srv/move_to_position.hpp>
-#include <gmcs_interfaces/srv/move_to_named_pose.hpp>
-#include <gmcs_interfaces/srv/pick_object.hpp>
-#include <gmcs_interfaces/srv/move_cartesian.hpp>
-#include <gmcs_interfaces/srv/move_object_to_board.hpp>
-#include <gmcs_interfaces/srv/assemble_object.hpp>
+#include <gear_place_interfaces/srv/move_cartesian.hpp>
+#include <gear_place_interfaces/srv/move_to_named_pose.hpp>
 
 #include <std_msgs/msg/string.hpp>
 
@@ -64,12 +60,8 @@ private:
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr ee_pose_pub_;
 
-  rclcpp::Service<gmcs_interfaces::srv::MoveToPosition>::SharedPtr move_to_position_srv_;
   rclcpp::Service<gmcs_interfaces::srv::MoveToNamedPose>::SharedPtr move_to_named_pose_srv_;
-  rclcpp::Service<gmcs_interfaces::srv::PickObject>::SharedPtr pick_object_srv_;
   rclcpp::Service<gmcs_interfaces::srv::MoveCartesian>::SharedPtr move_cartesian_srv_;
-  rclcpp::Service<gmcs_interfaces::srv::MoveObjectToBoard>::SharedPtr move_object_to_board_srv_;
-  rclcpp::Service<gmcs_interfaces::srv::AssembleObject>::SharedPtr assemble_object_srv_;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
@@ -107,22 +99,13 @@ private:
   void joint_state_publish_timer_cb_();
   void ee_pose_publish_timer_cb_();
 
-  void move_to_position_cb_(const std::shared_ptr<gmcs_interfaces::srv::MoveToPosition::Request> request,
-                            std::shared_ptr<gmcs_interfaces::srv::MoveToPosition::Response> response);
   void move_to_named_pose_cb_(const std::shared_ptr<gmcs_interfaces::srv::MoveToNamedPose::Request> request,
                               std::shared_ptr<gmcs_interfaces::srv::MoveToNamedPose::Response> response);
-  void pick_object_cb_(const std::shared_ptr<gmcs_interfaces::srv::PickObject::Request> request,
-                       std::shared_ptr<gmcs_interfaces::srv::PickObject::Response> response);
   void move_cartesian_cb_(const std::shared_ptr<gmcs_interfaces::srv::MoveCartesian::Request> request,
                           std::shared_ptr<gmcs_interfaces::srv::MoveCartesian::Response> response);
-  void move_object_to_board_cb_(const std::shared_ptr<gmcs_interfaces::srv::MoveObjectToBoard::Request> request,
-                                std::shared_ptr<gmcs_interfaces::srv::MoveObjectToBoard::Response> response);
-  void assemble_object_cb_(const std::shared_ptr<gmcs_interfaces::srv::AssembleObject::Request> request,
-                           std::shared_ptr<gmcs_interfaces::srv::AssembleObject::Response> response);
 
   // Methods
   void move_robot_cartesian(double, double, double, double, double);
-  bool attempt_install(double, double);
   void open_gripper();
   void grasp_object(double);
   void set_default_behavior();

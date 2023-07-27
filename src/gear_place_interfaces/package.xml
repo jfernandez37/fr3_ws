@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>gear_place</name>
+  <name>gear_place_interfaces</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
   <maintainer email="jothomas0615@gmail.com">jtf4</maintainer>
@@ -11,9 +11,6 @@
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
-
-  <exec_depend>rclpy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

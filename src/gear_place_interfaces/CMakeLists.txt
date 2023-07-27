@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(gear_place)
+project(gear_place_interfaces)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -10,7 +10,6 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-find_package(ament_cmake_python REQUIRED)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -24,13 +23,4 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-# Install Python modules
-ament_python_install_package(${PROJECT_NAME} SCRIPTS_DESTINATION lib/${PROJECT_NAME})
-
-# Install Python executables
-install(PROGRAMS
-nodes/find_object_node.py
-nodes/point_cloud_node.py
-DESTINATION lib/${PROJECT_NAME}
-)
 ament_package()

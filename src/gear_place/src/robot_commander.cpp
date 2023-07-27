@@ -1,4 +1,4 @@
-#include <gmcs_panda_task_board/robot_commander.hpp>
+#include <gear_place/robot_commander.hpp>
 
 RobotCommander::RobotCommander(const std::string &robot_ip)
     : Node("robot_commander")
@@ -59,22 +59,10 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       publisher_cb_group_);
 
   // ROS Services
-  move_to_position_srv_ = this->create_service<gmcs_interfaces::srv::MoveToPosition>(
-      "move_to_position",
-      std::bind(
-          &RobotCommander::move_to_position_cb_, this,
-          std::placeholders::_1, std::placeholders::_2));
-
   move_to_named_pose_srv_ = this->create_service<gmcs_interfaces::srv::MoveToNamedPose>(
       "move_to_named_pose",
       std::bind(
           &RobotCommander::move_to_named_pose_cb_, this,
-          std::placeholders::_1, std::placeholders::_2));
-
-  pick_object_srv_ = this->create_service<gmcs_interfaces::srv::PickObject>(
-      "pick_object",
-      std::bind(
-          &RobotCommander::pick_object_cb_, this,
           std::placeholders::_1, std::placeholders::_2));
 
   move_cartesian_srv_ = this->create_service<gmcs_interfaces::srv::MoveCartesian>(
@@ -82,41 +70,9 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       std::bind(&RobotCommander::move_cartesian_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
 
-  move_object_to_board_srv_ = this->create_service<gmcs_interfaces::srv::MoveObjectToBoard>(
-      "move_object_to_board",
-      std::bind(&RobotCommander::move_object_to_board_cb_, this,
-                std::placeholders::_1, std::placeholders::_2));
-
-  assemble_object_srv_ = this->create_service<gmcs_interfaces::srv::AssembleObject>(
-      "assemble_object",
-      std::bind(&RobotCommander::assemble_object_cb_, this,
-                std::placeholders::_1, std::placeholders::_2));
-
   std::srand(std::time(0)); // use current time as seed for random generator
 }
 
-void RobotCommander::move_to_position_cb_(
-    const std::shared_ptr<gmcs_interfaces::srv::MoveToPosition::Request> request,
-    std::shared_ptr<gmcs_interfaces::srv::MoveToPosition::Response> response)
-{
-  // Create target EE pose from home orientation and target position
-  KDL::Frame target_frame(
-      KDL::Rotation::RPY(M_PI, 0.0, 0.1),
-      KDL::Vector(request->target_position.x, request->target_position.y, request->target_position.z));
-
-  try
-  {
-    move_robot_to_frame(target_frame);
-  }
-  catch (CommanderError &e)// use current time as seed for random generator
-  {
-    std::string err = e.what();
-    RCLCPP_ERROR(get_logger(), err.c_str());
-    response->success = false;
-    return;
-  }
-  response->success = true;
-}
 
 void RobotCommander::move_to_named_pose_cb_(
     const std::shared_ptr<gmcs_interfaces::srv::MoveToNamedPose::Request> request,
@@ -148,67 +104,6 @@ void RobotCommander::move_to_named_pose_cb_(
   }
 }
 
-void RobotCommander::pick_object_cb_(
-    const std::shared_ptr<gmcs_interfaces::srv::PickObject::Request> request,
-    std::shared_ptr<gmcs_interfaces::srv::PickObject::Response> response)
-{
-  double grip_offset_height = 0.2;
-  geometry_msgs::msg::Pose grip_pose = robot_transformations::MultiplyPose(
-      request->object_pose,
-      robot_transformations::PoseFromTransform(request->object.grasp_transform));
-
-  KDL::Frame above_part_frame(
-      KDL::Rotation::RPY(M_PI, 0.0, 0.1),
-      KDL::Vector(grip_pose.position.x, grip_pose.position.y, grip_pose.position.z + grip_offset_height));
-
-  try
-  {
-    move_robot_to_frame(above_part_frame);
-    open_gripper();
-    move_robot_cartesian(0, 0, -grip_offset_height, default_velocity_, default_acceleration_);
-    grasp_object(request->object.grasp_width);
-    move_robot_cartesian(0, 0, grip_offset_height, default_velocity_, default_acceleration_);
-  }
-  catch (CommanderError &e)
-  {
-    std::string err = e.what();
-    RCLCPP_ERROR(get_logger(), err.c_str());
-    response->success = false;
-    return;
-  }
-
-  // Check that object is still grasped
-  gripper_state_ = gripper_->readOnce();
-  if (!gripper_state_.is_grasped)
-  {
-    RCLCPP_WARN(get_logger(), "Object was not grasped");
-    response->success = false;
-  }
-
-  response->success = true;
-}
-
-void RobotCommander::assemble_object_cb_(
-    const std::shared_ptr<gmcs_interfaces::srv::AssembleObject::Request> request,
-    std::shared_ptr<gmcs_interfaces::srv::AssembleObject::Response> response)
-{
-  if (request->search_method == gmcs_interfaces::srv::AssembleObject::Request::RANDOM_SEARCH)
-  {
-    try
-    {
-      response->success = random_search(request->object.type, 0.01, 10);
-      open_gripper();
-    }
-    catch (CommanderError &e)
-    {
-      open_gripper();
-      std::string err = e.what();
-      RCLCPP_ERROR(get_logger(), err.c_str());
-      response->success = false;
-      return;
-    }
-  }
-}
 
 void RobotCommander::joint_state_publish_timer_cb_()
 {
@@ -290,65 +185,6 @@ void RobotCommander::move_cartesian_cb_(
   response->success = true;
 }
 
-KDL::Frame RobotCommander::kdl_frame_from_franka_transform(std::array<double, 16UL> transform)
-{
-  double xx, yx, zx, xy, yy, zy, xz, yz, zz, tx, ty, tz;
-  xx = transform[0];
-  yx = transform[4];
-  zx = transform[8];
-  xy = transform[1];
-  yy = transform[5];
-  zy = transform[9];
-  xz = transform[2];
-  yz = transform[6];
-  zz = transform[10];
-
-  tx = transform[12];
-  ty = transform[13];
-  tz = transform[14];
-
-  return KDL::Frame(
-      KDL::Rotation(xx, yx, zx, xy, yy, zy, xz, yz, zz),
-      KDL::Vector(tx, ty, tz));
-}
-
-void RobotCommander::move_robot_to_frame(KDL::Frame target_frame)
-{
-  KDL::JntArray q_init = KDL::JntArray(num_joints_);
-  KDL::JntArray q_out = KDL::JntArray(num_joints_);
-
-  for (int i = 0; i < num_joints_; i++)
-  {
-    q_init(i) = current_state_.q.at(i);
-  }
-
-  int ret = ik_pos_solver_->CartToJnt(q_init, target_frame, q_out);
-
-  if (ret != 0)
-  {
-    std::string err = ik_pos_solver_->strError(ret);
-    throw CommanderError("Unable to solve the inverse kinematics. Error: " + err);
-  }
-
-  std::array<double, 7> q_goal{{q_out(0), q_out(1), q_out(2), q_out(3), q_out(4), q_out(5), q_out(6)}};
-
-  try
-  {
-    MotionGenerator motion_generator(0.2, q_goal, current_state_);
-
-    read_state_.lock();
-    robot_->control(motion_generator);
-    read_state_.unlock();
-  }
-  catch (const franka::Exception &e)
-  {
-    RCLCPP_WARN_STREAM(get_logger(), "Franka Exception: " << e.what());
-    RCLCPP_ERROR(get_logger(), "Unable to move to target frame");
-
-    throw CommanderError("Unable to move to target frame");
-  }
-}
-
 void RobotCommander::move_robot_cartesian(double x, double y, double z, double maximum_velocity, double acceleration)
 {
   std::unique_ptr<CartesianMotionGenerator> cartesian_motion_generator;
@@ -375,34 +211,6 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
   }
 }
 
-bool RobotCommander::attempt_install(double force, double max_travel)
-{
-  std::unique_ptr<ForceMotionGenerator> force_motion_generator;
-  franka::Model model = robot_->loadModel();
-  try
-  {
-    force_motion_generator = std::make_unique<ForceMotionGenerator>(force, max_travel, model, current_state_);
-  }
-  catch (InvalidParameters &ip)
-  {
-    throw CommanderError(ip.what());
-    return false;
-  }
-
-  try
-  {
-    read_state_.lock();
-    robot_->control(*force_motion_generator);
-    read_state_.unlock();
-  }
-  catch (const franka::Exception &e)
-  {
-    std::string ex = e.what();
-    throw CommanderError("Franka Exception: " + ex);
-    return false;
-  }
-  return force_motion_generator->get_result();
-}
 
 void RobotCommander::open_gripper()
 {
