@@ -13,7 +13,8 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <depend>rclcpp</depend>
-  <depend>gmcs_interfaces</depend>
+  <depend>gear_place_interfaces</depend>
+  <depend>gear_place_description</depend>
   <depend>geometry_msgs</depend>
   <depend>orocos_kdl</depend>
   <depend>python3-pykdl</depend>
