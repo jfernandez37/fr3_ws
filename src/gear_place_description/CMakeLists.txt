@@ -11,7 +11,10 @@ find_package(ament_cmake REQUIRED)
 install(
   DIRECTORY
   meshes
+  robots
   urdf
+  launch
+  rviz
   DESTINATION share/${PROJECT_NAME}
 )
 

@@ -34,18 +34,24 @@ def launch_setup(context, *args, **kwargs):
 
     # Custom Nodes
     robot_commander_node = Node(
-        package="gmcs_panda_task_board",
+        package="gear_place",
         executable="robot_commander_node",
         output="screen",
         parameters=[
             robot_description,
         ],
     )
+    supervisor = Node(
+        package="gear_place",
+        executable="gear_place_node.py",
+        output="screen",
+    )
 
     nodes_to_start = [
         robot_state_publisher,
         realsense,
-        robot_commander_node
+        robot_commander_node,
+        supervisor
     ]
 
     return nodes_to_start

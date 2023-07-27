@@ -89,8 +89,8 @@ private:
 
   // Joint State
   sensor_msgs::msg::JointState joint_state_msg_;
-  std::vector<std::string> joint_names_{"panda_joint1", "panda_joint2", "panda_joint3", "panda_joint4", "panda_joint5",
-                                        "panda_joint6", "panda_joint7", "panda_finger_joint1", "panda_finger_joint2"};
+  std::vector<std::string> joint_names_{"fr3_joint1", "fr3_joint2", "fr3_joint3", "fr3_joint4", "fr3_joint5",
+                                        "fr3_joint6", "fr3_joint7", "fr3_finger_joint1", "fr3_finger_joint2"};
 
   // EE Pose
   geometry_msgs::msg::PoseStamped ee_pose_;
