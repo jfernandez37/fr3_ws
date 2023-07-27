@@ -5,6 +5,17 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+set(THIS_PACKAGE_INCLUDE_DEPENDS
+  rclcpp 
+  tf2_kdl
+  gear_place_interfaces
+  shape_msgs
+  OpenCV
+  cv_bridge
+  Franka
+  kdl_parser
+)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
@@ -12,25 +23,61 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
-  set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-endif()
+foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
+  find_package(${Dependency} REQUIRED)
+endforeach()
+
+add_library(${PROJECT_NAME} SHARED
+  src/robot_commander.cpp
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+ament_target_dependencies(${PROJECT_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
+
+# Add robot_commander executable
+add_executable(robot_commander_node nodes/robot_commander_node.cpp)
+target_include_directories(robot_commander_node PRIVATE include)
+target_link_libraries(robot_commander_node
+  ${PROJECT_NAME}
+)
+ament_target_dependencies(robot_commander_node ${THIS_PACKAGE_INCLUDE_DEPENDS})
+
+install(TARGETS robot_commander_node
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
 
 # Install Python modules
 ament_python_install_package(${PROJECT_NAME} SCRIPTS_DESTINATION lib/${PROJECT_NAME})
 
 # Install Python executables
 install(PROGRAMS
+nodes/gear_place_node.py
 nodes/find_object_node.py
 nodes/point_cloud_node.py
 DESTINATION lib/${PROJECT_NAME}
+)
+install(TARGETS ${PROJECT_NAME}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+
+install(DIRECTORY include/
+  DESTINATION include
+)
+
+
+install(DIRECTORY 
+  DESTINATION share/${PROJECT_NAME}
+)
+
+ament_export_libraries(
+  ${PROJECT_NAME}
+)
+ament_export_include_directories(
+  include
+)
+ament_export_dependencies(
+  ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 ament_package()
