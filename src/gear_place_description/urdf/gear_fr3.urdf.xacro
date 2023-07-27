@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="gear_fr3">
+  <xacro:arg name="camera" default="true"/>
+
+  <!-- Inclue macros -->
+  <xacro:include filename="$(find franka_description)/robots/fr3_arm.xacro"/>
+  <xacro:include filename="$(find franka_description)/robots/hand.xacro"/>
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+  <xacro:include filename="$(find franka_description)/robots/fr3_arm.ros2_control.xacro"/>
+
+  <material name="Black">
+    <color rgba="${50/255} ${50/255} ${50/255} 1.0"/>
+  </material>
+
+  <material name="Gray">
+    <color rgba="${200/255} ${200/255} ${200/255} 1.0"/>
+  </material>
+
+  <!-- Run fr3 macro -->
+  <xacro:fr3_arm
+    arm_id="fr3"
+    safety_distance="0.0"
+    connected_to="cart_link"
+    xyz="0.05 0 0"/>
+  
+  <!-- Run hand macro -->
+  <xacro:hand 
+    ns="fr3"
+    rpy="0 0 ${-pi/4}"
+    connected_to="fr3_link8"
+    safety_distance="0.0"/>
+
+  <!-- Joints -->
+  <joint name="cart_to_world" type="fixed">
+    <origin xyz="-0.3945 0.55 0.0127" rpy="0 0 0"/>
+    <parent link="world"/>
+    <child link="cart_link" />
+  </joint>
+
+  
+  <xacro:if value="$(arg camera)">
+      <!-- Camera Mount Link -->
+    <link name="camera_mount">
+      <visual>
+        <origin xyz="-0.012 0 -0.038" rpy="0 0 ${-pi/2}"/>
+        <geometry>
+          <mesh
+            filename="package://gear_place_description/meshes/camera_mount.stl"
+            scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Black"/>
+      </visual>
+    </link>
+
+    <joint name="camera_mount_to_flange_joint" type="fixed">
+      <origin xyz="0.03 0 .045" rpy="0 0 0"/>
+      <parent link="fr3_hand"/>
+      <child link="camera_mount" />
+    </joint>
+
+    <joint name="camera_mount_joint" type="fixed">
+      <origin xyz="0 -0.0175 0.0208" rpy="0 ${-pi/2} ${-pi}"/>
+      <parent link="camera_mount"/>
+      <child link="camera_link" />
+    </joint>
+
+    <!-- Run camera macro -->
+    <xacro:sensor_d435 
+      parent="camera_mount" 
+      use_nominal_extrinsics="false" 
+      add_plug="false" 
+      use_mesh="true">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:sensor_d435>
+  </xacro:if>
+
+  <!-- Run ROS2 control macro -->
+  <xacro:fr3_arm_ros2_control 
+    ns="fr3"
+    robot_ip="172.16.0.2"
+    use_fake_hardware="false"
+    fake_sensor_commands="false"/>
+
+</robot>
