@@ -4,10 +4,10 @@
   <xacro:arg name="camera" default="true"/>
 
   <!-- Inclue macros -->
-  <xacro:include filename="$(find franka_description)/robots/fr3_arm.xacro"/>
+  <xacro:include filename="$(find franka_description)/robots/panda_arm.xacro"/>
   <xacro:include filename="$(find franka_description)/robots/hand.xacro"/>
   <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
-  <xacro:include filename="$(find franka_description)/robots/fr3_arm.ros2_control.xacro"/>
+  <xacro:include filename="$(find franka_description)/robots/panda_arm.ros2_control.xacro"/>
 
   <material name="Black">
     <color rgba="${50/255} ${50/255} ${50/255} 1.0"/>
@@ -17,18 +17,18 @@
     <color rgba="${200/255} ${200/255} ${200/255} 1.0"/>
   </material>
 
-  <!-- Run fr3 macro -->
-  <xacro:fr3_arm
-    arm_id="fr3"
+  <!-- Run panda macro -->
+  <xacro:panda_arm
+    arm_id="panda"
     safety_distance="0.0"
     connected_to="cart_link"
     xyz="0.05 0 0"/>
   
   <!-- Run hand macro -->
   <xacro:hand 
-    ns="fr3"
+    ns="panda"
     rpy="0 0 ${-pi/4}"
-    connected_to="fr3_link8"
+    connected_to="panda_link8"
     safety_distance="0.0"/>
 
   <!-- Joints -->
@@ -55,7 +55,7 @@
 
     <joint name="camera_mount_to_flange_joint" type="fixed">
       <origin xyz="0.03 0 .045" rpy="0 0 0"/>
-      <parent link="fr3_hand"/>
+      <parent link="panda_hand"/>
       <child link="camera_mount" />
     </joint>
 
@@ -76,8 +76,8 @@
   </xacro:if>
 
   <!-- Run ROS2 control macro -->
-  <xacro:fr3_arm_ros2_control 
-    ns="fr3"
+  <xacro:panda_arm_ros2_control 
+    ns="panda"
     robot_ip="172.16.0.2"
     use_fake_hardware="false"
     fake_sensor_commands="false"/>
