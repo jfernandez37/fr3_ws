@@ -78,6 +78,9 @@ void RobotCommander::move_to_named_pose_cb_(
     const std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Request> request,
     std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Response> response)
 {
+  /*
+  Accepts the name of a pose made in robot_commander.hpp and moves the robot to that pose
+  */
   if (named_joint_positions_.find(request->pose) != named_joint_positions_.end())
   {
     try
@@ -107,6 +110,9 @@ void RobotCommander::move_to_named_pose_cb_(
 
 void RobotCommander::joint_state_publish_timer_cb_()
 {
+  /*
+  Publishes the current state of each joint
+  */
   joint_state_msg_.name = joint_names_;
 
   if (read_state_.try_lock())
@@ -142,6 +148,9 @@ void RobotCommander::joint_state_publish_timer_cb_()
 
 void RobotCommander::ee_pose_publish_timer_cb_()
 {
+  /*
+  Publishes the current state of the end effector
+  */
   ee_pose_.header.frame_id = "world";
   ee_pose_.header.stamp = this->get_clock()->now();
 
@@ -171,6 +180,9 @@ void RobotCommander::move_cartesian_cb_(
     const std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Request> request,
     std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Response> response)
 {
+  /*
+  Callback for the move_robot_cartesian function
+  */
   try
   {
     move_robot_cartesian(request->x, request->y, request->z, request->max_velocity, request->acceleration);
@@ -187,6 +199,9 @@ void RobotCommander::move_cartesian_cb_(
 
 void RobotCommander::move_robot_cartesian(double x, double y, double z, double maximum_velocity, double acceleration)
 {
+  /*
+  Makes an CartesianMotionGenerator object with the paramaters and starts a control loop with it
+  */
   std::unique_ptr<CartesianMotionGenerator> cartesian_motion_generator;
 
   try
@@ -214,6 +229,9 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
 
 void RobotCommander::open_gripper()
 {
+  /*
+  Opens the gripper of the robot to almost the full amount
+  */
   try
   {
     gripper_->move(gripper_state_.max_width - 0.01, gripper_speed_);
@@ -228,6 +246,9 @@ void RobotCommander::open_gripper()
 
 void RobotCommander::grasp_object(double object_width)
 {
+  /*
+  Closes the gripper to the amount where it will pick up the object
+  */
   if (gripper_state_.max_width < object_width)
   {
     throw CommanderError("Object width is larger than gripper max width");
