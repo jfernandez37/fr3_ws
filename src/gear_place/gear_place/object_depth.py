@@ -1,12 +1,9 @@
 import rclpy
 from rclpy.node import Node
-import os
 from sensor_msgs.msg import PointCloud2, PointField
-# from sensor_msgs_py.point_cloud2 import read_points_numpy, read_points
 import struct
 import math
 import sys
-import numpy as np
 
 _DATATYPES = {}
 _DATATYPES[PointField.INT8]    = ('b', 1)
