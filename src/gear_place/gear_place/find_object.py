@@ -65,10 +65,8 @@ class FindObject(Node):
         cv2.drawContours(self.cv_image, contours, -1, (0,255,0), 3)
         M = cv2.moments(contours[self.closest_to_circle(contours)]) #Finds the contour that is closest to a circle
         (x,y),self.radius = cv2.minEnclosingCircle(contours[self.closest_to_circle(contours)])
-        (x,y),radius = cv2.minEnclosingCircle(contours[self.closest_to_circle(contours)])
         center = (int(x),int(y))
-        radius = int(radius)
-        cv2.circle(self.cv_image,center,radius,(255,255,255),2)
+        cv2.circle(self.cv_image,center,int(self.radius),(255,255,255),2)
         # print( M )
         try:
             (h, w) = self.cv_image.shape[:2]
