@@ -16,8 +16,6 @@ class FindObject(Node):
     def __init__(self):
         super().__init__('find_object')
         self.thresh_image = None
-        self.invert_thresh = None
-        self.blurred_image = None
         self.bridge = CvBridge()
         self.cv_image = None
         self.declare_parameter('thresh_value', 30)
