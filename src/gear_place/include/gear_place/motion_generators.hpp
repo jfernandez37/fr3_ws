@@ -240,6 +240,9 @@ CartesianMotionGenerator::CartesianMotionGenerator(double x, double y, double z,
 
 geometry_msgs::msg::Vector3 CartesianMotionGenerator::calculate_displacement(double time)
 {
+  /*
+  Calculates the next coordinates for the movement
+  */
   geometry_msgs::msg::Vector3 delta_vals;
   double delta;
   if (time <= t1_)
@@ -266,11 +269,18 @@ geometry_msgs::msg::Vector3 CartesianMotionGenerator::calculate_displacement(dou
 
 double CartesianMotionGenerator::norm(geometry_msgs::msg::Vector3 v)
 {
+  /*
+  For calculating the total distance
+  */
   return sqrt(pow(v.x, 2) + pow(v.y, 2) + pow(v.z, 2));
 }
 
 franka::CartesianPose CartesianMotionGenerator::operator()(const franka::RobotState &robot_state, franka::Duration period)
 {
+  /*
+  Function used for the control loop
+  Uses the calculate_displacement function above to calculate the next distance and move to it
+  */
   time_ += period.toSec();
 
   if (time_ == 0.0)
