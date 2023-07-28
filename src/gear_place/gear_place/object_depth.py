@@ -4,7 +4,6 @@ import os
 from sensor_msgs.msg import PointCloud2, PointField
 # from sensor_msgs_py.point_cloud2 import read_points_numpy, read_points
 import struct
-import ros2_numpy as rnpy
 import math
 import sys
 import numpy as np
@@ -92,6 +91,9 @@ def _get_struct_fmt(is_bigendian, fields, field_names=None):
 class ObjectDepth(Node):
 
     def __init__(self, gear_c: tuple):
+        '''
+        Takes in the gear center (or any other pixel) and finds the distance from the camera to that point
+        '''
         super().__init__('minimal_subscriber')
         self.subscription = self.create_subscription(
             PointCloud2,
@@ -106,28 +108,14 @@ class ObjectDepth(Node):
         self.dist_z = None
 
     def listener_callback(self, msg : PointCloud2):
-        # data = read_points_numpy(msg,field_names = ("x", "y", "z"), skip_nans=True, uvs=[[334,349]])
+        '''
+        Reads in the point cloud and returns the distance away from the given point.
+        Used for finding the distance from the camera to the center of the gear
+        '''
         data = read_points(msg, skip_nans=False, uvs=[[self.gx, self.gy]])
-        # print(data.shape)
-        # for i in range(0,15,3):
-        #     print(f"measurement for ({self.gx+i+40},{self.gy+i+40}): " + str(data[self.gx+i+40][self.gy+i+40]))
-        # print("\n"*5)
+        
         for i in data:
             self.dist_x = i[0]
             self.dist_y = i[1]
             self.dist_z = i[2]
-        # for i in range(5):
-        #     for j in range(5):
-        #         print(f"measurement for ({self.gx-2+i},{self.gy-2+j}): " + str(data[self.gx-2+i][self.gy-2+j]))
-        #     print("\n")
         
-        # print("Data for central point: ",str(data[(self.gx, self.gy)]))
-        # orientations = []
-        # orientations.append(data[self.gx][self.gy])
-        # orientations.append(data[848-self.gx][self.gy])
-        # orientations.append(data[self.gx][480-self.gy])
-        # orientations.append(data[848-self.gx][480-self.gy])
-        # print("Orientations:\n"+"\n".join([str(o) for o in orientations]),end="\n\n")
-        # print("\n\n".join(["Distance away from camera: "+str(__import__("math").sqrt(sum([i**2 for i in d])))+" meters" for d in orientations]))
-        # data = read_points(msg,field_names = ("x", "y", "z"), uvs=[437])
-        # self.get_logger().info("Data: "+ ", ".join([str(d) for d in data]))
