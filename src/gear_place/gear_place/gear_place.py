@@ -57,6 +57,9 @@ class GearPlace(Node):
                 raise Error("Ctrl+C pressed")
     
     def _call_move_to_named_pose_service(self, named_pose: str):
+        '''
+        Calls the move_to_named_pose callback
+        '''
         self.get_logger().info(f"Moving to {named_pose}")
 
         request = MoveToNamedPose.Request()
@@ -78,6 +81,9 @@ class GearPlace(Node):
             raise Error("Unable to move to pose")
     
     def _move_cartesian_service(self, x,y,z,v_max, acc):
+        '''
+        Calls the move_cartesian callback
+        '''
         self.get_logger().info(f"Moving {x},{y},{z}")
         
         request = MoveCartesian.Request()
