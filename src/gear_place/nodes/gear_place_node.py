@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import rclpy
-from gear_place.gear_place import GearPlace, Error
+from gear_place.gear_place_classes import GearPlace, Error
 from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 def main(args=None):
