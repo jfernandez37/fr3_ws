@@ -10,7 +10,7 @@ def main(args=None):
     try:
         supervisor = GearPlace()
         supervisor.wait(2.0)
-        supervisor._move_to_named_position_service("home")
+        supervisor._call_move_to_named_pose_service("home")
         find_object = FindObject()
         rclpy.spin_once(find_object)
         object_depth = ObjectDepth(find_object.ret_cent_gear())
