@@ -7,6 +7,7 @@ def main(args=None):
     
     try:
         supervisor = GearPlace()
+        supervisor.wait(2.0)
         supervisor._move_to_named_position_service("home")
         supervisor._move_cartesian_service(0.05,0.03,-0.02,0.15,0.2)
         supervisor._move_cartesian_service(-0.05,-0.03,0.02,0.15,0.2)

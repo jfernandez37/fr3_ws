@@ -27,6 +27,7 @@ from gear_place.transform_utils import(
 from gear_place_interfaces.srv import (
     MoveCartesian,
     MoveToNamedPose,
+    PickUpGear
 )
 
 class Error(Exception):
@@ -43,6 +44,7 @@ class GearPlace(Node):
         #Service Clients
         self.move_to_named_pose_client = self.create_client(MoveToNamedPose, 'move_to_named_pose')
         self.move_cartesian_client = self.create_client(MoveCartesian, "move_cartesian")
+        self.pick_up_gear_client = self.create_client(PickUpGear, "pick_up_gear")
     
     def wait(self, duration: float):
         # self.get_logger().info(f"Waiting for {duration} seconds...")
@@ -107,3 +109,30 @@ class GearPlace(Node):
         if not result.success:
             self.get_logger().error(f"Unable to move {x},{y},{z}")
             raise Error("Unable to move to location")
+    
+    def _pick_up_gear_service(self, x,y,z,object_width):
+        '''
+        Cals the pick_up_gear callback
+        '''
+        self.get_logger().info(f"Picking up gear")
+
+        request = PickUpGear.Request()
+
+        request.x = x
+        request.y = y
+        request.z = z
+        request.object_width = object_width
+
+        future = self.pick_up_gear_client.call_async(request)
+
+        rclpy.spin_until_future_complete(self, future, timeout_sec= 20)
+
+        if not future.done():
+            raise Error("Timeout reached when calling pick_up gear service")
+        
+        result : PickUpGear.Response
+        result = future.result()
+
+        if not result.success:
+            self.get_logger().error(f"Unable to pick up gear")
+            raise Error("Unable to pick up gear")
