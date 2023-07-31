@@ -2,6 +2,8 @@
 
 import rclpy
 from gear_place.gear_place import GearPlace, Error
+from gear_place.find_object import FindObject
+from gear_place.object_depth import ObjectDepth
 def main(args=None):
     rclpy.init(args=args)
     
@@ -9,8 +11,12 @@ def main(args=None):
         supervisor = GearPlace()
         supervisor.wait(2.0)
         supervisor._move_to_named_position_service("home")
-        supervisor._move_cartesian_service(0.05,0.03,-0.02,0.15,0.2)
-        supervisor._move_cartesian_service(-0.05,-0.03,0.02,0.15,0.2)
+        find_object = FindObject()
+        rclpy.spin_once(find_object)
+        object_depth = ObjectDepth(find_object.ret_cent_gear())
+        rclpy.spin_once(object_depth)
+        supervisor._pick_up_gear_service(object_depth.dist_x,object_depth.dist_y,object_depth.dist_z,0.01)
+        
     except Error as e:
         print(e)
 
