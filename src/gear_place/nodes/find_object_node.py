@@ -10,7 +10,7 @@ def main(args=None):
     find_object = FindObject()
     #rclpy.spin(find_object)
     rclpy.spin_once(find_object)
-    cv2.imshow("Threshold image", find_object.thresh_image)
+    # cv2.imshow("Threshold image", find_object.thresh_image)
     cv2.imshow("Depth image", find_object.cv_image)
     cv2.waitKey(0)
     # __import__("time").sleep(1)

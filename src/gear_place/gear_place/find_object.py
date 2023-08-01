@@ -60,12 +60,14 @@ class FindObject(Node):
         '''
         thresh_value = self.get_parameter('thresh_value').get_parameter_value().integer_value
         cv_image = self.bridge.imgmsg_to_cv2(msg, "32FC1")
-        cv_image_array = np.array(cv_image, dtype = np.dtype('u1'))
-        self.cv_image = cv_image_array
-        blurred_img = cv2.GaussianBlur(self.cv_image,(7,7),0)
-        _,self.thresh_image = cv2.threshold(blurred_img,thresh_value,255,cv2.THRESH_BINARY_INV)
-        # self.thresh_image = cv2.adaptiveThreshold(,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
-        contours, _ = cv2.findContours(self.thresh_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        self.cv_image = np.array(cv_image, dtype = np.dtype('u1'))
+        alpha = 1 # Contrast control (1.0-3.0)
+        beta = -50 # Brightness control (0-100)
+        self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
+        for i in range(len(self.cv_image)):
+            for j in range(len(self.cv_image[i])):
+                self.cv_image[i][j] = 255 if self.cv_image[i][j]<50 else 0
+        contours, _ = cv2.findContours(self.cv_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         print("Contours found:",len(contours))
         before_remove = len(contours)
         contours = self.remove_bad_contours(contours)
@@ -82,6 +84,7 @@ class FindObject(Node):
             cv2.circle(self.cv_image, (w//2, h//2), 7, (255, 255, 255), -1)
             self.gx = int(M['m10']/M['m00'])
             self.gy = int(M['m01']/M['m00'])
+            print("self_val: ",self.cv_image[self.gy][self.gx])
             cv2.circle(self.cv_image, (self.gx,self.gy), 10, color=(255,255,255), thickness=-1)
         except:
             print("Error: Contour does not form a single shape")
