@@ -13,7 +13,6 @@ def main(args=None):
     cv2.imshow("Image", find_object.cv_image)
     cv2.waitKey(0)
     # __import__("time").sleep(1)
-    print(find_object.ret_cent_gear())
     object_depth = ObjectDepth(find_object.ret_cent_gear())
     rclpy.spin_once(object_depth)
     print("x: "+str(object_depth.dist_x),end="\t")
