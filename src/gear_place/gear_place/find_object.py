@@ -14,6 +14,9 @@ class FindObject(Node):
         super().__init__('find_object')
         self.bridge = CvBridge()
         self.cv_image = None
+        self.gx = None
+        self.gy = None
+        self.thresh_image = None
         self.declare_parameter('thresh_value', 30)
         self.subscription = self.create_subscription(
             Image,
@@ -59,6 +62,7 @@ class FindObject(Node):
         cv_image = self.bridge.imgmsg_to_cv2(msg, "32FC1")
         cv_image_array = np.array(cv_image, dtype = np.dtype('u1'))
         self.cv_image = cv_image_array
+        print(self.cv_image)
         blurred_img = cv2.GaussianBlur(self.cv_image,(7,7),0)
         _,self.thresh_image = cv2.threshold(blurred_img,thresh_value,255,cv2.THRESH_BINARY_INV)
         contours, _ = cv2.findContours(self.thresh_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
