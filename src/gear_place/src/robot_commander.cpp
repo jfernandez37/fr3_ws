@@ -236,7 +236,10 @@ void RobotCommander::pick_up_gear_cb(
   */
   try
   {
-    move_robot_cartesian(request->x, request->y, 0, default_velocity_, default_acceleration_);
+    move_robot_cartesian(request->x, -1*request->y, 0, default_velocity_, default_acceleration_);
+    //From the camera:
+    //x is negative to the left and positive to the right
+    //y is negative above the center of the camera and positive below the center of the camera
     open_gripper();
     move_robot_cartesian(0,0,-1*request->z, default_velocity_, default_acceleration_);
     grasp_object(request->object_width);
