@@ -227,8 +227,8 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
 }
 
 void RobotCommander::pick_up_gear_cb(
-  const std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Request> request,
-    std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Response> response)
+  const std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Request> request,
+    std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Response> response)
 {
   /*
   Moves to above the object, opens the gripper, moves down to the object, grasps it, and picks it up.
@@ -240,7 +240,7 @@ void RobotCommander::pick_up_gear_cb(
     open_gripper();
     move_robot_cartesian(0,0,-1*request->z, default_velocity_, default_acceleration_);
     grasp_object(request->object_width);
-    move_robot_cartesian(0,0,request->z, default_velocity_, default_acceleration)
+    move_robot_cartesian(0,0,request->z, default_velocity_, default_acceleration_);
   }
   catch (CommanderError &e)
   {
@@ -251,7 +251,7 @@ void RobotCommander::pick_up_gear_cb(
   }
 
   gripper_state_ = gripper_->readOnce();
-  if(!gripper_state_.is_grsped)
+  if(!gripper_state_.is_grasped)
   {
     RCLCPP_WARN(get_logger(), "Object was not grasped");
     response->success = false;

@@ -5,6 +5,7 @@
 
 #include <gear_place_interfaces/srv/move_cartesian.hpp>
 #include <gear_place_interfaces/srv/move_to_named_pose.hpp>
+#include <gear_place_interfaces/srv/pick_up_gear.hpp>
 
 #include <std_msgs/msg/string.hpp>
 
@@ -103,7 +104,8 @@ private:
                               std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Response> response);
   void move_cartesian_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Request> request,
                           std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Response> response);
-
+  void pick_up_gear_cb(const std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Request> request,
+                                       std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Response> response);
   // Methods
   void move_robot_cartesian(double, double, double, double, double);
   void open_gripper();
