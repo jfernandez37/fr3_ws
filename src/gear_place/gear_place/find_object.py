@@ -17,7 +17,7 @@ class FindObject(Node):
         self.gx = None
         self.gy = None
         self.thresh_image = None
-        self.declare_parameter('thresh_value', 30)
+        self.declare_parameter('thresh_value', 97)
         self.subscription = self.create_subscription(
             Image,
             '/camera/depth/image_rect_raw',
@@ -64,11 +64,12 @@ class FindObject(Node):
         self.cv_image = cv_image_array
         blurred_img = cv2.GaussianBlur(self.cv_image,(7,7),0)
         _,self.thresh_image = cv2.threshold(blurred_img,thresh_value,255,cv2.THRESH_BINARY_INV)
+        # self.thresh_image = cv2.adaptiveThreshold(,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
         contours, _ = cv2.findContours(self.thresh_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         print("Contours found:",len(contours))
         before_remove = len(contours)
         contours = self.remove_bad_contours(contours)
-        print(before_remove-len(contours), " contours were removed")            
+        print(before_remove-len(contours), " contours were removed")
         cv2.drawContours(self.cv_image, contours, -1, (0,255,0), 3)
         M = cv2.moments(contours[self.closest_to_circle(contours)]) #Finds the contour that is closest to a circle
         (x,y),self.radius = cv2.minEnclosingCircle(contours[self.closest_to_circle(contours)])
