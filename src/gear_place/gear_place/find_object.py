@@ -62,12 +62,9 @@ class FindObject(Node):
         cv_image = self.bridge.imgmsg_to_cv2(msg, "32FC1")
         cv_image_array = np.array(cv_image, dtype = np.dtype('u1'))
         self.cv_image = cv_image_array
-        alpha = 1 # Contrast control (1.0-3.0)
-        beta = -50 # Brightness control (0-100)
-        self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
-        for i in range(len(cv_image)):
-            for j in range(len(cv_image[i])):
-                self.cv_image[i][j] = 0 if self.cv_image[i][j]<39 else 255
+        # alpha = 1 # Contrast control (1.0-3.0)
+        # beta = -50 # Brightness control (0-100)
+        # self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
         blurred_img = cv2.GaussianBlur(self.cv_image,(7,7),0)
         _,self.thresh_image = cv2.threshold(blurred_img,thresh_value,255,cv2.THRESH_BINARY_INV)
         d={}
