@@ -83,12 +83,16 @@ class FindObject(Node):
         self.original_image = self.cv_image.copy()
         blurred_img = cv2.GaussianBlur(self.cv_image,(7,7),0)
         for i in range(3): blurred_img = cv2.GaussianBlur(blurred_img,(7,7),0)
-        _,self.thresh_image = cv2.threshold(blurred_img,thresh_value,255,cv2.THRESH_BINARY_INV)
-        # self.thresh_image = cv2.adaptiveThreshold(,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
-        contours, _ = cv2.findContours(self.thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        print("Contours found:",len(contours))
-        before_remove = len(contours)
-        contours = self.remove_bad_contours(contours)
+        contours_left = 0
+        while contours_left<1:
+            _,self.thresh_image = cv2.threshold(blurred_img,thresh_value,255,cv2.THRESH_BINARY_INV)
+            # self.thresh_image = cv2.adaptiveThreshold(,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
+            contours, _ = cv2.findContours(self.thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            print("Contours found:",len(contours))
+            before_remove = len(contours)
+            contours = self.remove_bad_contours(contours)
+            contours_left = len(contours)
+            thresh_value+=1
         print(before_remove-len(contours), " contours were removed")
         cv2.drawContours(self.cv_image, contours, -1, (0,255,0), 3)
         # M = cv2.moments(contours[self.closest_to_circle(contours)]) #Finds the contour that is closest to a circle
