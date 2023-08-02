@@ -69,7 +69,7 @@ class FindObject(Node):
         self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
         for i in range(len(self.cv_image)):
             for j in range(len(self.cv_image[i])):
-                if self.cv_image[i][j]<85 or 230<self.cv_image[i][j]:
+                if self.cv_image[i][j]<95 or 230<self.cv_image[i][j]:
                     self.cv_image[i][j] = 255
         c=0
         for i in range(len(self.cv_image)):
@@ -82,6 +82,7 @@ class FindObject(Node):
         print(c)
         self.original_image = self.cv_image.copy()
         blurred_img = cv2.GaussianBlur(self.cv_image,(7,7),0)
+        for i in range(3): blurred_img = cv2.GaussianBlur(blurred_img,(7,7),0)
         _,self.thresh_image = cv2.threshold(blurred_img,thresh_value,255,cv2.THRESH_BINARY_INV)
         # self.thresh_image = cv2.adaptiveThreshold(,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
         contours, _ = cv2.findContours(self.thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
