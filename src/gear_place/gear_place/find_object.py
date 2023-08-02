@@ -91,17 +91,17 @@ class FindObject(Node):
         contours = self.remove_bad_contours(contours)
         print(before_remove-len(contours), " contours were removed")
         cv2.drawContours(self.cv_image, contours, -1, (0,255,0), 3)
-        M = cv2.moments(contours[self.closest_to_circle(contours)]) #Finds the contour that is closest to a circle
+        # M = cv2.moments(contours[self.closest_to_circle(contours)]) #Finds the contour that is closest to a circle
         (x,y),self.radius = cv2.minEnclosingCircle(contours[self.closest_to_circle(contours)])
         center = (int(x),int(y))
+        self.gx = int(x)
+        self.gy = int(y)
         cv2.circle(self.cv_image,center,int(self.radius),(255,255,255),2)
         try:
             (h, w) = self.cv_image.shape[:2]
             self.cx = w//2
             self.cy = h//2
             cv2.circle(self.cv_image, (w//2, h//2), 7, (255, 255, 255), -1)
-            self.gx = int(M['m10']/M['m00'])
-            self.gy = int(M['m01']/M['m00'])
             print("self_val: ",self.cv_image[self.gy][self.gx])
             cv2.circle(self.cv_image, (self.gx,self.gy), 10, color=(255,255,255), thickness=-1)
         except:
