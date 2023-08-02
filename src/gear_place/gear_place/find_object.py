@@ -3,6 +3,7 @@ import rclpy
 from rclpy.node import Node
 
 import numpy as np
+from numpy import copy
 
 from sensor_msgs.msg import Image # msg for recieving the image
 
@@ -17,7 +18,8 @@ class FindObject(Node):
         self.gx = None
         self.gy = None
         self.thresh_image = None
-        self.declare_parameter('thresh_value', 97)
+        self.original_image = None
+        self.declare_parameter('thresh_value', 30)
         self.subscription = self.create_subscription(
             Image,
             '/camera/depth/image_rect_raw',
@@ -62,21 +64,27 @@ class FindObject(Node):
         cv_image = self.bridge.imgmsg_to_cv2(msg, "32FC1")
         cv_image_array = np.array(cv_image, dtype = np.dtype('u1'))
         self.cv_image = cv_image_array
-        # alpha = 1 # Contrast control (1.0-3.0)
-        # beta = -50 # Brightness control (0-100)
-        # self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
+        alpha = 2.5 # Contrast control (1.0-3.0)
+        beta = -65 # Brightness control (-100-100)
+        self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
+        for i in range(len(self.cv_image)):
+            for j in range(len(self.cv_image[i])):
+                if self.cv_image[i][j]<120 or 230<self.cv_image[i][j]:
+                    self.cv_image[i][j] = 255
+        c=0
+        for i in range(len(self.cv_image)):
+            for j in range(len(self.cv_image[i])):
+                if self.cv_image[i][j]!=255:
+                    for i in range(10):
+                        c+=1
+                        self.cv_image[i][j]-=50
+                        self.cv_image[i][j] = min(255, self.cv_image[i][j]*10)
+        print(c)
+        self.original_image = self.cv_image.copy()
         blurred_img = cv2.GaussianBlur(self.cv_image,(7,7),0)
         _,self.thresh_image = cv2.threshold(blurred_img,thresh_value,255,cv2.THRESH_BINARY_INV)
-        d={}
-        for i in self.thresh_image:
-            for j in i:
-                try: 
-                    d[j]+=1
-                except:
-                    d[j]=1
-        print(d)
         # self.thresh_image = cv2.adaptiveThreshold(,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
-        contours, _ = cv2.findContours(self.thresh_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(self.thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         print("Contours found:",len(contours))
         before_remove = len(contours)
         contours = self.remove_bad_contours(contours)

@@ -12,6 +12,7 @@ def main(args=None):
     rclpy.spin_once(find_object)
     cv2.imshow("Threshold image", find_object.thresh_image)
     cv2.imshow("Depth image", find_object.cv_image)
+    # cv2.imshow("Originial image", find_object.original_image)
     cv2.waitKey(0)
     # __import__("time").sleep(1)
     object_depth = ObjectDepth(find_object.ret_cent_gear())
