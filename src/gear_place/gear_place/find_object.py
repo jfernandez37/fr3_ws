@@ -69,7 +69,7 @@ class FindObject(Node):
         self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
         for i in range(len(self.cv_image)):
             for j in range(len(self.cv_image[i])):
-                if self.cv_image[i][j]<100 or 230<self.cv_image[i][j]:
+                if self.cv_image[i][j]<60 or 230<self.cv_image[i][j]:
                     self.cv_image[i][j] = 255
         c=0
         for i in range(len(self.cv_image)):
