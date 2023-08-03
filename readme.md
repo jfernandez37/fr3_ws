@@ -24,3 +24,12 @@ Work space for Franka Emika FR3 robot ROS integration
 * Install dependencies
 
     `rosdep install --from-paths src -y --ignore-src -r --rosdistro humble`
+
+## Important commands to run
+
+* To start the camera with all options needed for getting the depth of the gear, run
+    `ros2 launch realsense2_camera rs_launch.py pointcloud.enable:=true pointcloud.ordered_pc:=true pointcloud.stream_filter:=0 depth_module.profile:='640x480x30'`
+* To test the gear detection functions, run this command. `thresh_value` can be set to different values for different heights
+    `ros2 run gear_place find_object_node.py --ros-args -p thresh_value:=160`
+* To launch everything, run
+    `ros2 launch gear_place gear.launch.py`
