@@ -22,6 +22,7 @@ def main(args=None):
             gear_center_target[0] = object_depth.dist_x
             gear_center_target[1] = object_depth.dist_y
             gear_center_target[2] = object_depth.dist_z
+            print(gear_center_target)
         supervisor._pick_up_gear_service(object_depth.dist_x,object_depth.dist_y,object_depth.dist_z,0.01)
         
     except Error as e:
