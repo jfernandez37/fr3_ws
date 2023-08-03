@@ -70,6 +70,11 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       std::bind(&RobotCommander::move_cartesian_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
 
+  pick_up_gear_srv_ = this->create_service<gear_place_interfaces::srv::PickUpGear>(
+      "pick_up_gear",
+      std::bind(&RobotCommander::pick_up_gear_cb, this,
+                std::placeholders::_1, std::placeholders::_2));
+
   std::srand(std::time(0)); // use current time as seed for random generator
 }
 
