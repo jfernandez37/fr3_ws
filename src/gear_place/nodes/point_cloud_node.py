@@ -7,20 +7,18 @@ from sensor_msgs_py.point_cloud2 import read_points_numpy
 
 import numpy as np
 
-class MinimalSubscriber(Node):
 
+class MinimalSubscriber(Node):
     def __init__(self):
-        super().__init__('minimal_subscriber')
+        super().__init__("minimal_subscriber")
         self.subscription = self.create_subscription(
-            PointCloud2,
-            '/camera/depth/color/points',
-            self.listener_callback,
-            10)
+            PointCloud2, "/camera/depth/color/points", self.listener_callback, 10
+        )
         self.subscription  # prevent unused variable warning
 
-    def listener_callback(self, msg : PointCloud2):
+    def listener_callback(self, msg: PointCloud2):
         # data = read_points_numpy(msg,field_names = ("x", "y", "z"), skip_nans=True, uvs=[[334,349]])
-        data = read_points_numpy(msg,reshape_organized_cloud = True, skip_nans=True)
+        data = read_points_numpy(msg, reshape_organized_cloud=True, skip_nans=True)
         print(data[434][224])
         # data = read_points(msg,field_names = ("x", "y", "z"), uvs=[437])
         # self.get_logger().info("Data: "+ ", ".join([str(d) for d in data]))
@@ -41,5 +39,5 @@ def main(args=None):
     rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

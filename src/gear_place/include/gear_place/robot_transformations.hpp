@@ -39,17 +39,17 @@ namespace robot_transformations
     pose.position.y = transform.translation.y;
     pose.position.z = transform.translation.z;
     pose.orientation = transform.rotation;
-    
+
     return pose;
   }
 
   double GetYawFromPose(geometry_msgs::msg::Pose pose)
   {
     tf2::Quaternion q(
-      pose.orientation.x,
-      pose.orientation.y,
-      pose.orientation.z,
-      pose.orientation.w);
+        pose.orientation.x,
+        pose.orientation.y,
+        pose.orientation.z,
+        pose.orientation.w);
     tf2::Matrix3x3 m(q);
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
@@ -74,13 +74,13 @@ namespace robot_transformations
 
   void log_pose(rclcpp::Logger l, geometry_msgs::msg::Pose p)
   {
-    RCLCPP_INFO_STREAM(l, 
-      "Position: {x: " << std::to_string(p.position.x) << " " <<
-        "y: " << std::to_string(p.position.y) << " " <<
-        "z: " << std::to_string(p.position.z) << " } " <<
-      "Orientation: x: " << std::to_string(p.orientation.x) << " " <<
-        "y: " << std::to_string(p.orientation.y) << " " <<
-        "z: " << std::to_string(p.orientation.z) << " " <<
-        "w: " << std::to_string(p.orientation.w) << " ");
+    RCLCPP_INFO_STREAM(l,
+                       "Position: {x: " << std::to_string(p.position.x) << " "
+                                        << "y: " << std::to_string(p.position.y) << " "
+                                        << "z: " << std::to_string(p.position.z) << " } "
+                                        << "Orientation: x: " << std::to_string(p.orientation.x) << " "
+                                        << "y: " << std::to_string(p.orientation.y) << " "
+                                        << "z: " << std::to_string(p.orientation.z) << " "
+                                        << "w: " << std::to_string(p.orientation.w) << " ");
   }
 }

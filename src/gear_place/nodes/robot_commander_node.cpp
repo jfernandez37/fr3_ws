@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
   rclcpp::executors::MultiThreadedExecutor executor;
   executor.add_node(robot_commander);
-  
+
   executor.spin();
 
   rclcpp::shutdown();

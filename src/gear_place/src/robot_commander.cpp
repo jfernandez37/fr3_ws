@@ -73,7 +73,6 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
   std::srand(std::time(0)); // use current time as seed for random generator
 }
 
-
 void RobotCommander::move_to_named_pose_cb_(
     const std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Request> request,
     std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Response> response)
@@ -106,7 +105,6 @@ void RobotCommander::move_to_named_pose_cb_(
     RCLCPP_WARN(get_logger(), "Named pose does not exist");
   }
 }
-
 
 void RobotCommander::joint_state_publish_timer_cb_()
 {
@@ -227,7 +225,7 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
 }
 
 void RobotCommander::pick_up_gear_cb(
-  const std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Request> request,
+    const std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Request> request,
     std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Response> response)
 {
   /*
@@ -236,14 +234,14 @@ void RobotCommander::pick_up_gear_cb(
   */
   try
   {
-    move_robot_cartesian(request->x, -1*request->y, 0, default_velocity_, default_acceleration_);
-    //From the camera:
-    //x is negative to the left and positive to the right
-    //y is negative above the center of the camera and positive below the center of the camera
+    move_robot_cartesian(request->x, -1 * request->y, 0, default_velocity_, default_acceleration_);
+    // From the camera:
+    // x is negative to the left and positive to the right
+    // y is negative above the center of the camera and positive below the center of the camera
     open_gripper();
-    move_robot_cartesian(0,0,-1*request->z, default_velocity_, default_acceleration_);
+    move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);
     grasp_object(request->object_width);
-    move_robot_cartesian(0,0,request->z, default_velocity_, default_acceleration_);
+    move_robot_cartesian(0, 0, request->z, default_velocity_, default_acceleration_);
   }
   catch (CommanderError &e)
   {
@@ -254,7 +252,7 @@ void RobotCommander::pick_up_gear_cb(
   }
 
   gripper_state_ = gripper_->readOnce();
-  if(!gripper_state_.is_grasped)
+  if (!gripper_state_.is_grasped)
   {
     RCLCPP_WARN(get_logger(), "Object was not grasped");
     response->success = false;

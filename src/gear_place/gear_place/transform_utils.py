@@ -1,33 +1,32 @@
 import PyKDL
 import numpy as np
 import math
-from geometry_msgs.msg import (
-    Pose,
-    Quaternion,
-    TransformStamped
-)
+from geometry_msgs.msg import Pose, Quaternion, TransformStamped
 
 from builtin_interfaces.msg import Time
 
+
 def multiply_pose(p1: Pose, p2: Pose) -> Pose:
-    '''
+    """
     Use KDL to multiply two poses together.
     Args:
         p1 (Pose): Pose of the first frame
         p2 (Pose): Pose of the second frame
     Returns:
         Pose: Pose of the resulting frame
-    '''
+    """
 
     o1 = p1.orientation
     frame1 = PyKDL.Frame(
         PyKDL.Rotation.Quaternion(o1.x, o1.y, o1.z, o1.w),
-        PyKDL.Vector(p1.position.x, p1.position.y, p1.position.z))
+        PyKDL.Vector(p1.position.x, p1.position.y, p1.position.z),
+    )
 
     o2 = p2.orientation
     frame2 = PyKDL.Frame(
         PyKDL.Rotation.Quaternion(o2.x, o2.y, o2.z, o2.w),
-        PyKDL.Vector(p2.position.x, p2.position.y, p2.position.z))
+        PyKDL.Vector(p2.position.x, p2.position.y, p2.position.z),
+    )
 
     frame3 = frame1 * frame2
 
@@ -45,6 +44,7 @@ def multiply_pose(p1: Pose, p2: Pose) -> Pose:
 
     return pose
 
+
 def convert_transform_to_pose(t: TransformStamped) -> Pose:
     p = Pose()
 
@@ -54,6 +54,7 @@ def convert_transform_to_pose(t: TransformStamped) -> Pose:
     p.orientation = t.transform.rotation
 
     return p
+
 
 def euler_from_quaternion(quaternion: Quaternion):
     """
@@ -78,6 +79,7 @@ def euler_from_quaternion(quaternion: Quaternion):
 
     return roll, pitch, yaw
 
+
 def quaternion_from_euler(roll: float, pitch: float, yaw: float) -> Quaternion:
     cy = math.cos(yaw * 0.5)
     sy = math.sin(yaw * 0.5)
@@ -100,12 +102,15 @@ def quaternion_from_euler(roll: float, pitch: float, yaw: float) -> Quaternion:
 
     return q_msg
 
-def transform_from_pose(pose: Pose, frame_id: str, parent: str, stamp: Time) -> TransformStamped:
+
+def transform_from_pose(
+    pose: Pose, frame_id: str, parent: str, stamp: Time
+) -> TransformStamped:
     t = TransformStamped()
 
     t.header.stamp = stamp
     t.header.frame_id = parent
-    t.child_frame_id = frame_id                             
+    t.child_frame_id = frame_id
 
     t.transform.translation.x = pose.position.x
     t.transform.translation.y = pose.position.y
@@ -114,12 +119,15 @@ def transform_from_pose(pose: Pose, frame_id: str, parent: str, stamp: Time) -> 
 
     return t
 
-def build_pose(x: float, y: float, z: float, roll: float, pitch: float, yaw: float) -> Pose:
+
+def build_pose(
+    x: float, y: float, z: float, roll: float, pitch: float, yaw: float
+) -> Pose:
     p = Pose()
     p.position.x = x
     p.position.y = y
     p.position.z = z
-    
+
     p.orientation = quaternion_from_euler(roll, pitch, yaw)
 
     return p
