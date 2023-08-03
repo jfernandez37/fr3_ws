@@ -1,9 +1,7 @@
 import cv2
-import rclpy
 from rclpy.node import Node
 
 import numpy as np
-from numpy import copy
 
 from sensor_msgs.msg import Image  # msg for recieving the image
 
@@ -20,7 +18,6 @@ class FindObject(Node):
         self.gx = None
         self.gy = None
         self.thresh_image = None
-        self.original_image = None
         self.declare_parameter("thresh_value", 180)
         self.subscription = self.create_subscription(
             Image, "/camera/depth/image_rect_raw", self.listener_callback, 10

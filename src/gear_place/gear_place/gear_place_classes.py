@@ -1,17 +1,6 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.time import Duration
-from rclpy.logging import LoggingSeverity
-from ament_index_python.packages import (
-    get_package_share_directory,
-    PackageNotFoundError,
-)
-
-import yaml
-import math
-from typing import List, Tuple
-
-from geometry_msgs.msg import Pose, Point, PoseStamped
 
 from gear_place_interfaces.srv import MoveCartesian, MoveToNamedPose, PickUpGear
 

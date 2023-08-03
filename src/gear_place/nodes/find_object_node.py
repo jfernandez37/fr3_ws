@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import cv2
 import rclpy
-import numpy as np
 from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 
