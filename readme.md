@@ -1,5 +1,5 @@
 # FR3 ROS2 Implementation
-Work space for Franka Emika FR3 robot ROS integration
+Work space for Franka Emika FR3 robot ROS2 integration
 
 ## Packages
 * `gear_place` - Includes all code for moving the robot, identifying the gear with the realsense_camera, and the supervisors to control the robot
