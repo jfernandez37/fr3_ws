@@ -18,7 +18,7 @@ class FindObject(Node):
         self.gx = None
         self.gy = None
         self.thresh_image = None
-        self.declare_parameter("thresh_value", 180)
+        self.declare_parameter("thresh_value", 170)
         self.subscription = self.create_subscription(
             Image, "/camera/depth/image_rect_raw", self.listener_callback, 10
         )
