@@ -2,7 +2,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.time import Duration
 
-from gear_place_interfaces.srv import MoveCartesian, MoveToNamedPose, PickUpGear
+from gear_place_interfaces.srv import MoveCartesian, MoveToNamedPose, PickUpGear, MoveToConveyor
 
 
 class Error(Exception):
@@ -90,7 +90,7 @@ class GearPlace(Node):
 
     def _call_pick_up_gear_service(self, x, y, z, object_width):
         """
-        Cals the pick_up_gear callback
+        Calls the pick_up_gear callback
         """
         self.get_logger().info(f"Picking up gear")
 
@@ -114,3 +114,29 @@ class GearPlace(Node):
         if not result.success:
             self.get_logger().error(f"Unable to pick up gear")
             raise Error("Unable to pick up gear")
+    
+    def _call_move_to_conveyor_service(self, x, y, z, object_width):
+        """
+        Calls the move_to_conveyor callback
+        """
+        self.get_logger().info(f"Picking up gear")
+
+        request = MoveToConveyor.Request()
+
+        request.x = x
+        request.y = y
+        request.z = z
+
+        future = self.pick_up_gear_client.call_async(request)
+
+        rclpy.spin_until_future_complete(self, future, timeout_sec=20)
+
+        if not future.done():
+            raise Error("Timeout reached when calling move_to_conveyor service")
+
+        result: MoveToConveyor.Response
+        result = future.result()
+
+        if not result.success:
+            self.get_logger().error(f"Unable to move_to_conveyor")
+            raise Error("Unable to move to conveyor")

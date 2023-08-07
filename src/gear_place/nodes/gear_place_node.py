@@ -32,6 +32,9 @@ def main(args=None):
         # supervisor._call_pick_up_gear_service(
         #     object_depth.dist_x, object_depth.dist_y, object_depth.dist_z, 0.01
         # )
+        # supervisor._call_move_to_named_pose_service("home")
+        # supervisor._call_move_to_conveyor_service(0.1,0.1,0.1)
+
 
     except Error as e:
         print(e)
