@@ -7,7 +7,9 @@ Work space for Franka Emika FR3 robot ROS2 integration
 * `gear_place_interfaces` - Includes all msg and srv for the ROS2 callbacks
 
 ## Installation Instructions
-* Follow the [instructions to build libfranka from source](https://support.franka.de/docs/installation_linux.html#building-from-source) 
+* Follow the [instructions to build libfranka from source](https://support.franka.de/docs/installation_linux.html#building-from-source)
+
+* Install ROS2 Realsense `sudo apt install ros-humble-librealsense2*`
 
 * Clone the workspace
 
