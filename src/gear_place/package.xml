@@ -4,7 +4,7 @@
   <name>gear_place</name>
   <version>0.0.0</version>
   <description>Package for getting the FR3, to find a gear, pick it up, and place it on the conveyor belt</description>
-  <maintainer email="jothomas0615@gmail.com">jtf4</maintainer>
+  <maintainer email="joseph.fernandez@nist.gov">Joseph Fernandez</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
