@@ -72,7 +72,12 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
 
   pick_up_gear_srv_ = this->create_service<gear_place_interfaces::srv::PickUpGear>(
       "pick_up_gear",
-      std::bind(&RobotCommander::pick_up_gear_cb, this,
+      std::bind(&RobotCommander::pick_up_gear_cb_, this,
+                std::placeholders::_1, std::placeholders::_2));
+
+  move_to_conveyor_srv_ = this->create_service<gear_place_interfaces::srv::MoveToConveyor>(
+      "move_to_conveyor",
+      std::bind(&RobotCommander::move_to_conveyor_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
 
   std::srand(std::time(0)); // use current time as seed for random generator
@@ -229,7 +234,7 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
   }
 }
 
-void RobotCommander::pick_up_gear_cb(
+void RobotCommander::pick_up_gear_cb_(
     const std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Request> request,
     std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Response> response)
 {
@@ -265,7 +270,7 @@ void RobotCommander::pick_up_gear_cb(
   response->success = true;
 }
 
-void RobotCommander::move_to_conveyor_cb(
+void RobotCommander::move_to_conveyor_cb_(
     const std::shared_ptr<gear_place_interfaces::srv::MoveToConveyor::Request> request,
     std::shared_ptr<gear_place_interfaces::srv::MoveToConveyor::Response> response)
 {
@@ -274,7 +279,7 @@ void RobotCommander::move_to_conveyor_cb(
   */
   try
   {
-    
+
     move_robot_cartesian(request->x, -1 * request->y, 0, default_velocity_, default_acceleration_);
     move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);
     open_gripper();

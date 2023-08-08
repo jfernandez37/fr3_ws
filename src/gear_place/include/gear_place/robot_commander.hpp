@@ -66,6 +66,7 @@ private:
   rclcpp::Service<gear_place_interfaces::srv::MoveToNamedPose>::SharedPtr move_to_named_pose_srv_;
   rclcpp::Service<gear_place_interfaces::srv::MoveCartesian>::SharedPtr move_cartesian_srv_;
   rclcpp::Service<gear_place_interfaces::srv::PickUpGear>::SharedPtr pick_up_gear_srv_;
+  rclcpp::Service<gear_place_interfaces::srv::MoveToConveyor>::SharedPtr move_to_conveyor_srv_;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
