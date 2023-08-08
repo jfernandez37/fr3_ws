@@ -1,6 +1,8 @@
 from launch import LaunchDescription
-from launch.actions import OpaqueFunction, IncludeLaunchDescription
+from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription, Shutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.conditions import IfCondition
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 
@@ -31,6 +33,22 @@ def launch_setup(context, *args, **kwargs):
             [FindPackageShare("realsense2_camera"), "/launch", "/rs_launch.py"]
         )
     )
+    
+    start_rviz = LaunchConfiguration("rviz")
+
+    rviz_config_file = PathJoinSubstitution(
+        [FindPackageShare("gear_place"), "rviz", "task_board.rviz"]
+    )
+
+    rviz_node = Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2_task_board",
+        output="log",
+        arguments=["-d", rviz_config_file],
+        parameters=[robot_description],
+        condition=IfCondition(start_rviz)
+    )
 
     # Custom Nodes
     robot_commander_node = Node(
@@ -49,7 +67,8 @@ def launch_setup(context, *args, **kwargs):
 
     nodes_to_start = [
         robot_state_publisher,
-        realsense,
+        # realsense,
+        rviz_node,
         robot_commander_node,
         supervisor
     ]
