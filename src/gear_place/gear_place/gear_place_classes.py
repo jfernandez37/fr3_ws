@@ -114,11 +114,11 @@ class GearPlace(Node):
             self.get_logger().error(f"Unable to pick up gear")
             raise Error("Unable to pick up gear")
     
-    def _call_move_to_conveyor_service(self, x, y, z, object_width):
+    def _call_move_to_conveyor_service(self, x, y, z):
         """
         Calls the move_to_conveyor callback
         """
-        self.get_logger().info(f"Picking up gear")
+        self.get_logger().info(f"Placing gear on conveyor belt")
 
         request = MoveToConveyor.Request()
 
@@ -126,7 +126,7 @@ class GearPlace(Node):
         request.y = y
         request.z = z
 
-        future = self.pick_up_gear_client.call_async(request)
+        future = self.move_to_conveyor_client.call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=20)
 
