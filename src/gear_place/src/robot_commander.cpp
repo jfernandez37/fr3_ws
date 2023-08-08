@@ -79,6 +79,11 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       "move_to_conveyor",
       std::bind(&RobotCommander::move_to_conveyor_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
+  
+  move_to_position_srv_ = this->create_service<gear_place_interfaces::srv::MoveToPosition>(
+      "move_to_position",
+      std::bind(&RobotCommander::move_to_position_cb_, this,
+                std::placeholders::_1, std::placeholders::_2));
 
   std::srand(std::time(0)); // use current time as seed for random generator
 }
@@ -302,6 +307,29 @@ void RobotCommander::move_to_conveyor_cb_(
   response->success = true;
 }
 
+void RobotCommander::move_to_position_cb_(
+    const std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Request> request,
+    std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Response> response)
+{
+  // Create target EE pose from home orientation and target position
+  KDL::Frame target_frame(
+      KDL::Rotation::RPY(M_PI, 0.0, 0.1),
+      KDL::Vector(request->target_position.x, request->target_position.y, request->target_position.z));
+
+  try
+  {
+    move_robot_to_frame(target_frame);
+  }
+  catch (CommanderError &e)
+  {
+    std::string err = e.what();
+    RCLCPP_ERROR(get_logger(), err.c_str());
+    response->success = false;
+    return;
+  }
+  response->success = true;
+}
+
 void RobotCommander::open_gripper()
 {
   /*
@@ -343,4 +371,41 @@ void RobotCommander::set_default_behavior()
       {{10.0, 10.0, 10.0, 10.0, 10.0, 10.0}}, {{10.0, 10.0, 10.0, 10.0, 10.0, 10.0}});
   robot_->setJointImpedance({{3000, 3000, 3000, 2500, 2500, 2000, 2000}});
   robot_->setCartesianImpedance({{3000, 3000, 3000, 300, 300, 300}});
+}
+
+void RobotCommander::move_robot_to_frame(KDL::Frame target_frame)
+{
+  KDL::JntArray q_init = KDL::JntArray(num_joints_);
+  KDL::JntArray q_out = KDL::JntArray(num_joints_);
+
+  for (int i = 0; i < num_joints_; i++)
+  {
+    q_init(i) = current_state_.q.at(i);
+  }
+
+  int ret = ik_pos_solver_->CartToJnt(q_init, target_frame, q_out);
+
+  if (ret != 0)
+  {
+    std::string err = ik_pos_solver_->strError(ret);
+    throw CommanderError("Unable to solve the inverse kinematics. Error: " + err);
+  }
+
+  std::array<double, 7> q_goal{{q_out(0), q_out(1), q_out(2), q_out(3), q_out(4), q_out(5), q_out(6)}};
+
+  try
+  {
+    MotionGenerator motion_generator(0.2, q_goal, current_state_);
+
+    read_state_.lock();
+    robot_->control(motion_generator);
+    read_state_.unlock();
+  }
+  catch (const franka::Exception &e)
+  {
+    RCLCPP_WARN_STREAM(get_logger(), "Franka Exception: " << e.what());
+    RCLCPP_ERROR(get_logger(), "Unable to move to target frame");
+
+    throw CommanderError("Unable to move to target frame");
+  }
 }

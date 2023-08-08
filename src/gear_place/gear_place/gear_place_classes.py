@@ -7,11 +7,11 @@ from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
 from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
 
-from gear_place_interfaces.srv import MoveCartesian, MoveToNamedPose, PickUpGear, MoveToConveyor
+from gear_place_interfaces.srv import MoveCartesian, MoveToNamedPose, PickUpGear, MoveToConveyor, MoveToPosition
 
 from gear_place.transform_utils import multiply_pose, convert_transform_to_pose
 
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Pose, Point
 
 class Error(Exception):
     def __init__(self, value: str):
@@ -37,6 +37,7 @@ class GearPlace(Node):
         self.move_cartesian_client = self.create_client(MoveCartesian, "move_cartesian")
         self.pick_up_gear_client = self.create_client(PickUpGear, "pick_up_gear")
         self.move_to_conveyor_client = self.create_client(MoveToConveyor, "move_to_conveyor")
+        self.move_to_position_client = self.create_client(MoveToPosition, "move_to_position")
 
     def wait(self, duration: float):
         # self.get_logger().info(f"Waiting for {duration} seconds...")
@@ -155,8 +156,33 @@ class GearPlace(Node):
             self.get_logger().error(f"Unable to move_to_conveyor")
             raise Error("Unable to move to conveyor")
     
+    def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
+        """
+        Calls the move_to_position callback
+        """
+        self.get_logger().info(f"Moving to position ({p.x}, {p.y}, {p.z})")
+
+        request = MoveToPosition.Request()
+        request.target_position = p
+        request.gripper_rotation = rot
+
+        future = self.move_to_position_client.call_async(request)
+
+        rclpy.spin_until_future_complete(self, future, timeout_sec=8)
+
+        if not future.done():
+            raise Error("Timeout reached when calling move_to_position service")
+
+        result : MoveToPosition.Response
+        result = future.result()
+
+        if not result.success:
+            raise Error(f"Unable to move to desired position [{p.x}, {p.y}, {p.z}]")
+    
     def _calculate_world_pose(self, frame_id: str, rel_pose: Pose) -> Pose:
-        # Lookup transform from world to frame_id
+        """
+        Looks up transform from the world to the given frame
+        """
         try:
             t = self.tf_buffer.lookup_transform('world', frame_id, rclpy.time.Time())
         except TransformException as ex:

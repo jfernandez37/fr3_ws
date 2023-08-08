@@ -37,7 +37,7 @@ def launch_setup(context, *args, **kwargs):
     start_rviz = LaunchConfiguration("rviz")
 
     rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("gear_place"), "rviz", "task_board.rviz"]
+        [FindPackageShare("gear_place_description"), "rviz", "visualize.rviz"]
     )
 
     rviz_node = Node(

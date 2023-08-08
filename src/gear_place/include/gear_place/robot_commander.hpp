@@ -7,7 +7,7 @@
 #include <gear_place_interfaces/srv/move_to_named_pose.hpp>
 #include <gear_place_interfaces/srv/pick_up_gear.hpp>
 #include <gear_place_interfaces/srv/move_to_conveyor.hpp>
-
+#include <gear_place_interfaces/srv/move_to_position.hpp>
 
 #include <std_msgs/msg/string.hpp>
 
@@ -67,6 +67,7 @@ private:
   rclcpp::Service<gear_place_interfaces::srv::MoveCartesian>::SharedPtr move_cartesian_srv_;
   rclcpp::Service<gear_place_interfaces::srv::PickUpGear>::SharedPtr pick_up_gear_srv_;
   rclcpp::Service<gear_place_interfaces::srv::MoveToConveyor>::SharedPtr move_to_conveyor_srv_;
+  rclcpp::Service<gear_place_interfaces::srv::MoveToPosition>::SharedPtr move_to_position_srv_;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
@@ -109,10 +110,13 @@ private:
   void move_cartesian_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Request> request,
                           std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Response> response);
   void pick_up_gear_cb_(const std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Request> request,
-                       std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Response> response);
+                        std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Response> response);
   void move_to_conveyor_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveToConveyor::Request> request,
-                       std::shared_ptr<gear_place_interfaces::srv::MoveToConveyor::Response> response);
+                            std::shared_ptr<gear_place_interfaces::srv::MoveToConveyor::Response> response);
+  void move_to_position_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Request> request,
+                            std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Response> response);
   // Methods
+  void move_robot_to_frame(KDL::Frame);
   void move_robot_cartesian(double, double, double, double, double);
   void open_gripper();
   void grasp_object(double);

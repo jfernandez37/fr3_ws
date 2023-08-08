@@ -1,0 +1,4 @@
+geometry_msgs/Point target_position
+float64 gripper_rotation # rotation in radians in z axis
+---
+bool success
