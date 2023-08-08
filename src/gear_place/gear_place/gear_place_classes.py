@@ -2,8 +2,16 @@ import rclpy
 from rclpy.node import Node
 from rclpy.time import Duration
 
+from tf2_ros import TransformException
+from tf2_ros.buffer import Buffer
+from tf2_ros.transform_listener import TransformListener
+from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
+
 from gear_place_interfaces.srv import MoveCartesian, MoveToNamedPose, PickUpGear, MoveToConveyor
 
+from gear_place.transform_utils import multiply_pose, convert_transform_to_pose
+
+from geometry_msgs.msg import Pose
 
 class Error(Exception):
     def __init__(self, value: str):
@@ -17,6 +25,13 @@ class GearPlace(Node):
     def _init__(self):
         super().__init__("gear_place")
 
+        # TF
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
+
+        self.tf_broadcaster = StaticTransformBroadcaster(self)
+        self.static_transforms = []
+        
         # Service Clients
         self.move_to_named_pose_client = self.create_client(MoveToNamedPose, "move_to_named_pose")
         self.move_cartesian_client = self.create_client(MoveCartesian, "move_cartesian")
@@ -139,3 +154,13 @@ class GearPlace(Node):
         if not result.success:
             self.get_logger().error(f"Unable to move_to_conveyor")
             raise Error("Unable to move to conveyor")
+    
+    def _calculate_world_pose(self, frame_id: str, rel_pose: Pose) -> Pose:
+        # Lookup transform from world to frame_id
+        try:
+            t = self.tf_buffer.lookup_transform('world', frame_id, rclpy.time.Time())
+        except TransformException as ex:
+            self.get_logger().info(f'Could not transform {frame_id} to world: {ex}')
+            raise Error("Unable to transform between frames")
+        
+        return multiply_pose(convert_transform_to_pose(t), rel_pose)
