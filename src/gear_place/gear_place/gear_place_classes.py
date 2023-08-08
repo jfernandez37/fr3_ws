@@ -18,11 +18,10 @@ class GearPlace(Node):
         super().__init__("gear_place")
 
         # Service Clients
-        self.move_to_named_pose_client = self.create_client(
-            MoveToNamedPose, "move_to_named_pose"
-        )
+        self.move_to_named_pose_client = self.create_client(MoveToNamedPose, "move_to_named_pose")
         self.move_cartesian_client = self.create_client(MoveCartesian, "move_cartesian")
         self.pick_up_gear_client = self.create_client(PickUpGear, "pick_up_gear")
+        self.move_to_conveyor_client = self.create_client(MoveToConveyor, "move_to_conveyor")
 
     def wait(self, duration: float):
         # self.get_logger().info(f"Waiting for {duration} seconds...")
