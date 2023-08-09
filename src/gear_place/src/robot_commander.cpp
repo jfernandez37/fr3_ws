@@ -79,7 +79,7 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       "move_to_conveyor",
       std::bind(&RobotCommander::move_to_conveyor_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
-  
+
   move_to_position_srv_ = this->create_service<gear_place_interfaces::srv::MoveToPosition>(
       "move_to_position",
       std::bind(&RobotCommander::move_to_position_cb_, this,
