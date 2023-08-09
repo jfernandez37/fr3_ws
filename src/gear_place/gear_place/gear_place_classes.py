@@ -61,7 +61,7 @@ class GearPlace(Node):
 
         request.pose = named_pose
 
-        future = self.move_to_named_pose_client.call_async(request)
+        future = self.create_client(MoveToNamedPose, "move_to_named_pose").call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=5)
 
@@ -89,7 +89,7 @@ class GearPlace(Node):
         request.max_velocity = v_max
         request.acceleration = acc
 
-        future = self.move_cartesian_client.call_async(request)
+        future = self.create_client(MoveCartesian, "move_cartesian").call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=10)
 
