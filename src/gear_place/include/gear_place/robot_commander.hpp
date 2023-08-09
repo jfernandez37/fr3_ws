@@ -24,7 +24,7 @@
 #include <franka/model.h>
 #include <franka/exception.h>
 
-#include <tf2_kdl/tf2_kdl.hpp>
+#include <tf2_kdl/tf2_kdl.h>
 
 #include <kdl/tree.hpp>
 #include <kdl/frames.hpp>
