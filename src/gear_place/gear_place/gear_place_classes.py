@@ -23,7 +23,7 @@ class Error(Exception):
 
 class GearPlace(Node):
     def _init__(self):
-        super().__init__("gear_place")
+        # super().__init__("gear_place")
 
         # TF
         self.tf_buffer = Buffer()
