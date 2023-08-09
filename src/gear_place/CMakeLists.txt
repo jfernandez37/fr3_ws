@@ -22,6 +22,7 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(ament_cmake_python REQUIRED)
+find_package(urdf REQUIRED)
 
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
@@ -47,7 +48,8 @@ install(TARGETS robot_commander_node
 )
 
 # Install Python modules
-ament_python_install_package(${PROJECT_NAME} SCRIPTS_DESTINATION lib/${PROJECT_NAME})
+#ament_python_install_package(${PROJECT_NAME} SCRIPTS_DESTINATION lib/${PROJECT_NAME})
+ament_python_install_package(${PROJECT_NAME})
 
 # Install Python executables
 install(PROGRAMS
