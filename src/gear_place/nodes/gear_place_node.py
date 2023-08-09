@@ -12,7 +12,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     try:
-        supervisor = GearPlace()
+        supervisor = GearPlace("gear_place")
         supervisor.wait(2.0)
         supervisor._call_move_to_named_pose_service("home")
         __import__("time").sleep(3)
