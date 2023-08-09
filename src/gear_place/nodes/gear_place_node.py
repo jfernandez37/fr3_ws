@@ -7,7 +7,6 @@ from gear_place.object_depth import ObjectDepth
 
 
 def main(args=None):
-    print("In gear_place_node.py")
     gear_center_target = [0 for i in range(3)]
     rclpy.init(args=args)
 

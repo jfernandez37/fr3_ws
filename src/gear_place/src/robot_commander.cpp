@@ -66,7 +66,7 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
           std::placeholders::_1, std::placeholders::_2));
 
   move_cartesian_srv_ = this->create_service<gear_place_interfaces::srv::MoveCartesian>(
-      "move_cart",
+      "move_cartesian",
       std::bind(&RobotCommander::move_cartesian_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
 
