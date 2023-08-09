@@ -11,7 +11,8 @@
         "/opt/ros/humble/include/**",
         "/home/jtf4/fr3_ws/src/realsense-ros/realsense2_camera/include/**",
         "/usr/include/**",
-        "/home/jtf4/fr3_ws/install/**"
+        "/home/jtf4/fr3_ws/install/**",
+        "/home/jtf4/fr3_ws/src/gear_place/include"
       ],
       "name": "ROS",
       "intelliSenseMode": "gcc-x64",
