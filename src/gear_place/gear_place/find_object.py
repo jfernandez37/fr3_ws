@@ -77,7 +77,6 @@ class FindObject(Node):
                         c += 1
                         self.cv_image[i][j] -= 50
                         self.cv_image[i][j] = min(255, self.cv_image[i][j] * 10)
-        print(c)
         self.original_image = self.cv_image.copy()
         blurred_img = cv2.GaussianBlur(self.cv_image, (7, 7), 0)
         for i in range(3):
@@ -116,7 +115,6 @@ class FindObject(Node):
             self.cx = w // 2
             self.cy = h // 2
             cv2.circle(self.cv_image, (w // 2, h // 2), 7, (255, 255, 255), -1)
-            print("self_val: ", self.cv_image[self.gy][self.gx])
             cv2.circle(
                 self.cv_image,
                 (self.gx, self.gy),
