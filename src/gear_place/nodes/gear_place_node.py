@@ -18,7 +18,7 @@ def main(args=None):
         supervisor._call_move_cartesian_service(-0.20, 0.0, 0.0, 0.15, 0.2)
         sleep(1)
         
-        while gear_center_target.count(0) == 3 and None not in gear_center_target:
+        while gear_center_target.count(0) == 3 and None in gear_center_target:
             find_object = FindObject()
             rclpy.spin_once(find_object)
             object_depth = ObjectDepth(find_object.ret_cent_gear())
