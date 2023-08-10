@@ -12,8 +12,8 @@ def main(args=None):
     rclpy.init(args=args)
 
     try:
-        x_offset = 0.09
-        y_offset = 0.02
+        x_offset = 0.05
+        y_offset = 0.08
         supervisor = GearPlace("gear_place")
         supervisor.wait(2.0)
         supervisor._call_move_to_named_pose_service("home")
