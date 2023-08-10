@@ -19,6 +19,10 @@ def main(args=None):
         supervisor._call_move_to_named_pose_service("home")
         sleep(3)
         supervisor._call_move_cartesian_service(-0.20, 0.0, 0.0, 0.15, 0.2)
+        sleep(3)
+        supervisor._call_move_cartesian_service(0.0, 0.0,-0.15, 0.15, 0.2)
+        sleep(3)
+        supervisor._call_move_cartesian_service(0.0, 0.0,0.15, 0.15, 0.2)
         sleep(1)
         
         while gear_center_target.count(0) == 3 or None in gear_center_target:
