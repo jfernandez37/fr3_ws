@@ -131,7 +131,7 @@ class GearPlace(Node):
         request.z = z
         request.object_width = object_width
 
-        future = self.pick_up_gear_client.call_async(request)
+        future = self.create_client(PickUpGear, "pick_up_gear").call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=20)
 
