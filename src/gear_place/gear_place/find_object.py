@@ -132,4 +132,5 @@ class FindObject(Node):
         """
         Returns the x and y coordinates of the pixel at the center of the gear
         """
+        print(self.gx, self.gy)
         return self.gx, self.gy
