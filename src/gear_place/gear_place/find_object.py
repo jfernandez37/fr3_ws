@@ -106,7 +106,7 @@ class FindObject(Node):
             elif thresh_value == 0:
                 up_down = 1
             thresh_value += up_down
-        self.get_logger().info(f"{before_remove - len(contours)} contours were removed. Took {c} different " + ("threshold" if c==1 else "thresholds"))
+        self.get_logger().info(f"{before_remove - len(contours)} contours were removed. \n\t\t\t\t\t     Took {c} different " + ("threshold" if c==1 else "thresholds"))
         cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
         (x, y), self.radius = cv2.minEnclosingCircle(
             contours[self.closest_to_circle(contours)]
