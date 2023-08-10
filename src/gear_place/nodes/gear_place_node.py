@@ -29,9 +29,9 @@ def main(args=None):
             gear_center_target[0] = object_depth.dist_x
             gear_center_target[1] = object_depth.dist_y
             gear_center_target[2] = object_depth.dist_z
-            print(gear_center_target)
             sleep(1)
         sleep(3)
+        print(gear_center_target)
         supervisor._call_move_cartesian_service(object_depth.dist_x,object_depth.dist_y,0.0,0.15,0.2)
         #     print(gear_center_target)
         # supervisor._call_pick_up_gear_service(
