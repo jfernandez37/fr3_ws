@@ -234,7 +234,7 @@ CartesianMotionGenerator::CartesianMotionGenerator(double x, double y, double z,
   t3_ = t1_ + t2_;
   if (t1_ * v_max_ > d_norm_)
   {
-    throw InvalidParameters();
+    v_max_ = d_norm_/t1_*0.9;
   }
 }
 
