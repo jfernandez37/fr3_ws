@@ -20,7 +20,7 @@ class FindObject(Node):
         self.thresh_image = None
         self.declare_parameter("thresh_value", 180)
         self.subscription = self.create_subscription(
-            Image, "/camera/depth/image_rect_raw", self.listener_callback, 10
+            Image, "/camera/depth/image_rect_raw", self.listener_callback, 1
         )
         self.subscription  # prevent unused variable warning
 
