@@ -262,6 +262,9 @@ void RobotCommander::pick_up_gear_cb_(
     sleep(3.0);
     move_robot_cartesian(0, 0, -1*request->z, default_velocity_, default_acceleration_);
     sleep(3.0);
+    move_robot_cartesian(0, 0, request->z, default_velocity_, default_acceleration_);
+    sleep(3.0);
+    open_gripper();
   }
   catch (CommanderError &e)
   {
