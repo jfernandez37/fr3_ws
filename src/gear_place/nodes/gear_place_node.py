@@ -5,7 +5,6 @@ from gear_place.gear_place_classes import GearPlace, Error
 from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 from time import sleep
-import cv2
 
 
 def main(args=None):
@@ -49,7 +48,7 @@ def main(args=None):
             -1 * object_depth.dist_x + y_offset,
             z_movement,
             0.01,
-        )  # Moves to above the gear, then down to the gear, grabs the gear, then picks it up
+        )  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
 
     except Error as e:
         print(e)
