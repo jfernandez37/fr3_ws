@@ -47,7 +47,11 @@ class FindObject(Node):
         for cnt in new_contours:
             epsilon = 0.01 * cv2.arcLength(cnt, True)
             approx = cv2.approxPolyDP(cnt, epsilon, True)
-            if len(approx) > 10 and cv2.contourArea(cnt) > minimum_contour_area and maximum_contour_area>cv2.contourArea(cnt):
+            if (
+                len(approx) > 10
+                and cv2.contourArea(cnt) > minimum_contour_area
+                and maximum_contour_area > cv2.contourArea(cnt)
+            ):
                 filtered_contours.append(cnt)
         return filtered_contours
 
@@ -88,7 +92,6 @@ class FindObject(Node):
             _, self.thresh_image = cv2.threshold(
                 blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV
             )
-            # self.thresh_image = cv2.adaptiveThreshold(,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
             contours, _ = cv2.findContours(
                 self.thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
             )
@@ -103,16 +106,13 @@ class FindObject(Node):
             thresh_value += up_down
         print(before_remove - len(contours), " contours were removed")
         cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
-        # M = cv2.moments(contours[self.closest_to_circle(contours)]) #Finds the contour that is closest to a circle
         (x, y), self.radius = cv2.minEnclosingCircle(
             contours[self.closest_to_circle(contours)]
         )
         print(cv2.contourArea(contours[self.closest_to_circle(contours)]))
-        center = (int(x), int(y))
         self.gx = int(x)
         self.gy = int(y)
-        print(x,y)
-        cv2.circle(self.cv_image, center, int(self.radius), (255, 255, 255), 2)
+        cv2.circle(self.cv_image, (x, y), int(self.radius), (255, 255, 255), 2)
         try:
             (h, w) = self.cv_image.shape[:2]
             self.cx = w // 2
