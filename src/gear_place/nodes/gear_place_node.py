@@ -5,6 +5,7 @@ from gear_place.gear_place_classes import GearPlace, Error
 from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 from time import sleep
+import cv2
 
 def main(args=None):
     gear_center_target = [0 for i in range(3)]
@@ -31,6 +32,7 @@ def main(args=None):
             sleep(1)
         sleep(3)
         print(gear_center_target)
+        cv2.imshow("Depth image", find_object.cv_image)
         supervisor._call_move_cartesian_service(object_depth.dist_x,object_depth.dist_y,0.0,0.15,0.2)
         #     print(gear_center_target)
         # supervisor._call_pick_up_gear_service(
