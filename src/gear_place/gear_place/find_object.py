@@ -95,7 +95,7 @@ class FindObject(Node):
             contours, _ = cv2.findContours(
                 self.thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
             )
-            print("Contours found:", len(contours))
+            self.get_logger().info(f"Contours found: {len(contours)}")
             before_remove = len(contours)
             contours = self.remove_bad_contours(contours)
             contours_left = len(contours)
@@ -104,15 +104,15 @@ class FindObject(Node):
             elif thresh_value == 0:
                 up_down = 1
             thresh_value += up_down
-        print(before_remove - len(contours), " contours were removed")
+        self.get_logger().info(f"{before_remove - len(contours)} contours were removed")
         cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
         (x, y), self.radius = cv2.minEnclosingCircle(
             contours[self.closest_to_circle(contours)]
         )
-        print(cv2.contourArea(contours[self.closest_to_circle(contours)]))
+        self.get_logger().info(f"{cv2.contourArea(contours[self.closest_to_circle(contours)])}")
         self.gx = int(x)
         self.gy = int(y)
-        cv2.circle(self.cv_image, (x, y), int(self.radius), (255, 255, 255), 2)
+        cv2.circle(self.cv_image, (self.gx, self.gy), int(self.radius), (255, 255, 255), 2)
         try:
             (h, w) = self.cv_image.shape[:2]
             self.cx = w // 2
@@ -126,7 +126,7 @@ class FindObject(Node):
                 thickness=-1,
             )
         except:
-            print("Error: Contour does not form a single shape")
+            self.get_logger.error("Error: Contour does not form a single shape")
         self.get_logger().info(
             f"X coordinate for gear: {self.gx}, y coordinate for gear {self.gy}"
         )
