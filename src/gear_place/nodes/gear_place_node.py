@@ -33,7 +33,7 @@ def main(args=None):
         sleep(3)
         print(gear_center_target)
         cv2.imshow("Depth image", find_object.cv_image)
-        supervisor._call_move_cartesian_service(-1*object_depth.dist_y,object_depth.dist_x,0.0,0.15,0.2)
+        supervisor._call_move_cartesian_service(object_depth.dist_y,object_depth.dist_x,0.0,0.15,0.2)
         #     print(gear_center_target)
         # supervisor._call_pick_up_gear_service(
         #     object_depth.dist_x, object_depth.dist_y, object_depth.dist_z, 0.01
