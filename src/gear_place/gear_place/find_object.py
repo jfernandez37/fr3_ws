@@ -90,7 +90,7 @@ class FindObject(Node):
         up_down = 1
         c = 0
         while contours_left < 1:
-            c+=1
+            c += 1
             _, self.thresh_image = cv2.threshold(
                 blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV
             )
@@ -106,15 +106,22 @@ class FindObject(Node):
             elif thresh_value == 0:
                 up_down = 1
             thresh_value += up_down
-        self.get_logger().info(f"{before_remove - len(contours)} contours were removed.\n\t\t\t\t\t     Took {c} different " + ("threshold" if c==1 else "thresholds"))
+        self.get_logger().info(
+            f"{before_remove - len(contours)} contours were removed.\n\t\t\t\t\t     Took {c} different "
+            + ("threshold" if c == 1 else "thresholds")
+        )
         cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
         (x, y), self.radius = cv2.minEnclosingCircle(
             contours[self.closest_to_circle(contours)]
         )
-        self.get_logger().info(f"{cv2.contourArea(contours[self.closest_to_circle(contours)])}")
+        self.get_logger().info(
+            f"{cv2.contourArea(contours[self.closest_to_circle(contours)])}"
+        )
         self.gx = int(x)
         self.gy = int(y)
-        cv2.circle(self.cv_image, (self.gx, self.gy), int(self.radius), (255, 255, 255), 2)
+        cv2.circle(
+            self.cv_image, (self.gx, self.gy), int(self.radius), (255, 255, 255), 2
+        )
         try:
             (h, w) = self.cv_image.shape[:2]
             self.cx = w // 2
