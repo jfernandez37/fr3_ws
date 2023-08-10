@@ -25,7 +25,7 @@ def main(args=None):
         gear_center_values[0] = object_depth.dist_x
         gear_center_values[1] = object_depth.dist_y
         gear_center_values[2] = object_depth.dist_z
-        print(gear_center_values)    
+        print(gear_center_values)
     cv2.imshow("Threshold image", find_object.thresh_image)
     cv2.imshow("Depth image", find_object.cv_image)
     cv2.waitKey(0)
