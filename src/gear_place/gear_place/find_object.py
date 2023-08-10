@@ -109,6 +109,7 @@ class FindObject(Node):
         center = (int(x), int(y))
         self.gx = int(x)
         self.gy = int(y)
+        print(x,y)
         cv2.circle(self.cv_image, center, int(self.radius), (255, 255, 255), 2)
         try:
             (h, w) = self.cv_image.shape[:2]
@@ -132,5 +133,4 @@ class FindObject(Node):
         """
         Returns the x and y coordinates of the pixel at the center of the gear
         """
-        print(self.gx, self.gy)
         return self.gx, self.gy
