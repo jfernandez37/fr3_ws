@@ -77,56 +77,56 @@ class FindObject(Node):
                         c += 1
                         self.cv_image[i][j] -= 50
                         self.cv_image[i][j] = min(255, self.cv_image[i][j] * 10)
-        self.original_image = self.cv_image.copy()
-        blurred_img = cv2.GaussianBlur(self.cv_image, (7, 7), 0)
-        for i in range(3):
-            blurred_img = cv2.GaussianBlur(blurred_img, (7, 7), 0)
-        contours_left = 0
-        up_down = 1
-        while contours_left < 1:
-            _, self.thresh_image = cv2.threshold(
-                blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV
-            )
-            # self.thresh_image = cv2.adaptiveThreshold(,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
-            contours, _ = cv2.findContours(
-                self.thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-            )
-            print("Contours found:", len(contours))
-            before_remove = len(contours)
-            contours = self.remove_bad_contours(contours)
-            contours_left = len(contours)
-            if thresh_value == 255:
-                up_down = -1
-            elif thresh_value == 0:
-                up_down = 1
-            thresh_value += up_down
-        print(before_remove - len(contours), " contours were removed")
-        cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
-        # M = cv2.moments(contours[self.closest_to_circle(contours)]) #Finds the contour that is closest to a circle
-        (x, y), self.radius = cv2.minEnclosingCircle(
-            contours[self.closest_to_circle(contours)]
-        )
-        center = (int(x), int(y))
-        self.gx = int(x)
-        self.gy = int(y)
-        cv2.circle(self.cv_image, center, int(self.radius), (255, 255, 255), 2)
-        try:
-            (h, w) = self.cv_image.shape[:2]
-            self.cx = w // 2
-            self.cy = h // 2
-            cv2.circle(self.cv_image, (w // 2, h // 2), 7, (255, 255, 255), -1)
-            cv2.circle(
-                self.cv_image,
-                (self.gx, self.gy),
-                10,
-                color=(255, 255, 255),
-                thickness=-1,
-            )
-        except:
-            print("Error: Contour does not form a single shape")
-        self.get_logger().info(
-            f"X coordinate for gear: {self.gx}, y coordinate for gear {self.gy}"
-        )
+        # self.original_image = self.cv_image.copy()
+        # blurred_img = cv2.GaussianBlur(self.cv_image, (7, 7), 0)
+        # for i in range(3):
+        #     blurred_img = cv2.GaussianBlur(blurred_img, (7, 7), 0)
+        # contours_left = 0
+        # up_down = 1
+        # while contours_left < 1:
+        #     _, self.thresh_image = cv2.threshold(
+        #         blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV
+        #     )
+        #     # self.thresh_image = cv2.adaptiveThreshold(,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
+        #     contours, _ = cv2.findContours(
+        #         self.thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+        #     )
+        #     print("Contours found:", len(contours))
+        #     before_remove = len(contours)
+        #     contours = self.remove_bad_contours(contours)
+        #     contours_left = len(contours)
+        #     if thresh_value == 255:
+        #         up_down = -1
+        #     elif thresh_value == 0:
+        #         up_down = 1
+        #     thresh_value += up_down
+        # print(before_remove - len(contours), " contours were removed")
+        # cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
+        # # M = cv2.moments(contours[self.closest_to_circle(contours)]) #Finds the contour that is closest to a circle
+        # (x, y), self.radius = cv2.minEnclosingCircle(
+        #     contours[self.closest_to_circle(contours)]
+        # )
+        # center = (int(x), int(y))
+        # self.gx = int(x)
+        # self.gy = int(y)
+        # cv2.circle(self.cv_image, center, int(self.radius), (255, 255, 255), 2)
+        # try:
+        #     (h, w) = self.cv_image.shape[:2]
+        #     self.cx = w // 2
+        #     self.cy = h // 2
+        #     cv2.circle(self.cv_image, (w // 2, h // 2), 7, (255, 255, 255), -1)
+        #     cv2.circle(
+        #         self.cv_image,
+        #         (self.gx, self.gy),
+        #         10,
+        #         color=(255, 255, 255),
+        #         thickness=-1,
+        #     )
+        # except:
+        #     print("Error: Contour does not form a single shape")
+        # self.get_logger().info(
+        #     f"X coordinate for gear: {self.gx}, y coordinate for gear {self.gy}"
+        # )
 
     def ret_cent_gear(self):
         """
