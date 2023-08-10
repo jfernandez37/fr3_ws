@@ -357,8 +357,6 @@ void RobotCommander::grasp_object(double object_width)
   /*
   Closes the gripper to the amount where it will pick up the object
   */
- std::cout << gripper_state_.max_width<< std::endl;
- std::cout << object_width << std::endl;
   if (gripper_state_.max_width < object_width)
   {
     throw CommanderError("Object width is larger than gripper max width");
