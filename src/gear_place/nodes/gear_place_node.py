@@ -17,7 +17,7 @@ def main(args=None):
         __import__("time").sleep(3)
         supervisor._call_move_cartesian_service(-0.20, 0.0, 0.0, 0.15, 0.2)
         __import__("time").sleep(1)
-        # supervisor._call_move_cartesian_service(-0.01,-0.08,0,0.15,0.2)
+        
         while gear_center_target.count(0) == 3:
             find_object = FindObject()
             rclpy.spin_once(find_object)
@@ -25,9 +25,10 @@ def main(args=None):
             rclpy.spin_once(object_depth)
             object_depth.destroy_node()
             find_object.destroy_node()
-        #     gear_center_target[0] = object_depth.dist_x
-        #     gear_center_target[1] = object_depth.dist_y
-        #     gear_center_target[2] = object_depth.dist_z
+            gear_center_target[0] = object_depth.dist_x
+            gear_center_target[1] = object_depth.dist_y
+            gear_center_target[2] = object_depth.dist_z
+        supervisor._call_move_cartesian_service(object_depth.dist_x,object_depth.dist_y,0,0.15,0.2)
         #     print(gear_center_target)
         # supervisor._call_pick_up_gear_service(
         #     object_depth.dist_x, object_depth.dist_y, object_depth.dist_z, 0.01
