@@ -12,32 +12,31 @@ def main(args=None):
     rclpy.init(args=args)
 
     try:
-        x_offset = 0.05
-        y_offset = 0.03
-        z_movement = -0.245
+        x_offset = 0.05 # offset from the camera to the gripper
+        y_offset = 0.03 # offset from the camera to the gripper
+        z_movement = -0.245 # z distance from the home position to where the gripper can grab the gear
         supervisor = GearPlace("gear_place")
         supervisor.wait(2.0)
-        supervisor._call_move_to_named_pose_service("home")
+        supervisor._call_move_to_named_pose_service("home") # starts in the home position
         sleep(3)
-        supervisor._call_move_cartesian_service(-0.20, 0.0, 0.0, 0.15, 0.2)
+        supervisor._call_move_cartesian_service(-0.20, 0.0, 0.0, 0.15, 0.2) # Moves to the center of the cart
         sleep(1)
         
-        while gear_center_target.count(0) == 3 or None in gear_center_target:
+        while gear_center_target.count(0) == 3 or None in gear_center_target: # runs until valid coordinates are found
             find_object = FindObject()
-            rclpy.spin_once(find_object)
+            rclpy.spin_once(find_object) # Finds the gear
             object_depth = ObjectDepth(find_object.ret_cent_gear())
-            rclpy.spin_once(object_depth)
-            object_depth.destroy_node()
+            rclpy.spin_once(object_depth) # Gets the distance from the camera 
+            object_depth.destroy_node() # Destroys the node to avoid errors on next loop
             find_object.destroy_node()
             gear_center_target[0] = object_depth.dist_x
             gear_center_target[1] = object_depth.dist_y
             gear_center_target[2] = object_depth.dist_z
-            sleep(1)
+            sleep(1) # sleeps between tries
         sleep(3)
         print(gear_center_target)
-        cv2.imshow("Depth image", find_object.cv_image)
         supervisor._call_pick_up_gear_service(-1*object_depth.dist_y+x_offset,-1*object_depth.dist_x+y_offset,
-                                              z_movement,0.01)
+                                              z_movement,0.01) # Moves to above the gear, then down to the gear, grabs the gear, then picks it up
         # supervisor._call_move_cartesian_service(-1*object_depth.dist_y+x_offset,-1*object_depth.dist_x+y_offset,0.0,0.15,0.2)
         # sleep(3)
         # supervisor._call_move_cartesian_service(0.0,0.0,z_movement,0.15,0.2)

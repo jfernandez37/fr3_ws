@@ -40,13 +40,14 @@ class FindObject(Node):
         """
         Removes contours which are too small and ones with too few sides to be the gear
         """
-        minimum_contour_area = 500
+        minimum_contour_area = 3000
+        maximum_contour_area = 8000
         new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
         filtered_contours = []
         for cnt in new_contours:
             epsilon = 0.01 * cv2.arcLength(cnt, True)
             approx = cv2.approxPolyDP(cnt, epsilon, True)
-            if len(approx) > 10 and cv2.contourArea(cnt) > minimum_contour_area:
+            if len(approx) > 10 and cv2.contourArea(cnt) > minimum_contour_area and maximum_contour_area>cv2.contourArea(cnt):
                 filtered_contours.append(cnt)
         return filtered_contours
 
@@ -106,6 +107,7 @@ class FindObject(Node):
         (x, y), self.radius = cv2.minEnclosingCircle(
             contours[self.closest_to_circle(contours)]
         )
+        print(cv2.contourArea(contours[self.closest_to_circle(contours)]))
         center = (int(x), int(y))
         self.gx = int(x)
         self.gy = int(y)
