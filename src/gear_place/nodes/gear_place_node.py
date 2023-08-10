@@ -14,7 +14,7 @@ def main(args=None):
     try:
         x_offset = 0.05
         y_offset = 0.03
-        z_offset = 0.07
+        z_movement = -0.24
         supervisor = GearPlace("gear_place")
         supervisor.wait(2.0)
         supervisor._call_move_to_named_pose_service("home")
@@ -38,7 +38,7 @@ def main(args=None):
         cv2.imshow("Depth image", find_object.cv_image)
         supervisor._call_move_cartesian_service(-1*object_depth.dist_y+x_offset,-1*object_depth.dist_x+y_offset,0.0,0.15,0.2)
         sleep(3)
-        supervisor._call_move_cartesian_service(0.0,0.0,-1*object_depth.dist_z+z_offset,0.15,0.2)
+        supervisor._call_move_cartesian_service(0.0,0.0,z_movement,0.15,0.2)
         #     print(gear_center_target)
         # supervisor._call_pick_up_gear_service(
         #     object_depth.dist_x, object_depth.dist_y, object_depth.dist_z, 0.01
