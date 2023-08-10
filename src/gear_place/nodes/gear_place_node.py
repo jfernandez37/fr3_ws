@@ -15,7 +15,7 @@ def main(args=None):
         supervisor.wait(2.0)
         supervisor._call_move_to_named_pose_service("home")
         __import__("time").sleep(3)
-        supervisor._call_move_cartesian_service(-0.20, 0.0, 0, 0.15, 0.2)
+        supervisor._call_move_cartesian_service(-0.20, 0.0, 0.0, 0.15, 0.2)
         __import__("time").sleep(1)
         # supervisor._call_move_cartesian_service(-0.01,-0.08,0,0.15,0.2)
         while gear_center_target.count(0) == 3:
