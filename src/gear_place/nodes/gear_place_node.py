@@ -12,7 +12,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     try:
-        x_offset = 0.9
+        x_offset = 0.09
         y_offset = 0.02
         supervisor = GearPlace("gear_place")
         supervisor.wait(2.0)
