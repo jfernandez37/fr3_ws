@@ -19,6 +19,7 @@ set(srv_files
   "srv/PickUpGear.srv"
   "srv/MoveToConveyor.srv"
   "srv/MoveToPosition.srv"
+  "srv/PutGearDown.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}

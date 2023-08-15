@@ -13,6 +13,7 @@ from gear_place_interfaces.srv import (
     PickUpGear,
     MoveToConveyor,
     MoveToPosition,
+    PutGearDown
 )
 
 from gear_place.transform_utils import multiply_pose, convert_transform_to_pose
@@ -50,6 +51,9 @@ class GearPlace(Node):
         )
         self.move_to_position_client = self.create_client(
             MoveToPosition, "move_to_position"
+        )
+        self.put_gear_down_client = self.create_client(
+            PutGearDown, "put_gear_down"
         )
 
     def wait(self, duration: float):
@@ -136,7 +140,7 @@ class GearPlace(Node):
         rclpy.spin_until_future_complete(self, future, timeout_sec=30)
 
         if not future.done():
-            raise Error("Timeout reached when calling pick_up gear service")
+            raise Error("Timeout reached when calling pick_up_gear service")
 
         result: PickUpGear.Response
         result = future.result()
@@ -144,6 +148,30 @@ class GearPlace(Node):
         if not result.success:
             self.get_logger().error(f"Unable to pick up gear")
             raise Error("Unable to pick up gear")
+        
+    def _call_put_gear_down_service(self,z):
+        """
+        Calls the put_gear_down callback
+        """
+        self.get_logger().info(f"Putting down gear")
+
+        request = PutGearDown.Request()
+
+        request.z = z
+
+        future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
+
+        rclpy.spin_until_future_complete(self, future, timeout_sec=30)
+
+        if not future.done():
+            raise Error("Timeout reached when calling put gear down service")
+
+        result: PutGearDown.Response
+        result = future.result()
+
+        if not result.success:
+            self.get_logger().error(f"Unable to put gear down")
+            raise Error("Unable to put gear down")
 
     def _call_move_to_conveyor_service(self, x, y, z):
         """

@@ -41,14 +41,18 @@ def main(args=None):
             gear_center_target[1] = object_depth.dist_y
             gear_center_target[2] = object_depth.dist_z
             sleep(1)  # sleeps between tries
-        sleep(3)
+        sleep(1)
         print(gear_center_target)
         supervisor._call_pick_up_gear_service(
             -1 * object_depth.dist_y + x_offset,
             -1 * object_depth.dist_x + y_offset,
             z_movement,
-            0.0095,
+            0.0095
         )  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
+        sleep(3)
+        supervisor._call_put_gear_down_service(
+            z_movement
+        ) # moves down, releases the gear, and moves back up
 
     except Error as e:
         print(e)
