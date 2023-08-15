@@ -15,7 +15,7 @@ def main(args=None):
         x_offset = 0.047  # offset from the camera to the gripper
         y_offset = 0.03  # offset from the camera to the gripper
         z_movement = (
-            -0.245
+            -0.247
         )  # z distance from the home position to where the gripper can grab the gear
         supervisor = GearPlace("gear_place")
         supervisor.wait(.75)
