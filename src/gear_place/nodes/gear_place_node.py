@@ -47,7 +47,7 @@ def main(args=None):
             -1 * object_depth.dist_y + x_offset,
             -1 * object_depth.dist_x + y_offset,
             z_movement,
-            0.01,
+            0.0095,
         )  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
 
     except Error as e:
