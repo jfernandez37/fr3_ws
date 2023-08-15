@@ -34,7 +34,7 @@ class FindObject(Node):
             (_, _), radius = cv2.minEnclosingCircle(cnt)
             circle_areas.append(__import__("math").pi * radius**2)
         diffs = [areas[i] / circle_areas[i] for i in range(len(areas))]
-        return diffs.index(max(diffs))
+        return diffs.index(max(diffs)), diffs[diffs.index(max(diffs))]
 
     def remove_bad_contours(self, contours: tuple):
         """
@@ -89,7 +89,8 @@ class FindObject(Node):
         contours_left = 0
         up_down = 1
         c = 0
-        while contours_left < 1:
+        contour_to_circle_ratio = 0.0
+        while contours_left < 1 or contour_to_circle_ratio<=0.5:
             c += 1
             _, self.thresh_image = cv2.threshold(
                 blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV
@@ -106,16 +107,21 @@ class FindObject(Node):
             elif thresh_value == 0:
                 up_down = 1
             thresh_value += up_down
+            if c>=255:
+                return
+            if contours_left>=1:
+                closest_to_circle, contour_to_circle_ratio = self.closest_to_circle(contours)
+                print(contour_to_circle_ratio)
         self.get_logger().info(
             f"{before_remove - len(contours)} contours were removed.\n\t\t\t\t\t     Took {c} different "
             + ("threshold" if c == 1 else "thresholds")
         )
         cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
         (x, y), self.radius = cv2.minEnclosingCircle(
-            contours[self.closest_to_circle(contours)]
+            contours[closest_to_circle]
         )
         self.get_logger().info(
-            f"{cv2.contourArea(contours[self.closest_to_circle(contours)])}"
+            f"{cv2.contourArea(contours[closest_to_circle])}"
         )
         self.gx = int(x)
         self.gy = int(y)

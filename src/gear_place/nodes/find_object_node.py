@@ -12,6 +12,10 @@ def main(args=None):
     while gear_center_values.count(0) == 3:
         find_object = FindObject()
         rclpy.spin_once(find_object)
+        while find_object.ret_cent_gear().count(None)!=0:
+            find_object.destroy_node()
+            find_object = FindObject()
+            rclpy.spin_once(find_object)
         object_depth = ObjectDepth(find_object.ret_cent_gear())
         rclpy.spin_once(object_depth)
 
