@@ -18,7 +18,7 @@ def main(args=None):
             -0.245
         )  # z distance from the home position to where the gripper can grab the gear
         supervisor = GearPlace("gear_place")
-        supervisor.wait(2.0)
+        supervisor.wait(.75)
         supervisor._call_move_to_named_pose_service(
             "home"
         )  # starts in the home position

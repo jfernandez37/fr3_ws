@@ -250,19 +250,19 @@ void RobotCommander::pick_up_gear_cb_(
   try
   {
     move_robot_cartesian(request->x,request->y, 0, default_velocity_, default_acceleration_);
-    sleep(1.0);
+    sleep(wait_time_);
     open_gripper();
-    sleep(1.0);
+    sleep(wait_time_);
     move_robot_cartesian(0, 0, request->z, default_velocity_, default_acceleration_);
-    sleep(1.0);
+    sleep(wait_time_);
     grasp_object(request->object_width);
-    sleep(1.0);
+    sleep(wait_time_);
     move_robot_cartesian(0, 0, -1*request->z, default_velocity_, default_acceleration_);
-    sleep(1.0);
+    sleep(wait_time_);
     move_robot_cartesian(0, 0, request->z+0.002, default_velocity_, default_acceleration_);
-    sleep(1.0);
+    sleep(wait_time_);
     open_gripper();
-    sleep(1.0);
+    sleep(wait_time_);
     move_robot_cartesian(0, 0, -1*request->z, default_velocity_, default_acceleration_);
   }
   catch (CommanderError &e)
