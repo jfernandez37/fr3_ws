@@ -24,7 +24,7 @@ def main(args=None):
         )  # starts in the home position
         sleep(3)
         supervisor._call_move_cartesian_service(
-            -0.20, 0.0, 0.0, 0.15, 0.2
+            -0.27, 0.0, 0.0, 0.15, 0.2
         )  # Moves to the center of the cart
         sleep(1)
 
