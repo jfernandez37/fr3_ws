@@ -82,7 +82,7 @@ def launch_setup(context, *args, **kwargs):
     nodes_to_start = [
         robot_state_publisher,
         # realsense,
-        # rviz_node,
+        rviz_node,
         robot_commander_node,
         supervisor,
     ]
