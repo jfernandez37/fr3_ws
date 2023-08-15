@@ -15,7 +15,7 @@ def main(args=None):
         x_offset = 0.047  # offset from the camera to the gripper
         y_offset = 0.03  # offset from the camera to the gripper
         z_movement = (
-            -0.245
+            -0.295
         )  # z distance from the home position to where the gripper can grab the gear
         supervisor = GearPlace("gear_place")
         supervisor.wait(2.0)
@@ -24,7 +24,7 @@ def main(args=None):
         )  # starts in the home position
         sleep(3)
         supervisor._call_move_cartesian_service(
-            -0.27, 0.0, 0.0, 0.15, 0.2
+            -0.27, 0.0, 0.05, 0.15, 0.2
         )  # Moves to the center of the cart
         sleep(1)
 
