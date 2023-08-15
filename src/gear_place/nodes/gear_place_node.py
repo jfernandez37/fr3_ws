@@ -50,10 +50,6 @@ def main(args=None):
             0.0095
         )  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
         sleep(1.5)
-        supervisor._call_move_to_named_pose_service(
-            "home"
-        )  # starts in the home position
-        sleep(3)
         supervisor._call_put_gear_down_service(
             z_movement
         ) # moves down, releases the gear, and moves back up
