@@ -71,7 +71,7 @@ private:
   rclcpp::Service<gear_place_interfaces::srv::PickUpGear>::SharedPtr pick_up_gear_srv_;
   rclcpp::Service<gear_place_interfaces::srv::MoveToConveyor>::SharedPtr move_to_conveyor_srv_;
   rclcpp::Service<gear_place_interfaces::srv::MoveToPosition>::SharedPtr move_to_position_srv_;
-  rclcpp::Service<gear_place_interfaces::srv::PutGearDown>::SharedPtr put_gear_down_srv;
+  rclcpp::Service<gear_place_interfaces::srv::PutGearDown>::SharedPtr put_gear_down_srv_;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
