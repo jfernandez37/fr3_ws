@@ -49,7 +49,7 @@ def main(args=None):
             z_movement,
             0.0095
         )  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
-        sleep(3)
+        sleep(1.5)
         supervisor._call_put_gear_down_service(
             z_movement
         ) # moves down, releases the gear, and moves back up
