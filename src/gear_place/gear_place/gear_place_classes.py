@@ -133,7 +133,7 @@ class GearPlace(Node):
 
         future = self.create_client(PickUpGear, "pick_up_gear").call_async(request)
 
-        rclpy.spin_until_future_complete(self, future, timeout_sec=20)
+        rclpy.spin_until_future_complete(self, future, timeout_sec=30)
 
         if not future.done():
             raise Error("Timeout reached when calling pick_up gear service")
