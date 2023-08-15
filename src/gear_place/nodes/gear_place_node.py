@@ -12,7 +12,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     try:
-        x_offset = 0.04  # offset from the camera to the gripper
+        x_offset = 0.043  # offset from the camera to the gripper
         y_offset = 0.03  # offset from the camera to the gripper
         z_movement = (
             -0.245
