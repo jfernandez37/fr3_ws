@@ -153,7 +153,8 @@ class GearPlace(Node):
         """
         Calls the put_gear_down callback
         """
-        self.get_logger().info(f"Putting down gear")
+        self.get_logger().info(f"Putting gear down")
+        
 
         request = PutGearDown.Request()
 
