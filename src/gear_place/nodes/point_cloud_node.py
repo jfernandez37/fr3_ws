@@ -5,6 +5,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import PointCloud2
 from sensor_msgs_py.point_cloud2 import read_points_numpy
 
+
 class MinimalSubscriber(Node):
     def __init__(self):
         super().__init__("minimal_subscriber")

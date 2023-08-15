@@ -13,7 +13,7 @@ from gear_place_interfaces.srv import (
     PickUpGear,
     MoveToConveyor,
     MoveToPosition,
-    PutGearDown
+    PutGearDown,
 )
 
 from gear_place.transform_utils import multiply_pose, convert_transform_to_pose
@@ -52,9 +52,7 @@ class GearPlace(Node):
         self.move_to_position_client = self.create_client(
             MoveToPosition, "move_to_position"
         )
-        self.put_gear_down_client = self.create_client(
-            PutGearDown, "put_gear_down"
-        )
+        self.put_gear_down_client = self.create_client(PutGearDown, "put_gear_down")
 
     def wait(self, duration: float):
         # self.get_logger().info(f"Waiting for {duration} seconds...")
@@ -148,13 +146,12 @@ class GearPlace(Node):
         if not result.success:
             self.get_logger().error(f"Unable to pick up gear")
             raise Error("Unable to pick up gear")
-        
-    def _call_put_gear_down_service(self,z):
+
+    def _call_put_gear_down_service(self, z):
         """
         Calls the put_gear_down callback
         """
         self.get_logger().info(f"Putting gear down")
-        
 
         request = PutGearDown.Request()
 

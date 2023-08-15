@@ -92,9 +92,11 @@ def launch_setup(context, *args, **kwargs):
 
 def generate_launch_description():
     declared_arguments = []
-    
+
     declared_arguments.append(
-        DeclareLaunchArgument("rviz", default_value="false", description="start rviz node?")
+        DeclareLaunchArgument(
+            "rviz", default_value="false", description="start rviz node?"
+        )
     )
 
     return LaunchDescription(

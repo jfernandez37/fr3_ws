@@ -18,7 +18,7 @@ def main(args=None):
             -0.247
         )  # z distance from the home position to where the gripper can grab the gear
         supervisor = GearPlace("gear_place")
-        supervisor.wait(.75)
+        supervisor.wait(0.75)
         supervisor._call_move_to_named_pose_service(
             "home"
         )  # starts in the home position
@@ -47,12 +47,12 @@ def main(args=None):
             -1 * object_depth.dist_y + x_offset,
             -1 * object_depth.dist_x + y_offset,
             z_movement,
-            0.0095
+            0.0095,
         )  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
         sleep(1.5)
         supervisor._call_put_gear_down_service(
             z_movement
-        ) # moves down, releases the gear, and moves back up
+        )  # moves down, releases the gear, and moves back up
 
     except Error as e:
         print(e)
