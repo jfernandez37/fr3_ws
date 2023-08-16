@@ -90,7 +90,7 @@ class FindObject(Node):
         up_down = 1
         c = 0
         contour_to_circle_ratio = 0.0
-        while contours_left < 1 or contour_to_circle_ratio<=0.82:
+        while contours_left < 1 or contour_to_circle_ratio<=0.75:
             c += 1
             _, self.thresh_image = cv2.threshold(
                 blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV

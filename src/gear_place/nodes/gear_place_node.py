@@ -33,6 +33,10 @@ def main(args=None):
         ):  # runs until valid coordinates are found
             find_object = FindObject()
             rclpy.spin_once(find_object)  # Finds the gear
+            while find_object.ret_cent_gear.count(None)!=0: #Runs and guarantees that none of the coordinates are none type
+                find_object.destroy_node()
+                find_object = FindObject()
+                rclpy.spin_once(find_object)
             object_depth = ObjectDepth(find_object.ret_cent_gear())
             rclpy.spin_once(object_depth)  # Gets the distance from the camera
             object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
