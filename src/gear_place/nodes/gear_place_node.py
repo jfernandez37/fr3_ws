@@ -39,7 +39,7 @@ def main(args=None):
                 
                 if c%5==0:
                     supervisor._call_move_cartesian_service(
-                        0.05, 0.05*(-1 if c%2==0 else 1), 0.0, 0.15, 0.2
+                        0.05, 0.05*(-1 if c%2==1 else 1), 0.0, 0.15, 0.2
                     )  # Moves to the center of the cart
                     sleep(1)
                 else:
