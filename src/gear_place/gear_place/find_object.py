@@ -137,6 +137,7 @@ class FindObject(Node):
                 color=(255, 255, 255),
                 thickness=-1,
             )
+            print(contour_to_circle_ratio)
         except:
             self.get_logger.error("Error: Contour does not form a single shape")
         self.get_logger().info(
