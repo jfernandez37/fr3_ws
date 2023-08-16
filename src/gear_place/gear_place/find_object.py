@@ -98,7 +98,6 @@ class FindObject(Node):
             contours, _ = cv2.findContours(
                 self.thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
             )
-            self.get_logger().info(f"Contours found: {len(contours)}")
             before_remove = len(contours)
             contours = self.remove_bad_contours(contours)
             contours_left = len(contours)
@@ -119,9 +118,6 @@ class FindObject(Node):
         cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
         (x, y), self.radius = cv2.minEnclosingCircle(
             contours[closest_to_circle]
-        )
-        self.get_logger().info(
-            f"{cv2.contourArea(contours[closest_to_circle])}"
         )
         self.gx = int(x)
         self.gy = int(y)
