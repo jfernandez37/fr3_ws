@@ -36,14 +36,16 @@ def main(args=None):
             c=0
             while find_object.ret_cent_gear().count(None)!=0: #Runs and guarantees that none of the coordinates are none type
                 c+=1
-                find_object.destroy_node()
-                find_object = FindObject()
-                rclpy.spin_once(find_object)
+                
                 if c%4==0:
                     supervisor._call_move_cartesian_service(
                         0.03, 0.0, 0.0, 0.15, 0.2
                     )  # Moves to the center of the cart
                     sleep(1)
+                else:
+                    find_object.destroy_node()
+                    find_object = FindObject()
+                    rclpy.spin_once(find_object)
             object_depth = ObjectDepth(find_object.ret_cent_gear())
             rclpy.spin_once(object_depth)  # Gets the distance from the camera
             object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
