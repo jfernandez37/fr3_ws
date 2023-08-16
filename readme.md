@@ -21,7 +21,7 @@ Work space for Franka Emika FR3 robot ROS2 integration
 
 * Clone the conveyor belt package
 
-  `git clone https://github.com/usnistgov/aprs-ros-conveyor.git`
+  `git clone https://github.com/usnistgov/aprs-ros-conveyor.git src/aprs-ros-conveyor`
 
 * Clone the humble port of franka_ros2
 
