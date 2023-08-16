@@ -43,6 +43,7 @@ def main(args=None):
                     )  # Moves to the center of the cart
                     sleep(1)
                 else:
+                    print("Test")
                     find_object.destroy_node()
                     find_object = FindObject()
                     rclpy.spin_once(find_object)
