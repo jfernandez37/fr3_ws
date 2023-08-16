@@ -114,7 +114,7 @@ class FindObject(Node):
                 closest_to_circle, contour_to_circle_ratio = self.closest_to_circle(contours)
                 print(contour_to_circle_ratio)
         self.get_logger().info(
-            f"{before_remove - len(contours)} contours were removed.\n\t\t\t\t\t     Took {c} different "
+            f"Gear found! {before_remove - len(contours)} contours were removed. Took {c} different "
             + ("threshold" if c == 1 else "thresholds")
         )
         cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
