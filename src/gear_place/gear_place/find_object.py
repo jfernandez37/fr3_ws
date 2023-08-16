@@ -41,7 +41,7 @@ class FindObject(Node):
         Removes contours which are too small and ones with too few sides to be the gear
         """
         minimum_contour_area = 4000
-        maximum_contour_area = 10000
+        maximum_contour_area = 15000
         new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
         filtered_contours = []
         for cnt in new_contours:
@@ -108,7 +108,7 @@ class FindObject(Node):
                 up_down = 1
             thresh_value += up_down
             if c>=255:
-                self.get_logger().info("Nothing found")
+                self.get_logger().info("Gear not found. Trying again")
                 return
             if contours_left>=1:
                 closest_to_circle, contour_to_circle_ratio = self.closest_to_circle(contours)
