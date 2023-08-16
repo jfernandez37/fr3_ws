@@ -33,13 +33,15 @@ def main(args=None):
         ):  # runs until valid coordinates are found
             find_object = FindObject()
             rclpy.spin_once(find_object)  # Finds the gear
-            c=0
-            while find_object.ret_cent_gear().count(None)!=0: #Runs and guarantees that none of the coordinates are none type
-                c+=1
-                
-                if c%5==0:
+            c = 0
+            while (
+                find_object.ret_cent_gear().count(None) != 0
+            ):  # Runs and guarantees that none of the coordinates are none type
+                c += 1
+
+                if c % 5 == 0:
                     supervisor._call_move_cartesian_service(
-                        0.05, 0.05*(-1 if c%2==1 else 1), 0.0, 0.15, 0.2
+                        0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
                     )  # Moves to the center of the cart
                     sleep(1)
                 else:

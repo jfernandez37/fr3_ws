@@ -91,7 +91,7 @@ class FindObject(Node):
         c = 0
         contour_to_circle_ratio = 0.0
         self.get_logger().info("Starting scan")
-        while contours_left < 1 or contour_to_circle_ratio<=0.89:
+        while contours_left < 1 or contour_to_circle_ratio <= 0.89:
             c += 1
             _, self.thresh_image = cv2.threshold(
                 blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV
@@ -107,19 +107,19 @@ class FindObject(Node):
             elif thresh_value == 0:
                 up_down = 1
             thresh_value += up_down
-            if c>=255:
+            if c >= 255:
                 self.get_logger().info("Gear not found. Trying again")
                 return
-            if contours_left>=1:
-                closest_to_circle, contour_to_circle_ratio = self.closest_to_circle(contours)
+            if contours_left >= 1:
+                closest_to_circle, contour_to_circle_ratio = self.closest_to_circle(
+                    contours
+                )
         self.get_logger().info(
             f"Gear found! {before_remove - len(contours)} contours were removed. Took {c} different "
             + ("threshold" if c == 1 else "thresholds")
         )
         cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
-        (x, y), self.radius = cv2.minEnclosingCircle(
-            contours[closest_to_circle]
-        )
+        (x, y), self.radius = cv2.minEnclosingCircle(contours[closest_to_circle])
         self.gx = int(x)
         self.gy = int(y)
         cv2.circle(
