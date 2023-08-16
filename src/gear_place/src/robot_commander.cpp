@@ -323,10 +323,14 @@ void RobotCommander::move_to_conveyor_cb_(
   try
   {
 
-    move_robot_cartesian(request->x, -1 * request->y, 0, default_velocity_, default_acceleration_);
-    move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);
-    open_gripper();
+    move_robot_cartesian(request->x, request->y, 0, default_velocity_, default_acceleration_);
+    sleep(wait_time_);
     move_robot_cartesian(0, 0, request->z, default_velocity_, default_acceleration_);
+    sleep(wait_time_);
+    open_gripper();
+    sleep(wait_time_);
+    move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);
+    sleep(wait_time_);
   }
   catch (CommanderError &e)
   {

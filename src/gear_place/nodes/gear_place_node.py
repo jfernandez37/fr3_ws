@@ -69,6 +69,13 @@ def main(args=None):
         supervisor._call_put_gear_down_service(
             z_movement
         )  # moves down, releases the gear, and moves back up
+        """
+        supervisor._call_move_to_named_pose_service("home")
+        supervisor._call_move_to_conveyor_service(-0.27, -0.3, z_movement + 0.1)
+        conveyor_supervisor._enable_conveyor_service(True)
+        conveyor_supervisor._set_conveyor_state_service(speed=50, direction=0)
+        conveyor_supervisor._enable_conveyor_service(False)
+        """
 
     except Error as e:
         print(e)
