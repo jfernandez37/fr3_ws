@@ -26,13 +26,13 @@ def main(args=None):
         gear_center_values[0] = object_depth.dist_x
         gear_center_values[1] = object_depth.dist_y
         gear_center_values[2] = object_depth.dist_z
-    cv2.imshow("Threshold image", find_object.thresh_image)
-    cv2.imshow("Depth image", find_object.cv_image)
-    cv2.waitKey(0)
     print("x: " + str(object_depth.dist_x), end="\t")
     print("y: " + str(object_depth.dist_y), end="\t")
     print("z: " + str(object_depth.dist_z) + "\n")
     print(f"{c} tries to find the gear")
+    cv2.imshow("Threshold image", find_object.thresh_image)
+    cv2.imshow("Depth image", find_object.cv_image)
+    cv2.waitKey(0)
     rclpy.shutdown()
 
 

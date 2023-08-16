@@ -121,6 +121,7 @@ private:
                             std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Response> response);
   void put_gear_down_cb_(const std::shared_ptr<gear_place_interfaces::srv::PutGearDown::Request> request,
                          std::shared_ptr<gear_place_interfaces::srv::PutGearDown::Response> response);
+  
   // Methods
   void move_robot_to_frame(KDL::Frame);
   void move_robot_cartesian(double, double, double, double, double);

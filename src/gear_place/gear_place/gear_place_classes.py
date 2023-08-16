@@ -16,6 +16,7 @@ from gear_place_interfaces.srv import (
     PutGearDown,
 )
 
+from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
 from gear_place.transform_utils import multiply_pose, convert_transform_to_pose
 
 from geometry_msgs.msg import Pose, Point
@@ -231,3 +232,64 @@ class GearPlace(Node):
             raise Error("Unable to transform between frames")
 
         return multiply_pose(convert_transform_to_pose(t), rel_pose)
+
+
+class ConveyorClass(Node):
+    def _init__(self):
+        # Service Clients
+        self.enable_conveyor_client = self.create_client(
+            EnableConveyor, "enable_conveyor"
+        )
+        self.set_conveyor_state_client = self.create_client(
+            SetConveyorState, "set_conveyor_state"
+        )
+
+    def _enable_conveyor_service(self, enable: bool):
+        """
+        Calls the enable_conveyor callback
+        """
+        self.get_logger().info(
+            ("Enabling" if enable else "Disabling"), "the conveyor belt"
+        )
+
+        request = EnableConveyor.Request()
+        request.enable = enable
+
+        future = self.enable_conveyor_client.call_async(request)
+
+        rclpy.spin_until_future_complete(self, future, timeout_sec=8)
+
+        if not future.done():
+            raise Error("Timeout reached when calling enable_conveyor service")
+
+        result: EnableConveyor.Response
+        result = future.result()
+
+        if not result.success:
+            raise Error(f"Unable to enable the conveyor belt")
+
+    def _set_conveyor_state_service(self, speed: float, direction: float):
+        """
+        Calls the set_conveyor_state callback
+        """
+        self.get_logger().info(
+            "Moving the conveyor",
+            ("forward" if direction == 0 else "backward"),
+            f"at a speed of {speed}",
+        )
+        request = SetConveyorState.Request()
+        request.speed = speed
+        request.direction = direction
+        
+        future = self.set_conveyor_state_client.call_async(request)
+        
+        rclpy.spin_until_future_complete(self,future,timeout_sec=20)
+        
+        if not future.done():
+            raise Error("Tiemout reached when calling set_conveyor_state service")
+        
+        result: SetConveyorState.Response
+        result = future.result()
+        
+        if not result.success:
+            raise Error(f"Unable to move the conveyor belt")

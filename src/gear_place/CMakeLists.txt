@@ -9,6 +9,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   rclcpp 
   tf2_kdl
   gear_place_interfaces
+  conveyor_interfaces
   shape_msgs
   OpenCV
   cv_bridge
