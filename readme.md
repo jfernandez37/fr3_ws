@@ -43,4 +43,4 @@ Work space for Franka Emika FR3 robot ROS2 integration
   
 * To launch everything, run
   
-    `ros2 launch gear_place gear.launch.py`
+    `ros2 launch gear_place gear.launch.py rviz:=True`
