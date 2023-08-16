@@ -9,6 +9,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     gear_center_values = [0 for i in range(3)]
+    c=1
     while gear_center_values.count(0) == 3:
         find_object = FindObject()
         rclpy.spin_once(find_object)
@@ -16,6 +17,7 @@ def main(args=None):
             find_object.destroy_node()
             find_object = FindObject()
             rclpy.spin_once(find_object)
+            c+=1
         object_depth = ObjectDepth(find_object.ret_cent_gear())
         rclpy.spin_once(object_depth)
 
@@ -30,6 +32,7 @@ def main(args=None):
     print("x: " + str(object_depth.dist_x), end="\t")
     print("y: " + str(object_depth.dist_y), end="\t")
     print("z: " + str(object_depth.dist_z) + "\n")
+    print(f"{c} tries to find the gear")
     rclpy.shutdown()
 
 
