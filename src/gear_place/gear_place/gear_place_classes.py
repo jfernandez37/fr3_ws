@@ -21,6 +21,8 @@ from gear_place.transform_utils import multiply_pose, convert_transform_to_pose
 
 from geometry_msgs.msg import Pose, Point
 
+from gear_place.find_object import FindObject
+from gear_place.object_depth import ObjectDepth
 
 class Error(Exception):
     def __init__(self, value: str):
@@ -155,8 +157,21 @@ class GearPlace(Node):
         self.get_logger().info(f"Putting gear down")
 
         request = PutGearDown.Request()
-
-        request.z = z
+        x_center = 320
+        y_center = 240
+        c=0
+        object_depth = ObjectDepth((x_center,y_center))
+        rclpy.spin_once(object_depth)
+        while object_depth.dist_z in [0,None]:
+            if c%2:
+                x_center+=1
+            else:
+                y_center+=1
+            c+=1
+            object_depth.destroy_node()
+            object_depth = ObjectDepth((x_center,y_center))
+            rclpy.spin_once(object_depth)
+        request.z = object_depth.dist_z *-1 +0.2
 
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
 
