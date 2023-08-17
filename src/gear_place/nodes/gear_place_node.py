@@ -18,7 +18,7 @@ def main(args=None):
             -0.247
         )  # z distance from the home position to where the gripper can grab the gear
         supervisor = GearPlace("gear_place")
-        conveyor_supervisor = ConveyorClass("aprs_ros_conveyor")
+        # conveyor_supervisor = ConveyorClass("aprs_ros_conveyor")
         supervisor.wait(0.75)
         supervisor._call_move_to_named_pose_service(
             "home"
