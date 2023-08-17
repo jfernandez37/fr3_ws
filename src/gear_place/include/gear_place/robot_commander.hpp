@@ -69,7 +69,6 @@ private:
   rclcpp::Service<gear_place_interfaces::srv::MoveToNamedPose>::SharedPtr move_to_named_pose_srv_;
   rclcpp::Service<gear_place_interfaces::srv::MoveCartesian>::SharedPtr move_cartesian_srv_;
   rclcpp::Service<gear_place_interfaces::srv::PickUpGear>::SharedPtr pick_up_gear_srv_;
-  rclcpp::Service<gear_place_interfaces::srv::MoveToConveyor>::SharedPtr move_to_conveyor_srv_;
   rclcpp::Service<gear_place_interfaces::srv::MoveToPosition>::SharedPtr move_to_position_srv_;
   rclcpp::Service<gear_place_interfaces::srv::PutGearDown>::SharedPtr put_gear_down_srv_;
 
@@ -115,8 +114,6 @@ private:
                           std::shared_ptr<gear_place_interfaces::srv::MoveCartesian::Response> response);
   void pick_up_gear_cb_(const std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Request> request,
                         std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Response> response);
-  void move_to_conveyor_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveToConveyor::Request> request,
-                            std::shared_ptr<gear_place_interfaces::srv::MoveToConveyor::Response> response);
   void move_to_position_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Request> request,
                             std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Response> response);
   void put_gear_down_cb_(const std::shared_ptr<gear_place_interfaces::srv::PutGearDown::Request> request,
