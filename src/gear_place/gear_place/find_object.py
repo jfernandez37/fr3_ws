@@ -91,7 +91,7 @@ class FindObject(Node):
         c = 0
         contour_to_circle_ratio = 0.0
         self.get_logger().info("Starting scan")
-        while contours_left < 1 or contour_to_circle_ratio <= 0.89:
+        while contours_left < 1 or contour_to_circle_ratio <= 0.895:
             c += 1
             _, self.thresh_image = cv2.threshold(
                 blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV
