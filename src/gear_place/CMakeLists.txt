@@ -10,12 +10,12 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   tf2_kdl
   gear_place_interfaces
   conveyor_interfaces
-  conveyor_controller
   shape_msgs
   OpenCV
   cv_bridge
   Franka
   kdl_parser
+  conveyor_controller
 )
 
 # find dependencies

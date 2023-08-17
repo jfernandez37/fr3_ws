@@ -313,42 +313,6 @@ void RobotCommander::put_gear_down_cb_(
   response->success = true;
 }
 
-void RobotCommander::move_to_conveyor_cb_(
-    const std::shared_ptr<gear_place_interfaces::srv::MoveToConveyor::Request> request,
-    std::shared_ptr<gear_place_interfaces::srv::MoveToConveyor::Response> response)
-{
-  /*
-  Moves to above conveyor belt, then down to it, opens the gripper and releasing the gear, then moves back up to above the conveyor belt
-  */
-  try
-  {
-
-    move_robot_cartesian(request->x, request->y, 0, default_velocity_, default_acceleration_);
-    sleep(wait_time_);
-    move_robot_cartesian(0, 0, request->z, default_velocity_, default_acceleration_);
-    sleep(wait_time_);
-    open_gripper();
-    sleep(wait_time_);
-    move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);
-    sleep(wait_time_);
-  }
-  catch (CommanderError &e)
-  {
-    std::string err = e.what();
-    RCLCPP_ERROR(get_logger(), err.c_str());
-    response->success = false;
-    return;
-  }
-
-  gripper_state_ = gripper_->readOnce();
-  if (!gripper_state_.is_grasped)
-  {
-    RCLCPP_WARN(get_logger(), "Object was not grasped");
-    response->success = false;
-  }
-  response->success = true;
-}
-
 void RobotCommander::move_to_position_cb_(
     const std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Request> request,
     std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Response> response)
