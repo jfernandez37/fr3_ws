@@ -17,6 +17,7 @@ class MinimalSubscriber(Node):
     def listener_callback(self, msg: PointCloud2):
         # data = read_points_numpy(msg,field_names = ("x", "y", "z"), skip_nans=True, uvs=[[334,349]])
         data = read_points_numpy(msg, reshape_organized_cloud=True, skip_nans=True)
+        print(data[320][240])
         # data = read_points(msg,field_names = ("x", "y", "z"), uvs=[437])
         # self.get_logger().info("Data: "+ ", ".join([str(d) for d in data]))
         print(data.shape, end="\n\n")
