@@ -26,6 +26,7 @@ from geometry_msgs.msg import Pose, Point
 from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 
+
 class Error(Exception):
     def __init__(self, value: str):
         self.value = value
@@ -51,14 +52,11 @@ class GearPlace(Node):
         )
         self.move_cartesian_client = self.create_client(MoveCartesian, "move_cartesian")
         self.pick_up_gear_client = self.create_client(PickUpGear, "pick_up_gear")
-        self.move_to_conveyor_client = self.create_client(
-            MoveToConveyor, "move_to_conveyor"
-        )
         self.move_to_position_client = self.create_client(
             MoveToPosition, "move_to_position"
         )
         self.put_gear_down_client = self.create_client(PutGearDown, "put_gear_down")
-        
+
         self.x_offset = 0.047  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
 
@@ -132,7 +130,9 @@ class GearPlace(Node):
         """
         Calls the pick_up_gear callback
         """
-        z_movement = -0.247 # z distance from the home position to where the gripper can grab the gear
+        z_movement = (
+            -0.247
+        )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         gear_center_target = [0 for i in range(3)]
         while (
@@ -196,19 +196,19 @@ class GearPlace(Node):
         request = PutGearDown.Request()
         x_center = 320
         y_center = 240
-        c=0
-        object_depth = ObjectDepth((x_center,y_center))
+        c = 0
+        object_depth = ObjectDepth((x_center, y_center))
         rclpy.spin_once(object_depth)
-        while object_depth.dist_z in [0,None]:
-            if c%2:
-                x_center+=1
+        while object_depth.dist_z in [0, None]:
+            if c % 2:
+                x_center += 1
             else:
-                y_center+=1
-            c+=1
+                y_center += 1
+            c += 1
             object_depth.destroy_node()
-            object_depth = ObjectDepth((x_center,y_center))
+            object_depth = ObjectDepth((x_center, y_center))
             rclpy.spin_once(object_depth)
-        request.z = object_depth.dist_z *-1 +0.1
+        request.z = object_depth.dist_z * -1 + 0.1
 
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
 
@@ -223,32 +223,6 @@ class GearPlace(Node):
         if not result.success:
             self.get_logger().error(f"Unable to put gear down")
             raise Error("Unable to put gear down")
-
-    def _call_move_to_conveyor_service(self, x, y, z):
-        """
-        Calls the move_to_conveyor callback
-        """
-        self.get_logger().info(f"Placing gear on conveyor belt")
-
-        request = MoveToConveyor.Request()
-
-        request.x = x
-        request.y = y
-        request.z = z
-
-        future = self.move_to_conveyor_client.call_async(request)
-
-        rclpy.spin_until_future_complete(self, future, timeout_sec=20)
-
-        if not future.done():
-            raise Error("Timeout reached when calling move_to_conveyor service")
-
-        result: MoveToConveyor.Response
-        result = future.result()
-
-        if not result.success:
-            self.get_logger().error(f"Unable to move_to_conveyor")
-            raise Error("Unable to move to conveyor")
 
     def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
         """
@@ -332,16 +306,16 @@ class ConveyorClass(Node):
         request = SetConveyorState.Request()
         request.speed = speed
         request.direction = direction
-        
+
         future = self.set_conveyor_state_client.call_async(request)
-        
-        rclpy.spin_until_future_complete(self,future,timeout_sec=20)
-        
+
+        rclpy.spin_until_future_complete(self, future, timeout_sec=20)
+
         if not future.done():
             raise Error("Tiemout reached when calling set_conveyor_state service")
-        
+
         result: SetConveyorState.Response
         result = future.result()
-        
+
         if not result.success:
             raise Error(f"Unable to move the conveyor belt")
