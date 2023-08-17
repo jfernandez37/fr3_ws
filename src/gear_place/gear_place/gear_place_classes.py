@@ -13,7 +13,6 @@ from gear_place_interfaces.srv import (
     MoveCartesian,
     MoveToNamedPose,
     PickUpGear,
-    MoveToConveyor,
     MoveToPosition,
     PutGearDown,
 )
