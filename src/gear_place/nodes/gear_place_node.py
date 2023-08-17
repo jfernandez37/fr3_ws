@@ -12,11 +12,6 @@ def main(args=None):
     rclpy.init(args=args)
 
     try:
-        x_offset = 0.047  # offset from the camera to the gripper
-        y_offset = 0.03  # offset from the camera to the gripper
-        z_movement = (
-            -0.247
-        )  # z distance from the home position to where the gripper can grab the gear
         supervisor = GearPlace("gear_place")
         conveyor_supervisor = ConveyorClass("aprs_ros_conveyor")
         supervisor.wait(0.75)
@@ -34,9 +29,7 @@ def main(args=None):
             0.0095,
         )  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
         sleep(1.5)
-        supervisor._call_put_gear_down_service(
-            z_movement
-        )  # moves down, releases the gear, and moves back up
+        supervisor._call_put_gear_down_service()  # moves down, releases the gear, and moves back up
         """
         supervisor._call_move_to_named_pose_service("home")
         supervisor._call_move_to_conveyor_service(-0.27, -0.3, z_movement + 0.1)

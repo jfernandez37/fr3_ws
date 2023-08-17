@@ -187,7 +187,7 @@ class GearPlace(Node):
             self.get_logger().error(f"Unable to pick up gear")
             raise Error("Unable to pick up gear")
 
-    def _call_put_gear_down_service(self, z):
+    def _call_put_gear_down_service(self):
         """
         Calls the put_gear_down callback
         """
