@@ -13,6 +13,8 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <depend>rclcpp</depend>
+  <depend>conveyor_interfaces</depend>
+  <depend>conveyor_controller</depend>
   <depend>gear_place_interfaces</depend>
   <depend>gear_place_description</depend>
   <depend>geometry_msgs</depend>
