@@ -45,7 +45,6 @@ class GearPlace(Node):
 
         self.tf_broadcaster = StaticTransformBroadcaster(self)
         self.static_transforms = []
-        print("CONSTRUCTOR RUNNING TEST")
         # Service Clients
         self.move_to_named_pose_client = self.create_client(
             MoveToNamedPose, "move_to_named_pose"
