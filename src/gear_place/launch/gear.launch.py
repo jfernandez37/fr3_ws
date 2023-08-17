@@ -74,10 +74,10 @@ def launch_setup(context, *args, **kwargs):
         ],
     )
     
-    conveyor_node = Node(
-        package="conveyor_controller",
-        executable="conveyor_controller"
-    )
+    # conveyor_node = Node(
+    #     package="conveyor_controller",
+    #     executable="conveyor_controller"
+    # )
     
     supervisor = Node(
         package="gear_place",
@@ -87,7 +87,7 @@ def launch_setup(context, *args, **kwargs):
 
     nodes_to_start = [
         robot_state_publisher,
-        conveyor_node,
+        # conveyor_node,
         # realsense,
         rviz_node,
         robot_commander_node,
