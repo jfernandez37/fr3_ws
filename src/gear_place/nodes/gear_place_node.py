@@ -29,40 +29,8 @@ def main(args=None):
         )  # Moves to the center of the cart
         sleep(1)
 
-        while (
-            gear_center_target.count(0) == 3 or None in gear_center_target
-        ):  # runs until valid coordinates are found
-            find_object = FindObject()
-            rclpy.spin_once(find_object)  # Finds the gear
-            c = 0
-            while (
-                find_object.ret_cent_gear().count(None) != 0
-            ):  # Runs and guarantees that none of the coordinates are none type
-                c += 1
-
-                if c % 5 == 0:
-                    supervisor._call_move_cartesian_service(
-                        0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
-                    )  # Moves to the center of the cart
-                    sleep(1)
-                else:
-                    find_object.destroy_node()
-                    find_object = FindObject()
-                    rclpy.spin_once(find_object)
-            object_depth = ObjectDepth(find_object.ret_cent_gear())
-            rclpy.spin_once(object_depth)  # Gets the distance from the camera
-            object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-            find_object.destroy_node()
-            gear_center_target[0] = object_depth.dist_x
-            gear_center_target[1] = object_depth.dist_y
-            gear_center_target[2] = object_depth.dist_z
-            sleep(1)  # sleeps between tries
-        sleep(1)
-        print(gear_center_target)
+        
         supervisor._call_pick_up_gear_service(
-            -1 * object_depth.dist_y + x_offset,
-            -1 * object_depth.dist_x + y_offset,
-            z_movement,
             0.0095,
         )  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
         sleep(1.5)
