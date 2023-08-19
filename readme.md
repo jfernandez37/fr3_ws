@@ -9,7 +9,7 @@ Work space for Franka Emika FR3 robot ROS2 integration
 ## Installation Instructions
 * Follow the [instructions to build libfranka from source](https://support.franka.de/docs/installation_linux.html#building-from-source)
 
-* Install ROS2 Realsense `sudo apt install ros-humble-librealsense2*`
+* Install ROS2 Realsense `sudo apt install ros-$ROS_DISTRO-librealsense2*`
 
 * Clone the workspace
 
@@ -29,7 +29,7 @@ Work space for Franka Emika FR3 robot ROS2 integration
 
 * Install dependencies
 
-    `rosdep install --from-paths src -y --ignore-src -r --rosdistro humble`
+    `rosdep install --from-paths src -y --ignore-src -r --rosdistro $ROS_DISTRO`
 
 ## Important commands to run
 
