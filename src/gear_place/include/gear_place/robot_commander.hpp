@@ -127,9 +127,6 @@ private:
   void set_default_behavior();
   geometry_msgs::msg::Pose solve_fk();
 
-  // Helper Function
-  KDL::Frame kdl_frame_from_franka_transform(std::array<double, 16UL> transform);
-
   // Constants
   std::map<std::string, std::array<double, 7>> named_joint_positions_ = {
       // {"home", {{0, 0.2, 0, -M_PI_2, 0, M_PI_2, M_PI_4}}},
