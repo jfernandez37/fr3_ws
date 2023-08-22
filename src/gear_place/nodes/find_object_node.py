@@ -11,10 +11,8 @@ def main(args=None):
     gear_center_values = [0 for i in range(3)]
     c=1
     while gear_center_values.count(0) == 3:
-        print("Finding gear")
         find_object = FindObject()
         rclpy.spin_once(find_object)
-        print("Gear find has spun once")
         while find_object.ret_cent_gear().count(None) != 0:
             find_object.destroy_node()
             find_object = FindObject()
