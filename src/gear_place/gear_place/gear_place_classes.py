@@ -197,6 +197,7 @@ class GearPlace(Node):
         rclpy.spin_once(object_depth)
         c=0
         while object_depth.dist_z in [0, None]:
+            print(x_center, y_center)
             c+=1
             if c%15==0:
                 if c%2==0: x_center+=1
@@ -204,6 +205,7 @@ class GearPlace(Node):
             object_depth.destroy_node()
             object_depth = ObjectDepth((x_center, y_center))
             rclpy.spin_once(object_depth)
+            print("Z_value:", object_depth.dist_z)
         request.z = object_depth.dist_z * -1 + 0.07
 
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
