@@ -17,8 +17,9 @@ def main(args=None):
         sleep(3)
         supervisor._call_move_cartesian_service(-0.27, 0.0, 0.0, 0.15, 0.2)  # Moves to the center of the cart
         sleep(1)
-        supervisor._call_pick_up_gear_service(0.0095)  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
-        sleep(1.5)
+        while(True):
+            supervisor._call_pick_up_gear_service(0.0095)  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
+            sleep(0.2)
         supervisor._call_move_to_named_pose_service("home")  # starts in the home position
         sleep(1.5)
         supervisor._call_put_gear_down_service()  # moves down, releases the gear, and moves back up
