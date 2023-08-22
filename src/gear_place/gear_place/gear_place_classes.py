@@ -55,8 +55,7 @@ class GearPlace(Node):
         )
         self.put_gear_down_client = self.create_client(PutGearDown, "put_gear_down")
 
-        self.x_offset = 0.047  # offset from the camera to the gripper
-        self.y_offset = 0.03  # offset from the camera to the gripper
+        
 
     def wait(self, duration: float):
         # self.get_logger().info(f"Waiting for {duration} seconds...")
@@ -128,6 +127,8 @@ class GearPlace(Node):
         """
         Calls the pick_up_gear callback
         """
+        self.x_offset = 0.047  # offset from the camera to the gripper
+        self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = -0.247 # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         gear_center_target = [0 for i in range(3)]
