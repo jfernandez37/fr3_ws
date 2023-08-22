@@ -15,6 +15,7 @@ from gear_place_interfaces.srv import (
     PickUpGear,
     MoveToPosition,
     PutGearDown,
+    PickUpMovingGear
 )
 
 from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
@@ -221,7 +222,67 @@ class GearPlace(Node):
         if not result.success:
             self.get_logger().error(f"Unable to put gear down")
             raise Error("Unable to put gear down")
+        
+    def _call_pick_up_moving_gear_service(self, object_width):
+        """
+        Calls the pick_up_gear callback
+        """
+        self.x_offset = 0.039  # offset from the camera to the gripper
+        self.y_offset = 0.03  # offset from the camera to the gripper
+        z_movement = -0.247 # z distance from the home position to where the gripper can grab the gear
+        self.get_logger().info(f"Picking up gear")
+        gear_center_target = [0 for i in range(3)]
+        while (
+            gear_center_target.count(0) == 3 or None in gear_center_target
+        ):  # runs until valid coordinates are found
+            find_object = FindObject()
+            rclpy.spin_once(find_object)  # Finds the gear
+            c = 0
+            while (
+                find_object.ret_cent_gear().count(None) != 0
+            ):  # Runs and guarantees that none of the coordinates are none type
+                c += 1
 
+                if c % 5 == 0:
+                    self._call_move_cartesian_service(
+                        0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
+                    )  # Moves to the center of the cart
+                    sleep(1)
+                else:
+                    find_object.destroy_node()
+                    find_object = FindObject()
+                    rclpy.spin_once(find_object)
+            object_depth = ObjectDepth(find_object.ret_cent_gear())
+            rclpy.spin_once(object_depth)  # Gets the distance from the camera
+            object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+            find_object.destroy_node()
+            gear_center_target[0] = object_depth.dist_x
+            gear_center_target[1] = object_depth.dist_y
+            gear_center_target[2] = object_depth.dist_z
+            sleep(0.2)  # sleeps between tries
+        print(gear_center_target)
+
+        request = PickUpMovingGear.Request()
+
+        request.x = -1 * object_depth.dist_y + self.x_offset
+        request.y = -1 * object_depth.dist_x + self.y_offset
+        request.z = z_movement
+        request.object_width = object_width
+
+        future = self.create_client(PickUpMovingGear, "pick_up_gear").call_async(request)
+
+        rclpy.spin_until_future_complete(self, future, timeout_sec=30)
+
+        if not future.done():
+            raise Error("Timeout reached when calling pick_up_moving_gear service")
+
+        result: PickUpMovingGear.Response
+        result = future.result()
+
+        if not result.success:
+            self.get_logger().error(f"Unable to pick up gear")
+            raise Error("Unable to pick up gear")
+        
     def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
         """
         Calls the move_to_position callback
