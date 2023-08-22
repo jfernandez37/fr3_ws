@@ -128,9 +128,7 @@ class GearPlace(Node):
         """
         Calls the pick_up_gear callback
         """
-        z_movement = (
-            -0.247
-        )  # z distance from the home position to where the gripper can grab the gear
+        z_movement = -0.247 # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         gear_center_target = [0 for i in range(3)]
         while (
@@ -160,7 +158,7 @@ class GearPlace(Node):
             gear_center_target[0] = object_depth.dist_x
             gear_center_target[1] = object_depth.dist_y
             gear_center_target[2] = object_depth.dist_z
-            sleep(1)  # sleeps between tries
+            sleep(0.5)  # sleeps between tries
         sleep(1)
         print(gear_center_target)
 
