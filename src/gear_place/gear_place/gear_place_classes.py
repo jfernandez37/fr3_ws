@@ -159,8 +159,7 @@ class GearPlace(Node):
             gear_center_target[0] = object_depth.dist_x
             gear_center_target[1] = object_depth.dist_y
             gear_center_target[2] = object_depth.dist_z
-            sleep(0.5)  # sleeps between tries
-        sleep(1)
+            sleep(0.2)  # sleeps between tries
         print(gear_center_target)
 
         request = PickUpGear.Request()
