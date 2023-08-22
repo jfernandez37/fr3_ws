@@ -194,7 +194,6 @@ class GearPlace(Node):
         request = PutGearDown.Request()
         x_center = 320
         y_center = 240
-        c = 0
         object_depth = ObjectDepth((x_center, y_center))
         rclpy.spin_once(object_depth)
         while object_depth.dist_z in [0, None]:
