@@ -9,7 +9,7 @@ class MovingGear():
         self.times = []
         self.x_vals = []
         self.y_vals = []
-        start_time = time()
+        self.start_time = time()
         while len(self.x_vals)<2:
             gear_center_values = [0 for i in range(3)]
             find_object = FindObject()
@@ -24,11 +24,11 @@ class MovingGear():
                 gear_center_values[2] = object_depth.dist_z
                 print(gear_center_values)
                 if gear_center_values.count(0)==0:
-                    self.times.append(time()-start_time)
+                    self.times.append(time()-self.start_time)
                     self.x_vals.append(object_depth.dist_x)
                     self.y_vals.append(object_depth.dist_y)
         
     def point_from_time(self, t:float):
-        x_val = (self.x_vals[1]-self.x_vals[0])/(self.times[1]-self.times[0])*(t-self.times[1])+self.x_vals[1]
-        y_val = (self.y_vals[1]-self.y_vals[0])/(self.times[1]-self.times[0])*(t-self.times[1])+self.y_vals[1]
+        x_val = (self.x_vals[1]-self.x_vals[0])/(self.times[1]-self.times[0])*(t-self.times[0])+self.x_vals[0]
+        y_val = (self.y_vals[1]-self.y_vals[0])/(self.times[1]-self.times[0])*(t-self.times[0])+self.y_vals[0]
         return (x_val, y_val)    
