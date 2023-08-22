@@ -11,7 +11,7 @@ class MovingGear():
         self.y_vals = []
         self.start_time = time()
         while len(self.x_vals)<2:
-            gear_center_values = [0 for i in range(3)]
+            gear_center_values = [0]
             find_object = FindObject()
             rclpy.spin_once(find_object)
             if find_object.ret_cent_gear().count(None) == 0:
@@ -19,9 +19,7 @@ class MovingGear():
                 rclpy.spin_once(object_depth)
                 object_depth.destroy_node()
                 find_object.destroy_node()
-                gear_center_values[0] = object_depth.dist_x
-                gear_center_values[1] = object_depth.dist_y
-                gear_center_values[2] = object_depth.dist_z
+                gear_center_values[0] = object_depth.dist_z
                 print(gear_center_values)
                 if gear_center_values.count(0)==0:
                     self.times.append(time()-self.start_time)
