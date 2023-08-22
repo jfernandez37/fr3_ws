@@ -195,7 +195,12 @@ class GearPlace(Node):
         y_center = 240
         object_depth = ObjectDepth((x_center, y_center))
         rclpy.spin_once(object_depth)
+        c=0
         while object_depth.dist_z in [0, None]:
+            c+=1
+            if c%15==0:
+                if c%2==0: x_center+=1
+                else: y_center+=1
             object_depth.destroy_node()
             object_depth = ObjectDepth((x_center, y_center))
             rclpy.spin_once(object_depth)
