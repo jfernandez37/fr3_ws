@@ -137,5 +137,5 @@ private:
   const double gripper_force_ = 10;
   const double default_velocity_ = 0.15;
   const double default_acceleration_ = 0.2;
-  const double wait_time_ = 1.25;
+  const double wait_time_ = 0.25;
 };
