@@ -191,19 +191,18 @@ class GearPlace(Node):
         self.get_logger().info(f"Putting gear down")
 
         request = PutGearDown.Request()
-        x_center = 320
-        y_center = 240
-        object_depth = ObjectDepth((x_center, y_center))
+        x_point = 450
+        y_point = 300
+        object_depth = ObjectDepth((x_point, y_point))
         rclpy.spin_once(object_depth)
         c=0
         while object_depth.dist_z in [0, None]:
-            print(x_center, y_center)
             c+=1
             if c%15==0:
-                if c%2==0: x_center+=1
-                else: y_center+=1
+                if c%2==0: x_point+=1
+                else: y_point+=1
             object_depth.destroy_node()
-            object_depth = ObjectDepth((x_center, y_center))
+            object_depth = ObjectDepth((x_point, y_point))
             rclpy.spin_once(object_depth)
             print("Z_value:", object_depth.dist_z)
             sleep(0.2)
