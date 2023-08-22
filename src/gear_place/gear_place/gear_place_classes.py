@@ -15,7 +15,7 @@ from gear_place_interfaces.srv import (
     PickUpGear,
     MoveToPosition,
     PutGearDown,
-    PickUpMovingGear
+    PickUpMovingGear,
 )
 
 from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
@@ -55,8 +55,6 @@ class GearPlace(Node):
             MoveToPosition, "move_to_position"
         )
         self.put_gear_down_client = self.create_client(PutGearDown, "put_gear_down")
-
-        
 
     def wait(self, duration: float):
         # self.get_logger().info(f"Waiting for {duration} seconds...")
@@ -130,7 +128,9 @@ class GearPlace(Node):
         """
         self.x_offset = 0.039  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
-        z_movement = -0.247 # z distance from the home position to where the gripper can grab the gear
+        z_movement = (
+            -0.247
+        )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         gear_center_target = [0 for i in range(3)]
         while (
@@ -222,14 +222,16 @@ class GearPlace(Node):
         if not result.success:
             self.get_logger().error(f"Unable to put gear down")
             raise Error("Unable to put gear down")
-        
+
     def _call_pick_up_moving_gear_service(self, object_width):
         """
         Calls the pick_up_gear callback
         """
         self.x_offset = 0.039  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
-        z_movement = -0.247 # z distance from the home position to where the gripper can grab the gear
+        z_movement = (
+            -0.247
+        )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         gear_center_target = [0 for i in range(3)]
         while (
@@ -269,7 +271,9 @@ class GearPlace(Node):
         request.z = z_movement
         request.object_width = object_width
 
-        future = self.create_client(PickUpMovingGear, "pick_up_gear").call_async(request)
+        future = self.create_client(PickUpMovingGear, "pick_up_gear").call_async(
+            request
+        )
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=30)
 
@@ -282,7 +286,7 @@ class GearPlace(Node):
         if not result.success:
             self.get_logger().error(f"Unable to pick up gear")
             raise Error("Unable to pick up gear")
-        
+
     def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
         """
         Calls the move_to_position callback
