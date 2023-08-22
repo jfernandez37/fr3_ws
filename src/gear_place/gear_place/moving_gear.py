@@ -4,13 +4,14 @@ from gear_place.object_depth import ObjectDepth
 from time import time
 import rclpy
 
-class MovingGear():
+
+class MovingGear:
     def __init__(self):
         self.times = []
         self.x_vals = []
         self.y_vals = []
         self.start_time = time()
-        while len(self.x_vals)<2:
+        while len(self.x_vals) < 2:
             gear_center_values = [0]
             find_object = FindObject()
             rclpy.spin_once(find_object)
@@ -21,12 +22,12 @@ class MovingGear():
                 find_object.destroy_node()
                 gear_center_values[0] = object_depth.dist_z
                 print(gear_center_values)
-                if gear_center_values.count(0)==0:
-                    self.times.append(time()-self.start_time)
+                if gear_center_values.count(0) == 0:
+                    self.times.append(time() - self.start_time)
                     self.x_vals.append(object_depth.dist_x)
                     self.y_vals.append(object_depth.dist_y)
-        
-    def point_from_time(self, t:float):
-        x_val = (self.x_vals[1]-self.x_vals[0])/(self.times[1]-self.times[0])*(t-self.times[1])+self.x_vals[1]
-        y_val = (self.y_vals[1]-self.y_vals[0])/(self.times[1]-self.times[0])*(t-self.times[1])+self.y_vals[1]
-        return (x_val, y_val)    
+
+    def point_from_time(self, t: float):
+        x_val = (self.x_vals[1] - self.x_vals[0]) / (self.times[1] - self.times[0]) * (t - self.times[1]) + self.x_vals[1]
+        y_val = (self.y_vals[1] - self.y_vals[0]) / (self.times[1] - self.times[0]) * (t - self.times[1]) + self.y_vals[1]
+        return (x_val, y_val)
