@@ -11,6 +11,7 @@
 #include <gear_place_interfaces/srv/move_to_conveyor.hpp>
 #include <gear_place_interfaces/srv/move_to_position.hpp>
 #include <gear_place_interfaces/srv/put_gear_down.hpp>
+#include <gear_place_interfaces/srv/pick_up_moving_gear.hpp>
 
 #include <std_msgs/msg/string.hpp>
 
@@ -71,6 +72,7 @@ private:
   rclcpp::Service<gear_place_interfaces::srv::PickUpGear>::SharedPtr pick_up_gear_srv_;
   rclcpp::Service<gear_place_interfaces::srv::MoveToPosition>::SharedPtr move_to_position_srv_;
   rclcpp::Service<gear_place_interfaces::srv::PutGearDown>::SharedPtr put_gear_down_srv_;
+  rclcpp::Service<gear_place_interfaces::srv::PickUpMovingGear>::SharedPtr pick_up_moving_gear_srv_;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
@@ -118,6 +120,8 @@ private:
                             std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Response> response);
   void put_gear_down_cb_(const std::shared_ptr<gear_place_interfaces::srv::PutGearDown::Request> request,
                          std::shared_ptr<gear_place_interfaces::srv::PutGearDown::Response> response);
+  void pick_up_moving_gear_cb_(const std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Request> request,
+                         std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Response> response);
   
   // Methods
   void move_robot_to_frame(KDL::Frame);

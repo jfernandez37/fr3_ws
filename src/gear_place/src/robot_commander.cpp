@@ -298,13 +298,6 @@ void RobotCommander::put_gear_down_cb_(
     response->success = false;
     return;
   }
-
-  gripper_state_ = gripper_->readOnce();
-  if (!gripper_state_.is_grasped)
-  {
-    RCLCPP_WARN(get_logger(), "Object was not grasped");
-    response->success = false;
-  }
   response->success = true;
 }
 
@@ -330,7 +323,34 @@ void RobotCommander::move_to_position_cb_(
   }
   response->success = true;
 }
+void RobotCommander::pick_up_moving_gear_cb_(
+    const std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Request> request,
+    std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Response> response)
+{
+  /*
+  Moves to above the object, opens the gripper, moves down to the object, grasps it, and picks it up.
+  Returns false if the object is not grasped or if there is an issue moving to it.
+  */
+  try
+  {
+    
+  }
+  catch (CommanderError &e)
+  {
+    std::string err = e.what();
+    RCLCPP_ERROR(get_logger(), err.c_str());
+    response->success = false;
+    return;
+  }
 
+  gripper_state_ = gripper_->readOnce();
+  if (!gripper_state_.is_grasped)
+  {
+    RCLCPP_WARN(get_logger(), "Object was not grasped");
+    response->success = false;
+  }
+  response->success = true;
+}
 void RobotCommander::open_gripper()
 {
   /*
