@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import rclpy
 from gear_place.moving_gear import MovingGear
-from time import time
     
 def main(args=None):
     rclpy.init(args=args)
