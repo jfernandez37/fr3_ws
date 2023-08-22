@@ -58,6 +58,7 @@ install(PROGRAMS
 nodes/gear_place_node.py
 nodes/find_object_node.py
 nodes/point_cloud_node.py
+nodes/moving_gear_node.py
 DESTINATION lib/${PROJECT_NAME}
 )
 install(TARGETS ${PROJECT_NAME}
