@@ -234,9 +234,10 @@ class GearPlace(Node):
         """
 
         moving_gear = MovingGear()
+        z_movement = -0.2465
         velocity = 0.15
         acceleration = 0.2
-        pick_up_constant = 3 #time that it takes for the fr3 to move down and grasp the gear
+        pick_up_constant = velocity/acceleration+abs(z_movement)/velocity+2 #time that it takes for the fr3 to move down and grasp the gear
         slope, intercept = moving_gear.distance_formula()
 
         intersection_time = (
@@ -256,7 +257,7 @@ class GearPlace(Node):
         request = PickUpMovingGear.Request()
 
         request.x, request.y = moving_gear.point_from_time(intersection_time)
-        request.z = -0.2465
+        request.z = z_movement
         request.object_width = object_width
 
         future = self.create_client(PickUpMovingGear, "pick_up_moving_gear").call_async(
