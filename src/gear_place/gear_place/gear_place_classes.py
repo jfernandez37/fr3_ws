@@ -36,9 +36,9 @@ class Error(Exception):
         return repr(self.value)
 
 
+def norm(x: float, y: float, z: float):
+    return __import__("math").sqrt(x**2 + y**2 + z**2)
 
-def norm(x:float, y:float, z:float):
-    return __import__("math").sqrt(x**2+y**2+z**2)
 
 class GearPlace(Node):
     def _init__(self):
@@ -237,17 +237,25 @@ class GearPlace(Node):
         velocity = 0.15
         acceleration = 0.2
         pick_up_constant = 3
-        slope,intercept = moving_gear.distance_formula()
-        
-        intersection_time = (-(velocity**2)/acceleration-velocity*pick_up_constant-intercept)/(slope-velocity)
-        distance_at_intersection = moving_gear.distance_to_point(moving_gear.point_from_time(intersection_time))
-        
-        if (velocity**2)/acceleration > distance_at_intersection:
-            velocity = distance_at_intersection/(velocity/acceleration)*0.9
-            intersection_time = (-(velocity**2)/acceleration-velocity*pick_up_constant-intercept)/(slope-velocity)
+        slope, intercept = moving_gear.distance_formula()
+
+        intersection_time = (
+            -(velocity**2) / acceleration - velocity * pick_up_constant - intercept
+        ) / (slope - velocity)
+        distance_at_intersection = moving_gear.distance_to_point(
+            moving_gear.point_from_time(intersection_time)
+        )
+
+        if (velocity**2) / acceleration > distance_at_intersection:
+            velocity = distance_at_intersection / (velocity / acceleration) * 0.9
+            intersection_time = (
+                -(velocity**2) / acceleration
+                - velocity * pick_up_constant
+                - intercept
+            ) / (slope - velocity)
         request = PickUpMovingGear.Request()
 
-        request.x,request.y = moving_gear.point_from_time(intersection_time)
+        request.x, request.y = moving_gear.point_from_time(intersection_time)
         request.z = -0.2465
         request.object_width = object_width
 
