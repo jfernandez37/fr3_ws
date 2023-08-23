@@ -84,9 +84,9 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       std::bind(&RobotCommander::put_gear_down_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
   open_gripper_srv_ = this->create_service<gear_place_interfaces::srv::OpenGripper>(
-    "open_gripper",
-    std::bind(&RobotCommander::open_gripper_cb_, this,
-    std::placeholders::_1, std::placeholders::_2));
+      "open_gripper",
+      std::bind(&RobotCommander::open_gripper_cb_, this,
+                std::placeholders::_1, std::placeholders::_2));
 
   pick_up_moving_gear_srv_ = this->create_service<gear_place_interfaces::srv::PickUpMovingGear>(
       "pick_up_moving_gear",
@@ -366,9 +366,9 @@ void RobotCommander::pick_up_moving_gear_cb_(
   }
   response->success = true;
 }
-void RobotCommander::pick_up_moving_gear_cb_(
-    const std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Request> request,
-    std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Response> response)
+void RobotCommander::open_gripper_cb_(
+    const std::shared_ptr<gear_place_interfaces::srv::OpenGripper::Request> request,
+    std::shared_ptr<gear_place_interfaces::srv::OpenGripper::Response> response)
 {
   /*
   Moves to above the object, opens the gripper, moves down to the object, grasps it, and picks it up.
