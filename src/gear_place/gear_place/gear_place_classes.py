@@ -25,6 +25,7 @@ from geometry_msgs.msg import Pose, Point
 
 from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
+from gear_place.moving_gear import MovingGear
 
 
 class Error(Exception):
@@ -34,6 +35,10 @@ class Error(Exception):
     def __str__(self):
         return repr(self.value)
 
+
+
+def norm(x:float, y:float, z:float):
+    return __import__("math").sqrt(x**2+y**2+z**2)
 
 class GearPlace(Node):
     def _init__(self):
@@ -225,50 +230,21 @@ class GearPlace(Node):
 
     def _call_pick_up_moving_gear_service(self, object_width):
         """
-        Calls the pick_up_gear callback
+        Calls the pick_up_moving_gear callback
         """
-        self.x_offset = 0.039  # offset from the camera to the gripper
-        self.y_offset = 0.03  # offset from the camera to the gripper
-        z_movement = (
-            -0.247
-        )  # z distance from the home position to where the gripper can grab the gear
-        self.get_logger().info(f"Picking up gear")
-        gear_center_target = [0 for i in range(3)]
-        while (
-            gear_center_target.count(0) == 3 or None in gear_center_target
-        ):  # runs until valid coordinates are found
-            find_object = FindObject()
-            rclpy.spin_once(find_object)  # Finds the gear
-            c = 0
-            while (
-                find_object.ret_cent_gear().count(None) != 0
-            ):  # Runs and guarantees that none of the coordinates are none type
-                c += 1
 
-                if c % 5 == 0:
-                    self._call_move_cartesian_service(
-                        0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
-                    )  # Moves to the center of the cart
-                    sleep(1)
-                else:
-                    find_object.destroy_node()
-                    find_object = FindObject()
-                    rclpy.spin_once(find_object)
-            object_depth = ObjectDepth(find_object.ret_cent_gear())
-            rclpy.spin_once(object_depth)  # Gets the distance from the camera
-            object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-            find_object.destroy_node()
-            gear_center_target[0] = object_depth.dist_x
-            gear_center_target[1] = object_depth.dist_y
-            gear_center_target[2] = object_depth.dist_z
-            sleep(0.2)  # sleeps between tries
-        print(gear_center_target)
-
+        moving_gear = MovingGear()
+        velocity = 0.15
+        acceleration = 0.2
+        pick_up_constant = 3
+        slope,intercept = moving_gear.distance_formula()
+        
+        intersection_time = (-(velocity**2)/acceleration-velocity*pick_up_constant-intercept)/(slope-velocity)
+        
         request = PickUpMovingGear.Request()
 
-        request.x = -1 * object_depth.dist_y + self.x_offset
-        request.y = -1 * object_depth.dist_x + self.y_offset
-        request.z = z_movement
+        request.x,request.y = moving_gear.point_from_time(intersection_time)
+        request.z = -0.2465
         request.object_width = object_width
 
         future = self.create_client(PickUpMovingGear, "pick_up_gear").call_async(

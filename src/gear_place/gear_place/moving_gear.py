@@ -3,7 +3,7 @@ from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 from time import time
 import rclpy
-
+from math import sqrt
 
 class MovingGear:
     def __init__(self):
@@ -31,3 +31,16 @@ class MovingGear:
         x_val = (self.x_vals[1] - self.x_vals[0]) / (self.times[1] - self.times[0]) * (t - self.times[1]) + self.x_vals[1]
         y_val = (self.y_vals[1] - self.y_vals[0]) / (self.times[1] - self.times[0]) * (t - self.times[1]) + self.y_vals[1]
         return (x_val, y_val)
+
+    def distance_to_point(self, p: tuple):
+        return sqrt(sum([v**2 for v in p]))
+
+    def distance_formula(self):
+        time_vals = []
+        distances = []
+        for i in range(1,3):
+            time_vals.append(i)
+            distances.append(self.distance_to_point(self.point_from_time(i)))
+        slope=(distances[1]-distances[0])/(time_vals[1]-time_vals[0])
+        intercept=distances[1]-(time_vals[1]*slope)
+        return slope, intercept
