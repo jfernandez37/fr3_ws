@@ -4,6 +4,7 @@ ROS2 package containing all of the code for controlling the robot and using the 
 ## Directories
 ### gear_place
 * `find_object.py` - Contains all of the code to use the depth image from the Realsense camera to identify the gear using OpenCV contours and returns the pixel coordinates of the center of the gear. For different depths, thresh value needs to be changed to recognize the gear
+* `moving_gear.py` - Contains all of the code used to detect the moving gear and give the coordinates for the fr3 to move to the correct position
 * `gear_place_classes.py` - Contains all of the code to call services like move_cartesian or move_to_named_pose
 * `object_depth.py` - Contains all of the code to use the pointoud to find the distance between the camera and the top of the gear
 * `transform_utils.py` - Contains all functions to convert transforms to different forms
@@ -19,6 +20,7 @@ ROS2 package containing all of the code for controlling the robot and using the 
 ### nodes
 * `find_object_node.py` - Node used for testing the realsense gear detection using the depth camera
 * `gear_place_node.py` - Node that combines everything and moves the robot to above the gear, picks it up, moves to the conveyor belt, and places the gear on the conveyor belt
+* `moving_gear_node.py` - Node for testing the detection of a moving gear. Also estimates the distance from the center of the gear to the center of the camera
 * `point_cloud_node.py` - Node for testing the point cloud. The points are read in and then printed for a hard coded coordinate
 * `robot_commander_node.cpp` - Starts the robot commander so the robot can be moved
 
