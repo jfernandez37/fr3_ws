@@ -34,7 +34,7 @@ class MovingGear:
                     self.found_gear = True
                 object_depth.destroy_node()
             find_object.destroy_node()
-            if c%15==0:
+            if c%4==0:
                 return
 
     def point_from_time(self, t: float):
