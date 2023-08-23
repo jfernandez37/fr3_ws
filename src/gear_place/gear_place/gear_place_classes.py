@@ -240,14 +240,18 @@ class GearPlace(Node):
         slope,intercept = moving_gear.distance_formula()
         
         intersection_time = (-(velocity**2)/acceleration-velocity*pick_up_constant-intercept)/(slope-velocity)
+        distance_at_intersection = moving_gear.distance_to_point(moving_gear.point_from_time(intersection_time))
         
+        if (velocity**2)/acceleration > distance_at_intersection:
+            velocity = distance_at_intersection/(velocity/acceleration)*0.9
+            intersection_time = (-(velocity**2)/acceleration-velocity*pick_up_constant-intercept)/(slope-velocity)
         request = PickUpMovingGear.Request()
 
         request.x,request.y = moving_gear.point_from_time(intersection_time)
         request.z = -0.2465
         request.object_width = object_width
 
-        future = self.create_client(PickUpMovingGear, "pick_up_gear").call_async(
+        future = self.create_client(PickUpMovingGear, "pick_up_moving_gear").call_async(
             request
         )
 
