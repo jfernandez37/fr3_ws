@@ -371,8 +371,7 @@ void RobotCommander::open_gripper_cb_(
     std::shared_ptr<gear_place_interfaces::srv::OpenGripper::Response> response)
 {
   /*
-  Moves to above the object, opens the gripper, moves down to the object, grasps it, and picks it up.
-  Returns false if the object is not grasped or if there is an issue moving to it.
+  Opens the gripper
   */
   try
   {
