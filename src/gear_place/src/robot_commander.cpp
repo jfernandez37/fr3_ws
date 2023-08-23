@@ -84,6 +84,11 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       std::bind(&RobotCommander::put_gear_down_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
 
+  pick_up_moving_gear_srv_ = this->create_service<gear_place_interfaces::srv::PickUpMovingGear>(
+      "pick_up_moving_gear",
+      std::bind(&RobotCommander::pick_up_moving_gear_cb_, this,
+                std::placeholders::_1, std::placeholders::_2));
+
   std::srand(std::time(0)); // use current time as seed for random generator
 }
 
