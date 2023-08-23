@@ -11,7 +11,12 @@ class MovingGear:
         self.x_vals = []
         self.y_vals = []
         self.start_time = time()
+        self.found_gear = False
+
+    def run(self):
+        c=0
         while len(self.x_vals) < 2:
+            c+=1
             gear_center_values = [0]
             find_object = FindObject()
             rclpy.spin_once(find_object)
@@ -26,8 +31,11 @@ class MovingGear:
                     self.times.append(time() - self.start_time)
                     self.x_vals.append(object_depth.dist_x)
                     self.y_vals.append(object_depth.dist_y)
+                    self.found_gear = True
                 object_depth.destroy_node()
             find_object.destroy_node()
+            if c%15==0:
+                return
 
     def point_from_time(self, t: float):
         x_val = (self.x_vals[1] - self.x_vals[0]) / (self.times[1] - self.times[0]) * (t - self.times[1]) + self.x_vals[1]

@@ -232,8 +232,16 @@ class GearPlace(Node):
         """
         Calls the pick_up_moving_gear callback
         """
-
         moving_gear = MovingGear()
+        c=0
+        while not moving_gear.found_gear:
+            moving_gear.run()
+            if not moving_gear.found_gear:
+                c+=1
+                self._call_move_cartesian_service(
+                        0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
+                )  # Moves to the center of the cart
+                sleep(1)
         self.x_offset = 0.039  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = -0.2465
