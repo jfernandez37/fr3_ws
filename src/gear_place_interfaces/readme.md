@@ -8,3 +8,4 @@ ROS2 package containing all of the services and messages necessary for the ROS2 
 * `move_to_conveyor` - XYZ value to move the robot to the conveyor belt. The robot then moves in the x and y direction, goes down to the conveyor belt, releases the gear, and moves back up.
 * `move_to_position` - Moves to an XYZ location with a given rotation for the gripper.
 * `put_gear_down` - Takes in a z value. Goes down the given z value minus an offset, opens the gripper, and moves back up the same z distance.
+* `pick_up_moving_gear` - Takes the xyz value and picks up the gear. The values need to calculated before hand using the camera.
