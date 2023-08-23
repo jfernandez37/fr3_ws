@@ -236,7 +236,7 @@ class GearPlace(Node):
         moving_gear = MovingGear()
         velocity = 0.15
         acceleration = 0.2
-        pick_up_constant = 3
+        pick_up_constant = 3 #time that it takes for the fr3 to move down and grasp the gear
         slope, intercept = moving_gear.distance_formula()
 
         intersection_time = (
