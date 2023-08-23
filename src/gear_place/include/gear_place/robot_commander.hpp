@@ -123,10 +123,10 @@ private:
   void put_gear_down_cb_(const std::shared_ptr<gear_place_interfaces::srv::PutGearDown::Request> request,
                          std::shared_ptr<gear_place_interfaces::srv::PutGearDown::Response> response);
   void pick_up_moving_gear_cb_(const std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Request> request,
-                         std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Response> response);
+                               std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Response> response);
   void open_gripper_cb_(const std::shared_ptr<gear_place_interfaces::srv::OpenGripper::Request> request,
                         std::shared_ptr<gear_place_interfaces::srv::OpenGripper::Response> response);
-  
+
   // Methods
   void move_robot_to_frame(KDL::Frame);
   void move_robot_cartesian(double, double, double, double, double);

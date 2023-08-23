@@ -10,7 +10,7 @@ def main(args=None):
         print(
             f"After {round(moving_gear.times[1]+i/4,2)} seconds from starting time, the gear is ",
             str(moving_gear.point_from_time(moving_gear.times[1] + i / 4)),
-            "away from the center of the camera"
+            "away from the center of the camera",
         )
     rclpy.shutdown()
 

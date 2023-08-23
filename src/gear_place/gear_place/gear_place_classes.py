@@ -16,7 +16,7 @@ from gear_place_interfaces.srv import (
     MoveToPosition,
     PutGearDown,
     PickUpMovingGear,
-    OpenGripper
+    OpenGripper,
 )
 
 from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
@@ -234,13 +234,13 @@ class GearPlace(Node):
         Calls the pick_up_moving_gear callback
         """
         moving_gear = MovingGear()
-        c=0
-        while not moving_gear.found_gear or len(moving_gear.x_vals)==0:
+        c = 0
+        while not moving_gear.found_gear or len(moving_gear.x_vals) == 0:
             moving_gear.run()
             if not moving_gear.found_gear:
-                c+=1
+                c += 1
                 self._call_move_cartesian_service(
-                        0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
+                    0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
                 )  # Moves to the center of the cart
                 sleep(1)
         self.x_offset = 0.039  # offset from the camera to the gripper
@@ -248,7 +248,9 @@ class GearPlace(Node):
         z_movement = -0.2465
         velocity = 0.15
         acceleration = 0.2
-        pick_up_constant = velocity/acceleration+abs(z_movement)/velocity+4.05 #time that it takes for the fr3 to open gripper,move down, and grasp the gear
+        pick_up_constant = (
+            velocity / acceleration + abs(z_movement) / velocity + 4.05
+        )  # time that it takes for the fr3 to open gripper,move down, and grasp the gear
         slope, intercept = moving_gear.distance_formula()
 
         intersection_time = (
@@ -267,7 +269,7 @@ class GearPlace(Node):
             ) / (slope - velocity)
         request = PickUpMovingGear.Request()
         x_value, y_value = moving_gear.point_from_time(intersection_time)
-        request.x = y_value * -1 + self.x_offset 
+        request.x = y_value * -1 + self.x_offset
         request.y = x_value * -1 + self.y_offset
         request.z = z_movement
         request.object_width = object_width
@@ -310,7 +312,7 @@ class GearPlace(Node):
 
         if not result.success:
             raise Error(f"Unable to move to desired position [{p.x}, {p.y}, {p.z}]")
-        
+
     def _call_open_gripper_service(self):
         """
         Calls the move_to_position callback
@@ -319,7 +321,7 @@ class GearPlace(Node):
 
         request = OpenGripper.Request()
 
-        future = self.create_client(OpenGripper,"open_gripper").call_async(request)
+        future = self.create_client(OpenGripper, "open_gripper").call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=8)
 

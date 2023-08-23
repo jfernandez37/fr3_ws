@@ -5,6 +5,7 @@ from time import time
 import rclpy
 from math import sqrt
 
+
 class MovingGear:
     def __init__(self):
         self.times = []
@@ -15,9 +16,9 @@ class MovingGear:
 
     def run(self):
         self.found_gear = False
-        c=0
+        c = 0
         while len(self.x_vals) < 2:
-            c+=1
+            c += 1
             gear_center_values = [0]
             find_object = FindObject()
             rclpy.spin_once(find_object)
@@ -35,18 +36,22 @@ class MovingGear:
                     self.found_gear = True
                 object_depth.destroy_node()
             find_object.destroy_node()
-            if c%6==0:
+            if c % 6 == 0:
                 self.x_vals = []
                 self.y_vals = []
                 self.times = []
                 return
 
     def point_from_time(self, t: float):
-        print("xvals:",self.x_vals)
+        print("xvals:", self.x_vals)
         print("yvals", self.y_vals)
         print("times", self.times)
-        x_val = (self.x_vals[1] - self.x_vals[0]) / (self.times[1] - self.times[0]) * (t - self.times[1]) + self.x_vals[1]
-        y_val = (self.y_vals[1] - self.y_vals[0]) / (self.times[1] - self.times[0]) * (t - self.times[1]) + self.y_vals[1]
+        x_val = (self.x_vals[1] - self.x_vals[0]) / (self.times[1] - self.times[0]) * (
+            t - self.times[1]
+        ) + self.x_vals[1]
+        y_val = (self.y_vals[1] - self.y_vals[0]) / (self.times[1] - self.times[0]) * (
+            t - self.times[1]
+        ) + self.y_vals[1]
         return (x_val, y_val)
 
     def distance_to_point(self, p: tuple):
@@ -55,9 +60,9 @@ class MovingGear:
     def distance_formula(self):
         time_vals = []
         distances = []
-        for i in range(1,3):
+        for i in range(1, 3):
             time_vals.append(i)
             distances.append(self.distance_to_point(self.point_from_time(i)))
-        slope=(distances[1]-distances[0])/(time_vals[1]-time_vals[0])
-        intercept=distances[1]-(time_vals[1]*slope)
+        slope = (distances[1] - distances[0]) / (time_vals[1] - time_vals[0])
+        intercept = distances[1] - (time_vals[1] * slope)
         return slope, intercept
