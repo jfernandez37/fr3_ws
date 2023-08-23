@@ -234,6 +234,8 @@ class GearPlace(Node):
         """
 
         moving_gear = MovingGear()
+        self.x_offset = 0.039  # offset from the camera to the gripper
+        self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = -0.2465
         velocity = 0.15
         acceleration = 0.2
