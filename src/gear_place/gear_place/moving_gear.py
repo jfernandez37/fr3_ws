@@ -26,6 +26,8 @@ class MovingGear:
                     self.times.append(time() - self.start_time)
                     self.x_vals.append(object_depth.dist_x)
                     self.y_vals.append(object_depth.dist_y)
+                object_depth.destroy_node()
+            find_object.destroy_node()
 
     def point_from_time(self, t: float):
         x_val = (self.x_vals[1] - self.x_vals[0]) / (self.times[1] - self.times[0]) * (t - self.times[1]) + self.x_vals[1]
