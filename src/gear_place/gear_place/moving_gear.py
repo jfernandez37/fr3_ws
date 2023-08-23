@@ -14,6 +14,7 @@ class MovingGear:
         self.found_gear = False
 
     def run(self):
+        self.found_gear = False
         c=0
         while len(self.x_vals) < 2:
             c+=1

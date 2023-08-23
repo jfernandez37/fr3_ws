@@ -234,7 +234,7 @@ class GearPlace(Node):
         """
         moving_gear = MovingGear()
         c=0
-        while not moving_gear.found_gear:
+        while not moving_gear.found_gear or len(moving_gear.x_vals)==0:
             moving_gear.run()
             if not moving_gear.found_gear:
                 c+=1
