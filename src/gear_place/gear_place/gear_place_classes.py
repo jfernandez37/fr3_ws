@@ -233,12 +233,22 @@ class GearPlace(Node):
         """
         Calls the pick_up_moving_gear callback
         """
-
         moving_gear = MovingGear()
+        c=0
+        while not moving_gear.found_gear or len(moving_gear.x_vals)==0:
+            moving_gear.run()
+            if not moving_gear.found_gear:
+                c+=1
+                self._call_move_cartesian_service(
+                        0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
+                )  # Moves to the center of the cart
+                sleep(1)
+        self.x_offset = 0.039  # offset from the camera to the gripper
+        self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = -0.2465
         velocity = 0.15
         acceleration = 0.2
-        pick_up_constant = velocity/acceleration+abs(z_movement)/velocity+2 #time that it takes for the fr3 to open gripper,move down, and grasp the gear
+        pick_up_constant = velocity/acceleration+abs(z_movement)/velocity+4.05 #time that it takes for the fr3 to open gripper,move down, and grasp the gear
         slope, intercept = moving_gear.distance_formula()
 
         intersection_time = (
