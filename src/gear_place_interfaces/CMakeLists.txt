@@ -21,6 +21,7 @@ set(srv_files
   "srv/MoveToPosition.srv"
   "srv/PutGearDown.srv"
   "srv/PickUpMovingGear.srv"
+  "srv/OpenGripper.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}

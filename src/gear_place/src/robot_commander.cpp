@@ -83,6 +83,10 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       "put_gear_down",
       std::bind(&RobotCommander::put_gear_down_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
+  open_gripper_srv_ = this->create_service<gear_place_interfaces::srv::OpenGripper>(
+    "open_gripper",
+    std::bind(&RobotCommander::open_gripper_cb_, this,
+    std::placeholders::_1, std::placeholders::_2));
 
   std::srand(std::time(0)); // use current time as seed for random generator
 }
@@ -334,8 +338,6 @@ void RobotCommander::pick_up_moving_gear_cb_(
   try
   {
     move_robot_cartesian(request->x, request->y, 0, default_velocity_, default_acceleration_);
-    sleep(wait_time_);
-    open_gripper();
     sleep(wait_time_ + 1.0);
     move_robot_cartesian(0, 0, request->z, default_velocity_, default_acceleration_);
     sleep(wait_time_);
@@ -356,6 +358,27 @@ void RobotCommander::pick_up_moving_gear_cb_(
   {
     RCLCPP_WARN(get_logger(), "Object was not grasped");
     response->success = false;
+  }
+  response->success = true;
+}
+void RobotCommander::pick_up_moving_gear_cb_(
+    const std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Request> request,
+    std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Response> response)
+{
+  /*
+  Moves to above the object, opens the gripper, moves down to the object, grasps it, and picks it up.
+  Returns false if the object is not grasped or if there is an issue moving to it.
+  */
+  try
+  {
+    open_gripper();
+  }
+  catch (CommanderError &e)
+  {
+    std::string err = e.what();
+    RCLCPP_ERROR(get_logger(), err.c_str());
+    response->success = false;
+    return;
   }
   response->success = true;
 }

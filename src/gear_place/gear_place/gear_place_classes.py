@@ -16,6 +16,7 @@ from gear_place_interfaces.srv import (
     MoveToPosition,
     PutGearDown,
     PickUpMovingGear,
+    OpenGripper
 )
 
 from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
@@ -299,6 +300,27 @@ class GearPlace(Node):
 
         if not result.success:
             raise Error(f"Unable to move to desired position [{p.x}, {p.y}, {p.z}]")
+        
+    def _call_open_gripper_service(self):
+        """
+        Calls the move_to_position callback
+        """
+        self.get_logger().info("Opening gripper")
+
+        request = OpenGripper.Request()
+
+        future = self.create_client(OpenGripper,"open_gripper").call_async(request)
+
+        rclpy.spin_until_future_complete(self, future, timeout_sec=8)
+
+        if not future.done():
+            raise Error("Timeout reached when calling move_to_position service")
+
+        result: OpenGripper.Response
+        result = future.result()
+
+        if not result.success:
+            raise Error("Unable to move to open gripper")
 
     def _calculate_world_pose(self, frame_id: str, rel_pose: Pose) -> Pose:
         """
