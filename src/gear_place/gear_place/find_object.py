@@ -79,7 +79,7 @@ class FindObject(Node):
         for i in range(len(self.cv_image)):
             for j in range(len(self.cv_image[i])):
                 if self.cv_image[i][j] != 255:
-                    for i in range(10):
+                    for i in range(4):
                         c += 1
                         self.cv_image[i][j] -= 50
                         self.cv_image[i][j] = min(255, self.cv_image[i][j] * 10)
