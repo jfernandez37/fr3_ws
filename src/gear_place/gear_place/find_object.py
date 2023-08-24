@@ -71,18 +71,14 @@ class FindObject(Node):
         alpha = 2.5  # Contrast control (1.0-3.0)
         beta = -65  # Brightness control (-100-100)
         self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
-        # for i in range(len(self.cv_image)):
-        #     for j in range(len(self.cv_image[i])):
-        #         if self.cv_image[i][j] < 10 or 180 < self.cv_image[i][j]:
-        #             self.cv_image[i][j] = 255
         c = 0
-        for i in range(0,len(self.cv_image),2):
-            for j in range(0,len(self.cv_image[i]),2):
-                if self.cv_image[i][j] != 255:
-                    for i in range(4):
-                        c += 1
-                        self.cv_image[i][j] -= 50
-                        self.cv_image[i][j] = min(255, self.cv_image[i][j] * 10)
+        # for i in range(0,len(self.cv_image),2):
+        #     for j in range(0,len(self.cv_image[i]),2):
+        #         if self.cv_image[i][j] != 255:
+        #             for i in range(4):
+        #                 c += 1
+        #                 self.cv_image[i][j] -= 50
+        #                 self.cv_image[i][j] = min(255, self.cv_image[i][j] * 10)
         self.original_image = self.cv_image.copy()
         blurred_img = cv2.GaussianBlur(self.cv_image, (7, 7), 0)
         for i in range(3):
@@ -116,26 +112,13 @@ class FindObject(Node):
             f"Gear found at thresh value {thresh_value}! {before_remove - len(contours)} contours were removed. Took {c} different "
             + ("threshold" if c == 1 else "thresholds")
         )
-        # cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
         (x, y), self.radius = cv2.minEnclosingCircle(contours[closest_to_circle])
         self.gx = int(x)
         self.gy = int(y)
-        # cv2.circle(
-        #     self.cv_image, (self.gx, self.gy), int(self.radius), (255, 255, 255), 2
-        # )
         try:
             (h, w) = self.cv_image.shape[:2]
             self.cx = w // 2
             self.cy = h // 2
-            # cv2.circle(self.cv_image, (w // 2, h // 2), 7, (255, 255, 255), -1)
-            # cv2.circle(
-            #     self.cv_image,
-            #     (self.gx, self.gy),
-            #     10,
-            #     color=(255, 255, 255),
-            #     thickness=-1,
-            # )
-            # print(contour_to_circle_ratio)
         except:
             self.get_logger.error("Error: Contour does not form a single shape")
         self.get_logger().info(
