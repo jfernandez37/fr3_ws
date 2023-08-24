@@ -71,10 +71,10 @@ class FindObject(Node):
         alpha = 2.5  # Contrast control (1.0-3.0)
         beta = -65  # Brightness control (-100-100)
         self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
-        for i in range(len(self.cv_image)):
-            for j in range(len(self.cv_image[i])):
-                if self.cv_image[i][j] < 10 or 180 < self.cv_image[i][j]:
-                    self.cv_image[i][j] = 255
+        # for i in range(len(self.cv_image)):
+        #     for j in range(len(self.cv_image[i])):
+        #         if self.cv_image[i][j] < 10 or 180 < self.cv_image[i][j]:
+        #             self.cv_image[i][j] = 255
         c = 0
         for i in range(len(self.cv_image)):
             for j in range(len(self.cv_image[i])):
