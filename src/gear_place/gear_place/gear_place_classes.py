@@ -151,9 +151,9 @@ class GearPlace(Node):
                 c += 1
 
                 if c % 5 == 0:
-                    self._call_move_cartesian_service(
-                        0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
-                    )  # Moves to the center of the cart
+                    # self._call_move_cartesian_service(
+                    #     0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
+                    # )  # Moves to the center of the cart
                     sleep(1)
                 else:
                     find_object.destroy_node()
