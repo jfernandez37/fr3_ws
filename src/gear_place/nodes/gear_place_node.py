@@ -3,8 +3,6 @@
 import rclpy
 from gear_place.gear_place_classes import GearPlace, Error, ConveyorClass
 
-from time import sleep
-
 
 def main(args=None):
     rclpy.init(args=args)
