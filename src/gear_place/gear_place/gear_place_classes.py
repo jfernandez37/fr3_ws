@@ -249,7 +249,7 @@ class GearPlace(Node):
         velocity = 0.15
         acceleration = 0.2
         pick_up_constant = (
-            velocity / acceleration + abs(z_movement) / velocity + 0.05
+            velocity / acceleration + abs(z_movement) / velocity + 0.1
         )  # time that it takes for the fr3 to open gripper,move down, and grasp the gear
         slope, intercept = moving_gear.distance_formula()
 
