@@ -102,10 +102,8 @@ class FindObject(Node):
             before_remove = len(contours)
             contours = self.remove_bad_contours(contours)
             contours_left = len(contours)
-            if thresh_value == 125:
-                up_down = -1
-            elif thresh_value == 0:
-                up_down = 1
+            if thresh_value == 0:
+                thresh_value = 125
             thresh_value += up_down
             if c >= 125:
                 self.get_logger().info("Gear not found. Trying again")
