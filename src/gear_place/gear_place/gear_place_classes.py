@@ -268,9 +268,13 @@ class GearPlace(Node):
                 - intercept
             ) / (slope - velocity)
         request = PickUpMovingGear.Request()
-        x_value, y_value = moving_gear.point_from_time(intersection_time)
-        request.x = y_value * -1 + self.x_offset
-        request.y = x_value * -1 + self.y_offset
+        if abs(moving_gear.x_vals[1]-moving_gear.x_vals[0])>2 or abs(moving_gear.y_vals[1]-moving_gear.y_vals[0])>2:
+            x_value, y_value = moving_gear.point_from_time(intersection_time)
+            request.x = y_value * -1 + self.x_offset
+            request.y = x_value * -1 + self.y_offset
+        else:
+            request.x = moving_gear.y_vals[0] * -1 + self.x_offset
+            request.y = moving_gear.x_vals[0] * -1 + self.y_offset
         request.z = z_movement
         request.object_width = object_width
 
