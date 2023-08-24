@@ -43,9 +43,6 @@ class MovingGear:
                 return
 
     def point_from_time(self, t: float):
-        print("xvals:", self.x_vals)
-        print("yvals", self.y_vals)
-        print("times", self.times)
         x_val = (self.x_vals[1] - self.x_vals[0]) / (self.times[1] - self.times[0]) * (
             t - self.times[1]
         ) + self.x_vals[1]
