@@ -344,9 +344,7 @@ void RobotCommander::pick_up_moving_gear_cb_(
   {
     move_robot_cartesian(request->x, request->y, 0, default_velocity_, default_acceleration_);
     move_robot_cartesian(0, 0, request->z, default_velocity_, default_acceleration_);
-    clock_t tStart = clock();
     grasp_object(request->object_width);
-    RCLCPP_INFO(get_logger(),"Time taken: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
     move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);
   }
   catch (CommanderError &e)
