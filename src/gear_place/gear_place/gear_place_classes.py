@@ -243,7 +243,7 @@ class GearPlace(Node):
                     0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
                 )  # Moves to the center of the cart
                 sleep(1)
-        self.x_offset = 0.036  # offset from the camera to the gripper
+        self.x_offset = 0.039  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = -0.2465
         velocity = 0.15
