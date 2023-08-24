@@ -102,7 +102,7 @@ class FindObject(Node):
             before_remove = len(contours)
             contours = self.remove_bad_contours(contours)
             contours_left = len(contours)
-            if thresh_value == 255:
+            if thresh_value == 125:
                 up_down = -1
             elif thresh_value == 0:
                 up_down = 1
