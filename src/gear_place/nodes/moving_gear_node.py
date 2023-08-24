@@ -6,7 +6,8 @@ from gear_place.moving_gear import MovingGear
 def main(args=None):
     rclpy.init(args=args)
     moving_gear = MovingGear()
-    moving_gear.run()
+    while len(moving_gear.times)<2:
+        moving_gear.run()
     for i in range(12):
         print(
             f"After {round(moving_gear.times[1]+i/4,2)} seconds from starting time, the gear is ",

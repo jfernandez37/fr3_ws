@@ -88,7 +88,6 @@ class FindObject(Node):
         for i in range(3):
             blurred_img = cv2.GaussianBlur(blurred_img, (7, 7), 0)
         contours_left = 0
-        up_down = 1
         c = 0
         contour_to_circle_ratio = 0.0
         self.get_logger().info("Starting scan")
@@ -117,26 +116,26 @@ class FindObject(Node):
             f"Gear found at thresh value {thresh_value}! {before_remove - len(contours)} contours were removed. Took {c} different "
             + ("threshold" if c == 1 else "thresholds")
         )
-        cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
+        # cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
         (x, y), self.radius = cv2.minEnclosingCircle(contours[closest_to_circle])
         self.gx = int(x)
         self.gy = int(y)
-        cv2.circle(
-            self.cv_image, (self.gx, self.gy), int(self.radius), (255, 255, 255), 2
-        )
+        # cv2.circle(
+        #     self.cv_image, (self.gx, self.gy), int(self.radius), (255, 255, 255), 2
+        # )
         try:
             (h, w) = self.cv_image.shape[:2]
             self.cx = w // 2
             self.cy = h // 2
-            cv2.circle(self.cv_image, (w // 2, h // 2), 7, (255, 255, 255), -1)
-            cv2.circle(
-                self.cv_image,
-                (self.gx, self.gy),
-                10,
-                color=(255, 255, 255),
-                thickness=-1,
-            )
-            print(contour_to_circle_ratio)
+            # cv2.circle(self.cv_image, (w // 2, h // 2), 7, (255, 255, 255), -1)
+            # cv2.circle(
+            #     self.cv_image,
+            #     (self.gx, self.gy),
+            #     10,
+            #     color=(255, 255, 255),
+            #     thickness=-1,
+            # )
+            # print(contour_to_circle_ratio)
         except:
             self.get_logger.error("Error: Contour does not form a single shape")
         self.get_logger().info(
