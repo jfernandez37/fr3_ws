@@ -115,7 +115,7 @@ class FindObject(Node):
         except:
             self.get_logger.error("Error: Contour does not form a single shape")
         self.get_logger().info(
-            f"X coordinate for gear: {self.gx}, y coordinate for gear {self.gy}"
+            f"X coordinate for gear: {self.gx}, y coordinate for gear {self.gy}. Circle ratio: {contour_to_circle_ratio}"
         )
 
     def ret_cent_gear(self):
