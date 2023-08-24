@@ -4,7 +4,6 @@ import rclpy
 from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 
-
 def main(args=None):
     rclpy.init(args=args)
 
