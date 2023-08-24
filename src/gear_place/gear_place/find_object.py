@@ -76,8 +76,8 @@ class FindObject(Node):
         #         if self.cv_image[i][j] < 10 or 180 < self.cv_image[i][j]:
         #             self.cv_image[i][j] = 255
         c = 0
-        for i in range(len(self.cv_image)):
-            for j in range(len(self.cv_image[i])):
+        for i in range(0,len(self.cv_image),2):
+            for j in range(0,len(self.cv_image[i]),2):
                 if self.cv_image[i][j] != 255:
                     for i in range(4):
                         c += 1
