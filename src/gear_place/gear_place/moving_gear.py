@@ -11,6 +11,8 @@ class MovingGear:
         self.times = []
         self.x_vals = []
         self.y_vals = []
+        self.x_pix = []
+        self.y_pix = []
         self.start_time = time()
         self.found_gear = False
 
@@ -30,6 +32,9 @@ class MovingGear:
                 gear_center_values[0] = object_depth.dist_z
                 print(gear_center_values)
                 if gear_center_values.count(0) == 0:
+                    x,y = find_object.ret_cent_gear()
+                    self.x_pix.append(x)
+                    self.y_pix.append(y)
                     self.times.append(time() - self.start_time)
                     self.x_vals.append(object_depth.dist_x)
                     self.y_vals.append(object_depth.dist_y)
