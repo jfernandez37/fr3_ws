@@ -61,7 +61,7 @@ class FindObject(Node):
         Then, the functions above are used to find the gear out of all the contours that are found.
         It then finds the center of the gear contour.
         """
-        min_thresh, max_thresh = 0, 255
+        min_thresh, max_thresh = 25, 75
         thresh_value = (
             self.get_parameter("thresh_value").get_parameter_value().integer_value
         )
