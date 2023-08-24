@@ -17,8 +17,8 @@ def main(args=None):
         supervisor._call_move_cartesian_service(-0.27, 0.0, 0.0, 0.15, 0.2)  # Moves to the center of the cart
         supervisor._call_open_gripper_service() # opens the gripper so that time delay is easier to calculate on moving gear pick up
         # while True:
-        supervisor._call_pick_up_gear_service(0.0095) 
-        # supervisor._call_pick_up_moving_gear_service(0.0095)  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
+        # supervisor._call_pick_up_gear_service(0.0095) 
+        supervisor._call_pick_up_moving_gear_service(0.0095)  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
         supervisor._call_move_to_named_pose_service("home")  # starts in the home position
         supervisor._call_put_gear_down_service()  # moves down, releases the gear, and moves back up
         """
