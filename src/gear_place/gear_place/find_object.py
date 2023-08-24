@@ -61,6 +61,7 @@ class FindObject(Node):
         Then, the functions above are used to find the gear out of all the contours that are found.
         It then finds the center of the gear contour.
         """
+        min_thresh, max_thresh = 0,255
         thresh_value = (
             self.get_parameter("thresh_value").get_parameter_value().integer_value
         )
@@ -102,10 +103,10 @@ class FindObject(Node):
             before_remove = len(contours)
             contours = self.remove_bad_contours(contours)
             contours_left = len(contours)
-            if thresh_value == 0:
-                thresh_value = 125
+            if thresh_value == min_thresh:
+                thresh_value = max_thresh
             thresh_value -=1
-            if c >= 125:
+            if c >= max_thresh:
                 self.get_logger().info("Gear not found. Trying again")
                 return
             if contours_left >= 1:
@@ -113,7 +114,7 @@ class FindObject(Node):
                     contours
                 )
         self.get_logger().info(
-            f"Gear found! {before_remove - len(contours)} contours were removed. Took {c} different "
+            f"Gear found at thresh value {thresh_value}! {before_remove - len(contours)} contours were removed. Took {c} different "
             + ("threshold" if c == 1 else "thresholds")
         )
         cv2.drawContours(self.cv_image, contours, -1, (0, 255, 0), 3)
