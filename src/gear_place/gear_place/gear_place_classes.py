@@ -306,7 +306,7 @@ class GearPlace(Node):
             for j in range(i, len(arr)):
                 if (
                     sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
-                    <= 0.003
+                    <= 0.005
                 ):
                     bad_measurements.append(j)
         bad_measurements = sorted(bad_measurements)[::-1]
@@ -355,7 +355,7 @@ class GearPlace(Node):
                 multiple_gears.destroy_node()
             for arr in gear_center_target:
                 distances_from_home.append(
-                    (-1 * arr[1] + x_movements[:ind], -1 * arr[0] + y_movements[:ind])
+                    (-1 * arr[1] + sum(x_movements[:ind]), -1 * arr[0] + sum(y_movements[:ind]))
                 )
             self._call_move_cartesian_service(
                 robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
@@ -382,7 +382,7 @@ class GearPlace(Node):
             multiple_gears.destroy_node()
         for arr in gear_center_target:
             distances_from_home.append(
-                (-1 * arr[1] + x_movements[:ind], -1 * arr[0] + y_movements[:ind])
+                (-1 * arr[1] + sum(x_movements), -1 * arr[0] + sum(y_movements))
             )
 
         distances_from_home = self.remove_identical_points(distances_from_home)
