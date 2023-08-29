@@ -45,4 +45,4 @@ Work space for Franka Emika FR3 robot ROS2 integration
   
     `ros2 launch gear_place gear.launch.py rviz:=True`
   
-This automatically launches the camera with the correct settings, so you do not need to run the camera launch command above.
+    This automatically launches the camera with the correct settings, so you do not need to run the camera launch command above.
