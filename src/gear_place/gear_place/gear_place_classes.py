@@ -360,33 +360,35 @@ class GearPlace(Node):
         #     self._call_move_cartesian_service(
         #         robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
         #     )
-        gear_center_target = [[0 for i in range(3)]]
-        while (
-            [0, 0, 0] in gear_center_target
-            or sum([cent.count(None) for cent in gear_center_target]) > 0
-        ) and len(gear_center_target) > 0:
-            gear_center_target = []
-            multiple_gears = MultipleGears()
-            rclpy.spin_once(multiple_gears)
-            while sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0:
-                multiple_gears.destroy_node()
+        while True:
+            gear_center_target = [[0 for i in range(3)]]
+            while (
+                [0, 0, 0] in gear_center_target
+                or sum([cent.count(None) for cent in gear_center_target]) > 0
+            ) and len(gear_center_target) > 0:
+                gear_center_target = []
                 multiple_gears = MultipleGears()
                 rclpy.spin_once(multiple_gears)
-            for g_center in multiple_gears.g_centers:
-                object_depth = ObjectDepth(g_center)
-                rclpy.spin_once(object_depth)
-                object_depth.destroy_node()
-                gear_center_target.append(
-                    [object_depth.dist_x, object_depth.dist_x, object_depth.dist_x]
-                )
-            multiple_gears.destroy_node()
-        # for arr in gear_center_target:
-        #     distances_from_home.append(
-        #         (-1 * arr[1] + x_movements[:ind], -1 * arr[0] + y_movements[:ind])
-        #     )
+                while sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0:
+                    multiple_gears.destroy_node()
+                    multiple_gears = MultipleGears()
+                    rclpy.spin_once(multiple_gears)
+                for g_center in multiple_gears.g_centers:
+                    object_depth = ObjectDepth(g_center)
+                    rclpy.spin_once(object_depth)
+                    object_depth.destroy_node()
+                    gear_center_target.append(
+                        [object_depth.dist_x, object_depth.dist_x, object_depth.dist_x]
+                    )
+                multiple_gears.destroy_node()
+            # for arr in gear_center_target:
+            #     distances_from_home.append(
+            #         (-1 * arr[1] + x_movements[:ind], -1 * arr[0] + y_movements[:ind])
+            #     )
 
-        distances_from_home = self.remove_identical_points(distances_from_home)
-        self.get_logger().info(f"{len(distances_from_home)} gears found")
+            distances_from_home = self.remove_identical_points(distances_from_home)
+            self.get_logger().info(f"{len(distances_from_home)} gears found")
+            sleep(3)
         for gear_point in distances_from_home:
             self._call_open_gripper_service()
             self._call_move_to_named_pose_service("home")
