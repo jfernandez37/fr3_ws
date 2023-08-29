@@ -24,7 +24,7 @@ def main(args=None):
                     rclpy.spin_once(object_depth)  # Gets the distance from the camera
                     object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
                     gear_center_target.append(
-                        [object_depth.dist_x, object_depth.dist_x, object_depth.dist_x]
+                        [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
                     )
                 multiple_gears.destroy_node()
     print(len(gear_center_target))
