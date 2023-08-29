@@ -309,6 +309,8 @@ class GearPlace(Node):
                     <= 0.005
                 ):
                     bad_measurements.append(j)
+        print(len(arr))
+        print(bad_measurements)
         bad_measurements = sorted(bad_measurements)[::-1]
         for ind in bad_measurements:
             del arr[ind]
