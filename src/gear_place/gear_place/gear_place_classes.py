@@ -367,7 +367,7 @@ class ConveyorClass(Node):
         Calls the enable_conveyor callback
         """
         self.get_logger().info(
-            ("Enabling" if enable else "Disabling"), "the conveyor belt"
+            ("Enabling" if enable else "Disabling")+ "the conveyor belt"
         )
 
         request = EnableConveyor.Request()
