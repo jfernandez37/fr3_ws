@@ -360,7 +360,7 @@ class GearPlace(Node):
         #     self._call_move_cartesian_service(
         #         robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
         #     )
-
+        gear_center_target = [[0 for i in range(3)]]
         while (
             [0, 0, 0] in gear_center_target
             or sum([cent.count(None) for cent in gear_center_target]) > 0
