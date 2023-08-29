@@ -33,7 +33,7 @@ class MultipleGears(Node):
             (_, _), radius = cv2.minEnclosingCircle(cnt)
             circle_areas.append(__import__("math").pi * radius**2)
         diffs = [areas[i] / circle_areas[i] for i in range(len(areas))]
-        return [i for i in range(len(diffs)) if diffs[i]>=0.9]
+        return [i for i in range(len(diffs)) if diffs[i] >= 0.9]
 
     def remove_bad_contours(self, contours: tuple):
         """
@@ -61,7 +61,7 @@ class MultipleGears(Node):
         It then finds the center of the gear contour.
         """
         # min_thresh, max_thresh = 25, 75 works on fr3
-        min_thresh, max_thresh = 150,225
+        min_thresh, max_thresh = 150, 225
         thresh_value = (
             self.get_parameter("thresh_value").get_parameter_value().integer_value
         )
@@ -79,7 +79,7 @@ class MultipleGears(Node):
         c = 0
         valid_contours = []
         self.get_logger().info("Starting scan")
-        while contours_left < 1 or len(valid_contours)<1:
+        while contours_left < 1 or len(valid_contours) < 1:
             c += 1
             _, self.thresh_image = cv2.threshold(
                 blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV
@@ -97,16 +97,14 @@ class MultipleGears(Node):
                 self.get_logger().info("Gear not found. Trying again")
                 return
             if contours_left >= 1:
-                valid_contours = self.closest_to_circle(
-                    contours
-                )
+                valid_contours = self.closest_to_circle(contours)
         self.get_logger().info(
             f"{len(valid_contours)} gears found at thresh value {thresh_value}! {before_remove - len(contours)} contours were removed. Took {c} different "
             + ("threshold" if c == 1 else "thresholds")
         )
         for ind in valid_contours:
             (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
-            self.g_centers = (int(x),int(y))
+            self.g_centers = (int(x), int(y))
             try:
                 (h, w) = self.cv_image.shape[:2]
                 self.cx = w // 2

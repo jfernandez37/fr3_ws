@@ -47,11 +47,11 @@ def launch_setup(context, *args, **kwargs):
             [FindPackageShare("realsense2_camera"), "/launch", "/rs_launch.py"]
         ),
         launch_arguments={
-            "pointcloud.enable":"true",
-            "pointcloud.ordered_pc":"true",
-            "pointcloud.stream_filter":"0",
-            "depth_module.profile":"'640x480x30'"
-        }.items()
+            "pointcloud.enable": "true",
+            "pointcloud.ordered_pc": "true",
+            "pointcloud.stream_filter": "0",
+            "depth_module.profile": "'640x480x30'",
+        }.items(),
     )
 
     start_rviz = LaunchConfiguration("rviz")
