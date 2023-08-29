@@ -27,6 +27,8 @@ def main(args=None):
                         [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
                     )
                 multiple_gears.destroy_node()
+                print(gear_center_target)
+                print("None count = ",sum([cent.count(None) for cent in gear_center_target]))
     print(len(gear_center_target))
     cv2.imshow("Threshold image", multiple_gears.thresh_image)
     cv2.imshow("Depth image", multiple_gears.cv_image)
