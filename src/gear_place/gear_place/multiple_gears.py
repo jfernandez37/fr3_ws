@@ -105,12 +105,3 @@ class MultipleGears(Node):
         for ind in valid_contours:
             (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
             self.g_centers.append((int(x), int(y)))
-            try:
-                (h, w) = self.cv_image.shape[:2]
-                self.cx = w // 2
-                self.cy = h // 2
-            except:
-                self.get_logger.error("Error: Contour does not form a single shape")
-            self.get_logger().info(
-                f"X coordinate for gear: {self.gx}, y coordinate for gear {self.gy}."
-            )
