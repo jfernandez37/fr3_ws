@@ -389,6 +389,7 @@ class GearPlace(Node):
             )
 
         distances_from_home = self.remove_identical_points(distances_from_home)
+        print(distances_from_home)
         self.get_logger().info(f"{len(distances_from_home)} gears found")
         for gear_point in distances_from_home:
             self._call_open_gripper_service()
