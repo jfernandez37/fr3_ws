@@ -341,7 +341,6 @@ class GearPlace(Node):
                 gear_center_target = []
                 multiple_gears = MultipleGears()
                 rclpy.spin_once(multiple_gears)
-                self.get_logger().info(str(gear_center_target))
                 while sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0:
                     multiple_gears.destroy_node()
                     multiple_gears = MultipleGears()
