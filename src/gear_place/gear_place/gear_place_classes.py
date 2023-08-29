@@ -309,8 +309,8 @@ class GearPlace(Node):
             for j in range(i+1, len(arr)):
                 if (
                     sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
-                    <= 0.0125
-                ): # Gets rid of the points which are within 10mm of each other
+                    <= 0.02
+                ): # Gets rid of the points which are within 20mm of each other
                     bad_measurements.append(j)
         bad_measurements = list(set(bad_measurements))
         print(len(arr))
