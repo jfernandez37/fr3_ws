@@ -303,12 +303,13 @@ class GearPlace(Node):
     def remove_identical_points(self, arr):
         bad_measurements = []
         for i in range(len(arr) - 1):
-            for j in range(i, len(arr)):
+            for j in range(i+1, len(arr)):
                 if (
                     sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
                     <= 0.005
                 ):
                     bad_measurements.append(j)
+        bad_measurements = list(set(bad_measurements))
         print(len(arr))
         print(bad_measurements)
         bad_measurements = sorted(bad_measurements)[::-1]
