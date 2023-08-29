@@ -457,7 +457,7 @@ class GearPlace(Node):
         """
         Calls the pick_up_gear callback
         """
-        self.x_offset = 0.04025  # offset from the camera to the gripper
+        self.x_offset = 0.03975  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = (
             -0.247
