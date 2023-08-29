@@ -27,10 +27,7 @@ def main(args=None):
                         [object_depth.dist_x, object_depth.dist_x, object_depth.dist_x]
                     )
                 multiple_gears.destroy_node()
-    print("x: " + str(object_depth.dist_x), end="\t")
-    print("y: " + str(object_depth.dist_y), end="\t")
-    print("z: " + str(object_depth.dist_z) + "\n")
-    print(f"{c} tries to find the gear")
+    print(len(gear_center_target))
     cv2.imshow("Threshold image", multiple_gears.thresh_image)
     cv2.imshow("Depth image", multiple_gears.cv_image)
     cv2.waitKey(0)
