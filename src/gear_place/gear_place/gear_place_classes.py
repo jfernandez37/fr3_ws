@@ -332,7 +332,6 @@ class GearPlace(Node):
         x_movements = [a[0] for a in robot_moves]
         y_movements = [a[1] for a in robot_moves]
         self.get_logger().info(f"Picking up gear")
-        gear_center_target = [[0 for i in range(3)]]
         for ind in range(len(robot_moves)):
             gear_center_target = [[0 for i in range(3)]]
             while (
