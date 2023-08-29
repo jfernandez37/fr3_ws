@@ -27,7 +27,8 @@ from geometry_msgs.msg import Pose, Point
 from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 from gear_place.moving_gear import MovingGear
-
+from gear_place.multiple_gears import MultipleGears
+from math import sqrt
 
 class Error(Exception):
     def __init__(self, value: str):
@@ -294,7 +295,75 @@ class GearPlace(Node):
         if not result.success:
             self.get_logger().error(f"Unable to pick up gear")
             raise Error("Unable to pick up gear")
-
+    
+    def remove_identical_points(self, arr):
+        bad_measurements = []
+        for i in range(len(arr)-1):
+            for j in range(i, len(arr)):
+                if sqrt((arr[i][0]-arr[j][0])**2+(arr[i][1]-arr[j][1])**2):
+                    bad_measurements.append(j)
+        bad_measurements = sorted(bad_measurements)[::-1]
+        for ind in bad_measurements:
+            del arr[ind]
+        return arr
+                
+    def __call_pick_up_multiple_gears(self, object_width):
+        distances_from_home = []
+        robot_moves = [[0.1,0.0],[0.0,-0.1],[-0.1,0.0],[-0.1,0.0],[-0.1,0.0],[0.0,0.1],[0.1,0.0],[-0.1,0.1],[0.1,0.0],[0.1,0.0],[0.1,0.0]]
+        x_movements = [a[0] for a in robot_moves]
+        y_movements = [a[1] for a in robot_moves]
+        z_movement = (
+                -0.247
+            )  # z distance from the home position to where the gripper can grab the gear
+        self.get_logger().info(f"Picking up gear")
+        gear_center_target = [[0 for i in range(3)]]
+        for ind in range(len(robot_moves)):
+            while ((
+                [0,0,0] in gear_center_target or sum([cent.count(None) for cent in gear_center_target])>0) and len(gear_center_target)>0
+            ):
+                gear_center_target = []
+                multiple_gears = MultipleGears()
+                rclpy.spin_once(multiple_gears)
+                while sum([cent.count(None) for cent in multiple_gears.g_centers])!=0:
+                    multiple_gears.destroy_node()
+                    multiple_gears = MultipleGears()
+                    rclpy.spin_once(multiple_gears)
+                for g_center in multiple_gears.g_centers:
+                    object_depth = ObjectDepth(g_center)
+                    rclpy.spin_once(object_depth)  # Gets the distance from the camera
+                    object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+                    gear_center_target.append([object_depth.dist_x,object_depth.dist_x,object_depth.dist_x])
+                multiple_gears.destroy_node()
+            for arr in gear_center_target:
+                distances_from_home.append((-1*arr[1]+x_movements[:ind],-1*arr[0]+y_movements[:ind]))
+            self._call_move_cartesian_service(robot_moves[ind][0],robot_moves[ind][1], 0.0, 0.15, 0.2)
+        while ((
+            [0,0,0] in gear_center_target or sum([cent.count(None) for cent in gear_center_target])>0) and len(gear_center_target)>0
+        ):
+            gear_center_target = []
+            multiple_gears = MultipleGears()
+            rclpy.spin_once(multiple_gears)
+            while sum([cent.count(None) for cent in multiple_gears.g_centers])!=0:
+                multiple_gears.destroy_node()
+                multiple_gears = MultipleGears()
+                rclpy.spin_once(multiple_gears)
+            for g_center in multiple_gears.g_centers:
+                object_depth = ObjectDepth(g_center)
+                rclpy.spin_once(object_depth)  # Gets the distance from the camera
+                object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+                gear_center_target.append([object_depth.dist_x,object_depth.dist_x,object_depth.dist_x])
+            multiple_gears.destroy_node()
+        for arr in gear_center_target:
+            distances_from_home.append((-1*arr[1]+x_movements[:ind],-1*arr[0]+y_movements[:ind]))
+        
+        distances_from_home = self.remove_identical_points(distances_from_home)
+        
+        for gear_point in distances_from_home:
+            self._call_move_to_named_pose_service("home")
+            self._call_pick_up_gear_coord_service(gear_point[0],gear_point[1], 0.0095)
+            self._call_put_gear_down_service()
+        
+                
     def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
         """
         Calls the move_to_position callback
@@ -338,6 +407,37 @@ class GearPlace(Node):
 
         if not result.success:
             raise Error("Unable to move to open gripper")
+    
+    def _call_pick_up_gear_coord_service(self, x,y,object_width):
+        """
+        Calls the pick_up_gear callback
+        """
+        self.x_offset = 0.0425  # offset from the camera to the gripper
+        self.y_offset = 0.03  # offset from the camera to the gripper
+        z_movement = (
+            -0.247
+        )  # z distance from the home position to where the gripper can grab the gear
+        self.get_logger().info(f"Picking up gear")
+        request = PickUpGear.Request()
+
+        request.x = x + self.x_offset
+        request.y = y + self.y_offset
+        request.z = z_movement
+        request.object_width = object_width
+
+        future = self.create_client(PickUpGear, "pick_up_gear").call_async(request)
+
+        rclpy.spin_until_future_complete(self, future, timeout_sec=30)
+
+        if not future.done():
+            raise Error("Timeout reached when calling pick_up_gear service")
+
+        result: PickUpGear.Response
+        result = future.result()
+
+        if not result.success:
+            self.get_logger().error(f"Unable to pick up gear")
+            raise Error("Unable to pick up gear")
 
     def _calculate_world_pose(self, frame_id: str, rel_pose: Pose) -> Pose:
         """
@@ -350,6 +450,7 @@ class GearPlace(Node):
             raise Error("Unable to transform between frames")
 
         return multiply_pose(convert_transform_to_pose(t), rel_pose)
+    
 
 
 class ConveyorClass(Node):
