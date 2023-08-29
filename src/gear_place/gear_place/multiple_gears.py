@@ -15,6 +15,7 @@ class MultipleGears(Node):
         super().__init__("multiple_gears")
         self.bridge = CvBridge()
         self.cv_image = None
+        self.ran = False
         self.g_centers = []
         self.thresh_image = None
         self.declare_parameter("thresh_value", 50)
@@ -60,6 +61,7 @@ class MultipleGears(Node):
         Then, the functions above are used to find the gear out of all the contours that are found.
         It then finds the center of the gear contour.
         """
+        self.ran = True
         min_thresh, max_thresh = 25, 75 #works on fr3
         # min_thresh, max_thresh = 150, 225
         thresh_value = (
