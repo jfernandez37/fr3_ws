@@ -301,13 +301,16 @@ class GearPlace(Node):
             raise Error("Unable to pick up gear")
 
     def remove_identical_points(self, arr):
+        """
+        Removes duplicate coordinates from different positions
+        """
         bad_measurements = []
         for i in range(len(arr) - 1):
             for j in range(i+1, len(arr)):
                 if (
                     sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
                     <= 0.010
-                ):
+                ): # Gets rid of the points which are within 10mm of each other
                     bad_measurements.append(j)
         bad_measurements = list(set(bad_measurements))
         print(len(arr))
@@ -318,6 +321,10 @@ class GearPlace(Node):
         return arr
 
     def _call_pick_up_multiple_gears(self, object_width):
+        """_summary_
+
+        Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
+        """
         distances_from_home = []
         robot_moves = [
             [0.1, 0.0],
@@ -334,20 +341,20 @@ class GearPlace(Node):
             [0.1, 0.0],
             [0.1, 0.0],
             [0.1, 0.0],
-        ]
-        x_movements = [a[0] for a in robot_moves]
-        y_movements = [a[1] for a in robot_moves]
+        ] # cartesian movements starting at home position. Scans the area in front of the robot.
+        x_movements = [a[0] for a in robot_moves] # just the x direction movements
+        y_movements = [a[1] for a in robot_moves] # just the y direction movements
         self.get_logger().info(f"Picking up gear")
-        for ind in range(len(robot_moves)):
+        for ind in range(len(robot_moves)): # loops through the scanning positions
             gear_center_target = [[0 for i in range(3)]]
             while (
                 [0, 0, 0] in gear_center_target
                 or sum([cent.count(None) for cent in gear_center_target]) > 0
-            ) and len(gear_center_target) > 0:
+            ) and len(gear_center_target) > 0: # runs until nothing is found, or while something is found, but coordinates are not
                 gear_center_target = []
                 multiple_gears = MultipleGears()
-                rclpy.spin_once(multiple_gears)
-                while sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0 or not multiple_gears.ran:
+                rclpy.spin_once(multiple_gears) # finds multiple gears if there are multiple
+                while sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0 or not multiple_gears.ran: # loops until it has run and until there are no None values
                     multiple_gears.destroy_node()
                     multiple_gears = MultipleGears()
                     rclpy.spin_once(multiple_gears)
@@ -359,18 +366,19 @@ class GearPlace(Node):
                         [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
                     )
                 multiple_gears.destroy_node()
-            for arr in gear_center_target:
+                
+            for arr in gear_center_target: # adds the points to list which holds all points
                 distances_from_home.append(
                     (-1 * arr[1] + sum(x_movements[:ind]), -1 * arr[0] + sum(y_movements[:ind]))
-                )
+                ) # adds the previous movements so that the measurements are from the home position instead of the current position
             self._call_move_cartesian_service(
                 robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
-            )
+            ) # moves to the next position
         gear_center_target = [[0 for i in range(3)]]
         while (
             [0, 0, 0] in gear_center_target
             or sum([cent.count(None) for cent in gear_center_target]) > 0
-        ) and len(gear_center_target) > 0:
+        ) and len(gear_center_target) > 0: # runs at the final position
             gear_center_target = []
             multiple_gears = MultipleGears()
             rclpy.spin_once(multiple_gears)
@@ -391,9 +399,8 @@ class GearPlace(Node):
                 (-1 * arr[1] + sum(x_movements), -1 * arr[0] + sum(y_movements))
             )
 
-        distances_from_home = self.remove_identical_points(distances_from_home)
-        print(distances_from_home)
-        self.get_logger().info(f"{len(distances_from_home)} gears found")
+        distances_from_home = self.remove_identical_points(distances_from_home) # since gears will be repeated from different positions, repetitions are removed
+        self.get_logger().info(f"{len(distances_from_home)} gears found") # outputs the number of gears found
         for gear_point in distances_from_home:
             self._call_open_gripper_service()
             self._call_move_to_named_pose_service("home")
