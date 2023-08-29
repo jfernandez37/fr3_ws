@@ -41,6 +41,8 @@ Work space for Franka Emika FR3 robot ROS2 integration
   
     `ros2 run gear_place find_object_node.py --ros-args -p thresh_value:=160`
   
-* To launch everything, run
+* To launch everything, run:
   
     `ros2 launch gear_place gear.launch.py rviz:=True`
+  
+This automatically launches the camera with the correct settings, so you do not need to run the camera launch command above.
