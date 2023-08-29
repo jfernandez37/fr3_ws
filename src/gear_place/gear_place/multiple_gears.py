@@ -19,7 +19,7 @@ class MultipleGears(Node):
         self.thresh_image = None
         self.declare_parameter("thresh_value", 50)
         self.subscription = self.create_subscription(
-            Image, "/camera/depth/image_rect_raw", self.listener_callback, 50
+            Image, "/camera/depth/image_rect_raw", self.listener_callback, 1
         )
         self.subscription  # prevent unused variable warning
 
