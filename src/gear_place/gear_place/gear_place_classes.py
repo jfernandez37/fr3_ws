@@ -334,6 +334,7 @@ class GearPlace(Node):
         self.get_logger().info(f"Picking up gear")
         gear_center_target = [[0 for i in range(3)]]
         for ind in range(len(robot_moves)):
+            gear_center_target = [[0 for i in range(3)]]
             while (
                 [0, 0, 0] in gear_center_target
                 or sum([cent.count(None) for cent in gear_center_target]) > 0
