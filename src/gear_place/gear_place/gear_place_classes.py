@@ -300,7 +300,7 @@ class GearPlace(Node):
         bad_measurements = []
         for i in range(len(arr)-1):
             for j in range(i, len(arr)):
-                if sqrt((arr[i][0]-arr[j][0])**2+(arr[i][1]-arr[j][1])**2):
+                if sqrt((arr[i][0]-arr[j][0])**2+(arr[i][1]-arr[j][1])**2)<=0.003:
                     bad_measurements.append(j)
         bad_measurements = sorted(bad_measurements)[::-1]
         for ind in bad_measurements:
