@@ -314,7 +314,7 @@ class GearPlace(Node):
             del arr[ind]
         return arr
 
-    def __call_pick_up_multiple_gears(self, object_width):
+    def _call_pick_up_multiple_gears(self, object_width):
         distances_from_home = []
         robot_moves = [
             [0.1, 0.0],
