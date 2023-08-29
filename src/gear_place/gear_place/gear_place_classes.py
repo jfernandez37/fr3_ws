@@ -359,6 +359,7 @@ class GearPlace(Node):
         distances_from_home = self.remove_identical_points(distances_from_home)
         
         for gear_point in distances_from_home:
+            self._call_open_gripper_service()
             self._call_move_to_named_pose_service("home")
             self._call_pick_up_gear_coord_service(gear_point[0],gear_point[1], 0.0095)
             self._call_put_gear_down_service()
