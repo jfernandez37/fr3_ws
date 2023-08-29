@@ -274,8 +274,8 @@ class GearPlace(Node):
             request.y = x_value * -1 + self.y_offset
         else:
             print("Gear not moving")
-            request.x = sum(moving_gear.y_vals)/2 * -1 + self.x_offset
-            request.y = sum(moving_gear.x_vals)/2 * -1 + self.y_offset
+            request.x = moving_gear.y_vals[0] * -1 + self.x_offset
+            request.y = moving_gear.x_vals[0] * -1 + self.y_offset
         request.z = z_movement
         request.object_width = object_width
 
