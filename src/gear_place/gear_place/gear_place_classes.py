@@ -312,9 +312,6 @@ class GearPlace(Node):
         robot_moves = [[0.1,0.0],[0.0,-0.1],[-0.1,0.0],[-0.1,0.0],[-0.1,0.0],[0.0,0.1],[0.1,0.0],[-0.1,0.1],[0.1,0.0],[0.1,0.0],[0.1,0.0]]
         x_movements = [a[0] for a in robot_moves]
         y_movements = [a[1] for a in robot_moves]
-        z_movement = (
-                -0.247
-            )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         gear_center_target = [[0 for i in range(3)]]
         for ind in range(len(robot_moves)):
