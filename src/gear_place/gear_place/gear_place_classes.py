@@ -275,8 +275,8 @@ class GearPlace(Node):
             request.y = x_value * -1 + self.y_offset
         else:
             print("Gear not moving")
-            request.x = sum(moving_gear.y_vals)/2 * -1 + self.x_offset
-            request.y = sum(moving_gear.x_vals)/2 * -1 + self.y_offset
+            request.x = moving_gear.y_vals[0] * -1 + self.x_offset
+            request.y = moving_gear.x_vals[0] * -1 + self.y_offset
         request.z = z_movement
         request.object_width = object_width
 
@@ -468,13 +468,15 @@ class ConveyorClass(Node):
         Calls the enable_conveyor callback
         """
         self.get_logger().info(
-            ("Enabling" if enable else "Disabling"), "the conveyor belt"
+            ("Enabling " if enable else "Disabling ")+ "the conveyor belt"
         )
 
         request = EnableConveyor.Request()
         request.enable = enable
 
-        future = self.enable_conveyor_client.call_async(request)
+        future = self.create_client(
+            EnableConveyor, "enable_conveyor"
+        ).call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=8)
 
@@ -500,7 +502,9 @@ class ConveyorClass(Node):
         request.speed = speed
         request.direction = direction
 
-        future = self.set_conveyor_state_client.call_async(request)
+        future = self.create_client(
+            SetConveyorState, "set_conveyor_state"
+        ).call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=20)
 
