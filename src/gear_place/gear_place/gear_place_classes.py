@@ -373,7 +373,9 @@ class ConveyorClass(Node):
         request = EnableConveyor.Request()
         request.enable = enable
 
-        future = self.enable_conveyor_client.call_async(request)
+        future = self.self.self.create_client(
+            EnableConveyor, "enable_conveyor"
+        ).call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=8)
 
@@ -399,7 +401,9 @@ class ConveyorClass(Node):
         request.speed = speed
         request.direction = direction
 
-        future = self.set_conveyor_state_client.call_async(request)
+        future = self.self.self.create_client(
+            SetConveyorState, "set_conveyor_state"
+        ).call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=20)
 
