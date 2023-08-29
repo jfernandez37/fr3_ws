@@ -19,7 +19,7 @@ class MultipleGears(Node):
         self.thresh_image = None
         self.declare_parameter("thresh_value", 50)
         self.subscription = self.create_subscription(
-            Image, "/camera/depth/image_rect_raw", self.listener_callback, 1
+            Image, "/camera/depth/image_rect_raw", self.listener_callback, 10
         )
         self.subscription  # prevent unused variable warning
 
@@ -60,7 +60,6 @@ class MultipleGears(Node):
         Then, the functions above are used to find the gear out of all the contours that are found.
         It then finds the center of the gear contour.
         """
-        self.get_logger().info("In listener callback")
         min_thresh, max_thresh = 25, 75 #works on fr3
         # min_thresh, max_thresh = 150, 225
         thresh_value = (
