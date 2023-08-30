@@ -410,15 +410,17 @@ class GearPlace(Node):
             self.get_logger().info("Movement: "+str(movment))
         next_move = [0,0]
         self._call_move_to_named_pose_service("home")
+        offset_needed = True
         for gear_point in distances_from_home: # loops through the movements to the gears
-            next_move = [gear_point[i]-next_move[i]*1.75 for i in range(2)] # finds the next movement to the next gear
+            next_move = [gear_point[i]-next_move[i] for i in range(2)] # finds the next movement to the next gear
             self.get_logger().info("Next_move:"+str(next_move))
             # self._call_move_to_named_pose_service("home")
             self._call_open_gripper_service() # opens the gripper
             self._call_pick_up_gear_coord_service(
-                next_move[0], next_move[1], object_width
+                offset_needed,next_move[0], next_move[1], object_width
             ) # picks up the gear
             self._call_put_gear_down_service() # puts the gear down
+            offset_needed = False
 
     def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
         """
@@ -464,7 +466,7 @@ class GearPlace(Node):
         if not result.success:
             raise Error("Unable to move to open gripper")
 
-    def _call_pick_up_gear_coord_service(self, x, y, object_width):
+    def _call_pick_up_gear_coord_service(self, offset_bool, x, y, object_width):
         """
         Calls the pick_up_gear callback
         """
@@ -476,8 +478,12 @@ class GearPlace(Node):
         self.get_logger().info(f"Picking up gear")
         request = PickUpGear.Request()
 
-        request.x = x + self.x_offset
-        request.y = y + self.y_offset
+        if offset_bool:
+            request.x = x + self.x_offset
+            request.y = y + self.y_offset
+        else:
+            request.x = x
+            request.y = y    
         request.z = z_movement
         request.object_width = object_width
 
