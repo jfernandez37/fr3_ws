@@ -101,6 +101,7 @@ class MultipleGears(Node):
             #     return
             if contours_left >= 1:
                 for ind in self.closest_to_circle(contours):
+                    print("TEST")
                     (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
                     if (int(x), int(y)) not in self.g_centers:
                         self.g_centers.append((int(x), int(y)))
