@@ -407,7 +407,7 @@ class GearPlace(Node):
         distances_from_home = self.remove_identical_points(distances_from_home) # since gears will be repeated from different positions, repetitions are removed
         self.get_logger().info(f"{len(distances_from_home)} gears found\nMovements:") # outputs the number of gears found
         for movment in distances_from_home:
-            self.get_logger("Movement: "+str(movment))
+            self.get_logger().info("Movement: "+str(movment))
         next_move = [0,0]
         self._call_move_to_named_pose_service("home")
         for gear_point in distances_from_home: # loops through the movements to the gears
