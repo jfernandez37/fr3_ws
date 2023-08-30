@@ -413,7 +413,7 @@ class GearPlace(Node):
                 rclpy.spin_once(object_depth)
                 object_depth.destroy_node()
                 gear_center_target.append(
-                    [object_depth.dist_x, object_depth.dist_x, object_depth.dist_x]
+                    [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
                 )
             multiple_gears.destroy_node()
         for arr in gear_center_target:
