@@ -63,7 +63,7 @@ class MultipleGears(Node):
         """
         self.ran = True
         # min_thresh, max_thresh = 25, 75  # works on fr3
-        min_thresh, max_thresh = 0,255
+        min_thresh, max_thresh = 0,150
         # min_thresh, max_thresh = 150, 225
         thresh_value = (
             self.get_parameter("thresh_value").get_parameter_value().integer_value
@@ -82,7 +82,7 @@ class MultipleGears(Node):
         c = 0
         valid_contours = []
         self.get_logger().info("Starting scan")
-        for i in range(256):
+        for i in range(min_thresh,max_thresh+1):
             thresh_value = i
             _, self.thresh_image = cv2.threshold(
                 blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV
@@ -101,7 +101,6 @@ class MultipleGears(Node):
             #     return
             if contours_left >= 1:
                 for ind in self.closest_to_circle(contours):
-                    print("TEST")
                     (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
                     if (int(x), int(y)) not in self.g_centers:
                         self.g_centers.append((int(x), int(y)))
