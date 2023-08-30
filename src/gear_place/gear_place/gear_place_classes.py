@@ -192,7 +192,7 @@ class GearPlace(Node):
             self.get_logger().error(f"Unable to pick up gear")
             raise Error("Unable to pick up gear")
 
-    def _call_put_gear_down_service(self):
+    def _call_put_gear_down_service(self,z):
         """
         Calls the put_gear_down callback
         """
@@ -215,8 +215,10 @@ class GearPlace(Node):
         #     print("Z_value:", object_depth.dist_z)
         #     sleep(0.2)
         # request.z = object_depth.dist_z * -1 + 0.07
-        z = -0.247
-        request.z = z + 0.0005
+        z_movement = max(
+            -0.247, z+0.043
+        )  # z distance from the home position to where the gripper can grab the gear
+        request.z = z_movement + 0.0005
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=30)
@@ -447,7 +449,7 @@ class GearPlace(Node):
             self._call_pick_up_gear_coord_service(
                 offset_needed, move[0], move[1], gear_point[2], object_width
             )  # picks up the gear
-            self._call_put_gear_down_service()  # puts the gear down
+            self._call_put_gear_down_service(gear_point[2])  # puts the gear down
             offset_needed = False
 
     def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
