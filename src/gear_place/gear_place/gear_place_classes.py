@@ -216,7 +216,7 @@ class GearPlace(Node):
         #     sleep(0.2)
         # request.z = object_depth.dist_z * -1 + 0.07
         z_movement = max(
-            -0.247, z+0.043
+            -0.247, z+0.045
         )  # z distance from the home position to where the gripper can grab the gear
         request.z = z_movement + 0.0005
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
@@ -503,7 +503,7 @@ class GearPlace(Node):
         self.x_offset = 0.041  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = max(
-            -0.247, z+0.043
+            -0.247, z+0.045
         )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         request = PickUpGear.Request()
