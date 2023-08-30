@@ -100,16 +100,17 @@ class MultipleGears(Node):
             #     self.get_logger().info("Gear not found. Trying again")
             #     return
             if contours_left >= 1:
-                for cnt in self.closest_to_circle(contours):
-                    print(cnt)
-                    valid_contours.append(cnt)
+                for ind in self.closest_to_circle(contours):
+                    (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
+                    if (int(x), int(y)) not in self.g_centers:
+                        self.g_centers.append((int(x), int(y)))
         if len(valid_contours) == 0:
             return
         self.get_logger().info(
             f"{len(valid_contours)} gears found at thresh value {thresh_value}! {before_remove - len(contours)} contours were removed. Took {c} different "
             + ("threshold" if c == 1 else "thresholds")
         )
-        for ind in valid_contours:
-            (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
-            if (int(x), int(y)) not in self.g_centers:
-                self.g_centers.append((int(x), int(y)))
+        # for ind in valid_contours:
+        #     (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
+        #     if (int(x), int(y)) not in self.g_centers:
+        #         self.g_centers.append((int(x), int(y)))
