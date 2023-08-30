@@ -101,6 +101,7 @@ class MultipleGears(Node):
             #     return
             if contours_left >= 1:
                 for cnt in self.closest_to_circle(contours):
+                    print(cnt)
                     valid_contours.append(cnt)
         if len(valid_contours) == 0:
             return
