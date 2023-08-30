@@ -339,7 +339,7 @@ class GearPlace(Node):
             [-0.2, 0.1],
             [0.1, 0.0],
             [0.1, 0.0],
-            [0.1, 0.0],
+            [0.1, 0.0]
         ]  # cartesian movements starting at home position. Scans the area in front of the robot.
         x_movements = [a[0] for a in robot_moves]  # just the x direction movements
         y_movements = [a[1] for a in robot_moves]  # just the y direction movements
@@ -356,7 +356,7 @@ class GearPlace(Node):
                 and c < 5
             ):  # runs until nothing is found, or while something is found, but coordinates are not
                 c += 1
-                gear_center_target = []
+                gear_center_target = [] # holds the coordinates for the gear centers
                 multiple_gears = MultipleGears()
                 rclpy.spin_once(
                     multiple_gears
@@ -375,7 +375,7 @@ class GearPlace(Node):
                     gear_center_target.append(
                         [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
                     )
-                    if object_depth.dist_x!=0 and object_depth.dist_y!=0 and object_depth.dist_z!=0:
+                    if object_depth.dist_x!=0 and object_depth.dist_y!=0 and object_depth.dist_z!=0: # adds coordinates if not all 0. Duplicates are removed later
                         distances_from_home.append(
                         (
                             -1 * object_depth.dist_y + sum(x_movements[:ind]),
