@@ -485,7 +485,7 @@ class GearPlace(Node):
         else:
             request.x = x
             request.y = y    
-        request.z = z_movement+.0005
+        request.z = z_movement+.0015
         request.object_width = object_width
 
         future = self.create_client(PickUpGear, "pick_up_gear").call_async(request)
