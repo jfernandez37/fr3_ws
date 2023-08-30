@@ -375,6 +375,14 @@ class GearPlace(Node):
                     gear_center_target.append(
                         [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
                     )
+                    if object_depth.dist_x!=0 and object_depth.dist_y!=0 and object_depth.dist_z!=0:
+                        distances_from_home.append(
+                        (
+                            -1 * object_depth.dist_y + sum(x_movements[:ind]),
+                            -1 * object_depth.dist_x + sum(y_movements[:ind]),
+                            -1 * object_depth.dist_z
+                        )
+                    )
                 multiple_gears.destroy_node()
 
             for (
