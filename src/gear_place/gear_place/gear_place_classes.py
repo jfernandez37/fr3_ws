@@ -327,9 +327,7 @@ class GearPlace(Node):
         """
         distances_from_home = []
         robot_moves = [
-            [0.1, 0.0],
             [0.0, -0.1],
-            [-0.1, 0.0],
             [-0.1, 0.0],
             [-0.1, 0.0],
             [-0.1, 0.0],
@@ -337,7 +335,6 @@ class GearPlace(Node):
             [0.1, 0.0],
             [0.1, 0.0],
             [-0.2, 0.1],
-            [0.1, 0.0],
             [0.1, 0.0],
             [0.1, 0.0],
             [0.1, 0.0],
@@ -354,7 +351,7 @@ class GearPlace(Node):
                     or sum([cent.count(None) for cent in gear_center_target]) > 0
                 )
                 and len(gear_center_target) > 0
-                and c < 15
+                and c < 7
             ):  # runs until nothing is found, or while something is found, but coordinates are not
                 c += 1
                 gear_center_target = []
@@ -399,7 +396,7 @@ class GearPlace(Node):
                 or sum([cent.count(None) for cent in gear_center_target]) > 0
             )
             and len(gear_center_target) > 0
-            and c < 15
+            and c < 7
         ):  # runs at the final position
             gear_center_target = []
             multiple_gears = MultipleGears()
