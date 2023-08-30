@@ -1,7 +1,5 @@
 from launch import LaunchDescription
 from launch.substitutions import (
-    Command,
-    FindExecutable,
     PathJoinSubstitution,
     LaunchConfiguration,
 )
@@ -9,7 +7,6 @@ from launch.actions import (
     DeclareLaunchArgument,
     OpaqueFunction,
     IncludeLaunchDescription,
-    Shutdown,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import IfCondition
