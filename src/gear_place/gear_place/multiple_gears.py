@@ -102,8 +102,8 @@ class MultipleGears(Node):
             if contours_left >= 1:
                 for cnt in self.closest_to_circle(contours):
                     valid_contours.append(cnt)
-                if len(valid_contours) == 0:
-                    return
+        if len(valid_contours) == 0:
+            return
         self.get_logger().info(
             f"{len(valid_contours)} gears found at thresh value {thresh_value}! {before_remove - len(contours)} contours were removed. Took {c} different "
             + ("threshold" if c == 1 else "thresholds")
