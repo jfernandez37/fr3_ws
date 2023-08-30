@@ -501,7 +501,7 @@ class GearPlace(Node):
         self.x_offset = 0.041  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = max(
-            -0.247, z+0.1
+            -0.247, z+0.05
         )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         request = PickUpGear.Request()
