@@ -383,6 +383,7 @@ class GearPlace(Node):
                         (
                             -1 * arr[1] + sum(x_movements[:ind]),
                             -1 * arr[0] + sum(y_movements[:ind]),
+                            -1*arr[2]
                         )
                     )  # adds the previous movements so that the measurements are from the home position instead of the current position
             self._call_move_cartesian_service(
@@ -419,7 +420,7 @@ class GearPlace(Node):
         for arr in gear_center_target:
             if arr != [0, 0, 0]:
                 distances_from_home.append(
-                    (-1 * arr[1] + sum(x_movements), -1 * arr[0] + sum(y_movements))
+                    (-1 * arr[1] + sum(x_movements), -1 * arr[0] + sum(y_movements),-1*arr[2])
                 )
 
         distances_from_home = self.remove_identical_points(
@@ -444,7 +445,7 @@ class GearPlace(Node):
             # self._call_move_to_named_pose_service("home")
             self._call_open_gripper_service()  # opens the gripper
             self._call_pick_up_gear_coord_service(
-                offset_needed, move[0], move[1], object_width
+                offset_needed, move[0], move[1], gear_point[2], object_width
             )  # picks up the gear
             self._call_put_gear_down_service()  # puts the gear down
             offset_needed = False
@@ -493,14 +494,14 @@ class GearPlace(Node):
         if not result.success:
             raise Error("Unable to move to open gripper")
 
-    def _call_pick_up_gear_coord_service(self, offset_bool, x, y, object_width):
+    def _call_pick_up_gear_coord_service(self, offset_bool, x, y, z, object_width):
         """
         Calls the pick_up_gear callback
         """
         self.x_offset = 0.041  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
-        z_movement = (
-            -0.247
+        z_movement = max(
+            -0.247, z+0.1
         )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         request = PickUpGear.Request()
