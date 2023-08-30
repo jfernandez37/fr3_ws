@@ -82,8 +82,8 @@ class MultipleGears(Node):
         c = 0
         valid_contours = []
         self.get_logger().info("Starting scan")
-        while contours_left < 1 or len(valid_contours) < 1:
-            c += 1
+        for i in range(256):
+            thresh_value = i
             _, self.thresh_image = cv2.threshold(
                 blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV
             )
@@ -93,14 +93,17 @@ class MultipleGears(Node):
             before_remove = len(contours)
             contours = self.remove_bad_contours(contours)
             contours_left = len(contours)
-            if thresh_value <= min_thresh:
-                thresh_value = max_thresh
-            thresh_value -= 1
-            if c >= max_thresh:
-                self.get_logger().info("Gear not found. Trying again")
-                return
+            # if thresh_value <= min_thresh:
+            #     thresh_value = max_thresh
+            # thresh_value -= 1
+            # if c >= max_thresh:
+            #     self.get_logger().info("Gear not found. Trying again")
+            #     return
             if contours_left >= 1:
-                valid_contours = self.closest_to_circle(contours)
+                for cnt in self.closest_to_circle(contours):
+                    valid_contours.append(cnt)
+                if len(valid_contours) == 0:
+                    return
         self.get_logger().info(
             f"{len(valid_contours)} gears found at thresh value {thresh_value}! {before_remove - len(contours)} contours were removed. Took {c} different "
             + ("threshold" if c == 1 else "thresholds")
