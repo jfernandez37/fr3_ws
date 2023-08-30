@@ -408,13 +408,13 @@ class GearPlace(Node):
         self.get_logger().info(f"{len(distances_from_home)} gears found") # outputs the number of gears found
         next_move = [0,0]
         self._call_move_to_named_pose_service("home")
-        for gear_point in distances_from_home:
-            next_move = [gear_point[i]-next_move[i] for i in range(2)]
-            self._call_open_gripper_service()
+        for gear_point in distances_from_home: # loops through the movements to the gears
+            next_move = [gear_point[i]-next_move[i] for i in range(2)] # finds the next movement to the next gear
+            self._call_open_gripper_service() # opens the gripper
             self._call_pick_up_gear_coord_service(
                 next_move[0], next_move[1], object_width
-            )
-            self._call_put_gear_down_service()
+            ) # picks up the gear
+            self._call_put_gear_down_service() # puts the gear down
 
     def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
         """
