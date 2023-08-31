@@ -8,10 +8,10 @@ def main(args=None):
     rclpy.init(args=args)
 
     gear_center_target = [[0 for i in range(3)]]
-    while (
+    while ((
                 [0, 0, 0] in gear_center_target
                 or sum([cent.count(None) for cent in gear_center_target]) > 0
-            ) and len(gear_center_target) > 0:
+            ) and len(gear_center_target) > 0) or len(gear_center_target)==0:
                 gear_center_target = []
                 multiple_gears = MultipleGears()
                 rclpy.spin_once(multiple_gears)
