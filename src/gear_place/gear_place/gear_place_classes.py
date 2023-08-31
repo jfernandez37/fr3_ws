@@ -335,7 +335,7 @@ class GearPlace(Node):
             [0.1, 0.1],
             [-0.1, 0.0],
             [-0.1, 0.0],
-            [-0.1, 0.0],
+            [-0.1, 0.0]
         ]  # cartesian movements starting at home position. Scans the area in front of the robot.
         x_movements = [a[0] for a in robot_moves]  # just the x direction movements
         y_movements = [a[1] for a in robot_moves]  # just the y direction movements
@@ -459,7 +459,7 @@ class GearPlace(Node):
         distances_from_home = [distances_from_home[i] for i in range(len(distances_from_home)) if self.find_distance(distances_from_home[i])<=0.27] # removes points which are too far from the home position
         
         self.get_logger().info(
-            f"{len(distances_from_home)} gears found"
+            f"{len(distances_from_home)} gears found. Picking up the gears"
         )  # outputs the number of gears found
         for movment in distances_from_home:
             self.get_logger().info("Movement: " + str(movment))
