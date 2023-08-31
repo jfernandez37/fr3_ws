@@ -201,7 +201,7 @@ class GearPlace(Node):
         request = PutGearDown.Request()
         z_movement = max(
             -0.247, z+0.048
-        )  # z distance from the home position to where the gripper can grab the gear
+        )  # z distance from current position to the gear
         request.z = z_movement + 0.0005
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
 
