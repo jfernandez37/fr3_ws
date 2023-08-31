@@ -34,7 +34,11 @@ class MultipleGears(Node):
             (_, _), radius = cv2.minEnclosingCircle(cnt)
             circle_areas.append(__import__("math").pi * radius**2)
         diffs = [areas[i] / circle_areas[i] for i in range(len(areas))]
-        return [i for i in range(len(diffs)) if diffs[i] >= 0.7]
+        gears = [i for i in range(len(diffs)) if diffs[i] >= 0.9]
+        for ind in range(len(diffs)):
+            if areas[ind] >10000 and diffs[ind] >=0.5:
+                gears.append(ind)
+        return sorted(list(set(gears)))
 
     def remove_bad_contours(self, contours: tuple):
         """
