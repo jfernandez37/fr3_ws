@@ -90,7 +90,6 @@ class MultipleGears(Node):
             contours, _ = cv2.findContours(
                 self.thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
             )
-            before_remove = len(contours)
             contours = self.remove_bad_contours(contours)
             if len(contours) >= 1:
                 for ind in self.closest_to_circle(contours):
