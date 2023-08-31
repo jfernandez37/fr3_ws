@@ -83,7 +83,6 @@ class MultipleGears(Node):
         self.original_image = self.cv_image.copy()
         for _ in range(4):
             blurred_img = cv2.GaussianBlur(blurred_img, (7, 7), 0)
-        contours_left = 0
         valid_contours = []
         self.get_logger().info("Starting scan")
         for i in range(min_thresh, max_thresh + 1):
@@ -96,8 +95,7 @@ class MultipleGears(Node):
             )
             before_remove = len(contours)
             contours = self.remove_bad_contours(contours)
-            contours_left = len(contours)
-            if contours_left >= 1:
+            if len(contours) >= 1:
                 for ind in self.closest_to_circle(contours):
                     (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
                     if (int(x), int(y)) not in self.g_centers:
