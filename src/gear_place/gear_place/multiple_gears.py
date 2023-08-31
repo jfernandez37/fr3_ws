@@ -36,7 +36,7 @@ class MultipleGears(Node):
         diffs = [areas[i] / circle_areas[i] for i in range(len(areas))]
         gears = [i for i in range(len(diffs)) if diffs[i] >= 0.9]
         for ind in range(len(diffs)):
-            if areas[ind] >20000 and diffs[ind] >=0.5:
+            if areas[ind] >10000 and diffs[ind] >=0.5:
                 gears.append(ind)
         return sorted(list(set(gears)))
 
