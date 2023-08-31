@@ -65,14 +65,12 @@ class GearPlace(Node):
         self.put_gear_down_client = self.create_client(PutGearDown, "put_gear_down")
 
     def wait(self, duration: float):
-        # self.get_logger().info(f"Waiting for {duration} seconds...")
 
         start = self.get_clock().now()
 
         while self.get_clock().now() <= start + Duration(seconds=duration):
             try:
                 rclpy.spin_once(self, timeout_sec=0)
-                # self.get_logger().log(str(self.get_clock().now().to_msg().sec), LoggingSeverity.INFO, throttle_duration_sec=1.0)
             except KeyboardInterrupt:
                 raise Error("Ctrl+C pressed")
 
@@ -475,7 +473,6 @@ class GearPlace(Node):
             ]  # finds the next movement to the next gear
             last_point = gear_point
             self.get_logger().info("Next_move:" + str(move))
-            # self._call_move_to_named_pose_service("home")
             self._call_open_gripper_service()  # opens the gripper
             self._call_pick_up_gear_coord_service(
                 offset_needed, move[0], move[1], gear_point[2], object_width
