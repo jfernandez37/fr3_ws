@@ -192,7 +192,7 @@ class GearPlace(Node):
             self.get_logger().error(f"Unable to pick up gear")
             raise Error("Unable to pick up gear")
 
-    def _call_put_gear_down_service(self,z):
+    def _call_put_gear_down_service(self, z):
         """
         Calls the put_gear_down callback
         """
@@ -200,7 +200,7 @@ class GearPlace(Node):
 
         request = PutGearDown.Request()
         z_movement = max(
-            -0.247, z+0.048
+            -0.247, z + 0.048
         )  # z distance from current position to the gear
         request.z = z_movement + 0.0005
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
@@ -243,27 +243,35 @@ class GearPlace(Node):
 
         intersection_time = (
             -(velocity**2) / acceleration - velocity * pick_up_constant - intercept
-        ) / (slope - velocity)
+        ) / (
+            slope - velocity
+        )  # calculates the time where the pick up time equals the gear position
         distance_at_intersection = moving_gear.distance_to_point(
             moving_gear.point_from_time(intersection_time)
-        )
+        )  # Calculates the distance of the gear to the camera at intersection time
 
-        if (velocity**2) / acceleration > distance_at_intersection:
-            velocity = distance_at_intersection / (velocity / acceleration) * 0.9
+        if (
+            velocity**2
+        ) / acceleration > distance_at_intersection:  # runs if max velocity needs to be lowered in move_cartesian
+            velocity = (
+                distance_at_intersection / (velocity / acceleration) * 0.9
+            )  # lowers the velocity
             intersection_time = (
                 -(velocity**2) / acceleration
                 - velocity * pick_up_constant
                 - intercept
-            ) / (slope - velocity)
+            ) / (
+                slope - velocity
+            )  # calculates the new intersection time
         request = PickUpMovingGear.Request()
         if (
             abs(moving_gear.x_pix[1] - moving_gear.x_pix[0]) > 2
             or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 2
-        ):
+        ):  # runs if the gear is moving
             x_value, y_value = moving_gear.point_from_time(intersection_time)
             request.x = y_value * -1 + self.x_offset
             request.y = x_value * -1 + self.y_offset
-        else:
+        else:  # runs if the gear is stationary
             print("Gear not moving")
             request.x = moving_gear.y_vals[0] * -1 + self.x_offset
             request.y = moving_gear.x_vals[0] * -1 + self.y_offset
@@ -298,10 +306,12 @@ class GearPlace(Node):
                     <= 0.02
                 ):  # Gets rid of the points which are within 20mm of each other
                     bad_measurements.append(j)
-        bad_measurements = list(set(bad_measurements))
+        bad_measurements = list(set(bad_measurements))  # removes duplicated indicies
         print(len(arr))
         print(bad_measurements)
-        bad_measurements = sorted(bad_measurements)[::-1]
+        bad_measurements = sorted(bad_measurements)[
+            ::-1
+        ]  # sorts the indicies in decending order so the correct values are removed in next loop
         for ind in bad_measurements:
             del arr[ind]
         return arr
@@ -322,14 +332,13 @@ class GearPlace(Node):
             [0.1, 0.1],
             [-0.1, 0.0],
             [-0.1, 0.0],
-            [-0.1, 0.0]
+            [-0.1, 0.0],
         ]  # cartesian movements starting at home position. Scans the area in front of the robot.
         x_movements = [a[0] for a in robot_moves]  # just the x direction movements
         y_movements = [a[1] for a in robot_moves]  # just the y direction movements
         self.get_logger().info(f"Scanning for gears")
-        
+
         for ind in range(len(robot_moves)):  # loops through the scanning positions
-            
             c = 0
             gear_center_target = [[0 for _ in range(3)]]
             while (
@@ -341,7 +350,7 @@ class GearPlace(Node):
                 and c < 5
             ):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
                 c += 1
-                gear_center_target = [] # holds the coordinates for the gear centers
+                gear_center_target = []  # holds the coordinates for the gear centers
                 multiple_gears = MultipleGears()
                 rclpy.spin_once(
                     multiple_gears
@@ -360,14 +369,18 @@ class GearPlace(Node):
                     gear_center_target.append(
                         [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
                     )
-                    if object_depth.dist_x!=0 and object_depth.dist_y!=0 and object_depth.dist_z!=0: # adds coordinates if not all 0. Duplicates are removed later
+                    if (
+                        object_depth.dist_x != 0
+                        and object_depth.dist_y != 0
+                        and object_depth.dist_z != 0
+                    ):  # adds coordinates if not all 0. Duplicates are removed later
                         distances_from_home.append(
-                        (
-                            -1 * object_depth.dist_y + sum(x_movements[:ind]),
-                            -1 * object_depth.dist_x + sum(y_movements[:ind]),
-                            -1 * object_depth.dist_z
+                            (
+                                -1 * object_depth.dist_y + sum(x_movements[:ind]),
+                                -1 * object_depth.dist_x + sum(y_movements[:ind]),
+                                -1 * object_depth.dist_z,
+                            )
                         )
-                    )
                 multiple_gears.destroy_node()
 
             for (
@@ -378,14 +391,13 @@ class GearPlace(Node):
                         (
                             -1 * arr[1] + sum(x_movements[:ind]),
                             -1 * arr[0] + sum(y_movements[:ind]),
-                            -1*arr[2]
+                            -1 * arr[2],
                         )
                     )  # adds the previous movements so that the measurements are from the home position instead of the current position
             self._call_move_cartesian_service(
                 robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
             )  # moves to the next position
-            
-            
+
         gear_center_target = [[0 for _ in range(3)]]
         c = 0
         while (
@@ -413,19 +425,27 @@ class GearPlace(Node):
                 gear_center_target.append(
                     [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
                 )
-                if object_depth.dist_x!=0 and object_depth.dist_y!=0 and object_depth.dist_z!=0:
-                        distances_from_home.append(
+                if (
+                    object_depth.dist_x != 0
+                    and object_depth.dist_y != 0
+                    and object_depth.dist_z != 0
+                ):
+                    distances_from_home.append(
                         (
                             -1 * object_depth.dist_y + sum(x_movements[:ind]),
                             -1 * object_depth.dist_x + sum(y_movements[:ind]),
-                            -1 * object_depth.dist_z
+                            -1 * object_depth.dist_z,
                         )
                     )
             multiple_gears.destroy_node()
         for arr in gear_center_target:
             if arr != [0, 0, 0]:
                 distances_from_home.append(
-                    (-1 * arr[1] + sum(x_movements), -1 * arr[0] + sum(y_movements),-1*arr[2])
+                    (
+                        -1 * arr[1] + sum(x_movements),
+                        -1 * arr[0] + sum(y_movements),
+                        -1 * arr[2],
+                    )
                 )
 
         distances_from_home = self.remove_identical_points(
@@ -436,8 +456,7 @@ class GearPlace(Node):
         )  # outputs the number of gears found
         for movment in distances_from_home:
             self.get_logger().info("Movement: " + str(movment))
-            
-            
+
         self._call_move_to_named_pose_service("home")
         last_point = [0, 0]
         offset_needed = True
@@ -508,7 +527,7 @@ class GearPlace(Node):
         self.x_offset = 0.03975  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = max(
-            -0.247, z+0.048
+            -0.247, z + 0.048
         )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         request = PickUpGear.Request()
