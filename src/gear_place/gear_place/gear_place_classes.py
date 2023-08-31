@@ -457,7 +457,7 @@ class GearPlace(Node):
         distances_from_home = [distances_from_home[i] for i in range(len(distances_from_home)) if self.find_distance(distances_from_home[i])<=0.27] # removes points which are too far from the home position
         
         self.get_logger().info(
-            f"{len(distances_from_home)} gears found. Picking up the gears"
+            f"{len(distances_from_home)-1} gears found. Picking up the gears"
         )  # outputs the number of gears found
         for movment in distances_from_home:
             self.get_logger().info("Movement: " + str(movment))
@@ -467,7 +467,7 @@ class GearPlace(Node):
         offset_needed = True
         for (
             gear_point
-        ) in distances_from_home:  # loops through the movements to the gears
+        ) in distances_from_home[:-1]:  # loops through the movements to the gears
             move = [
                 gear_point[i] - last_point[i] for i in range(2)
             ]  # finds the next movement to the next gear
