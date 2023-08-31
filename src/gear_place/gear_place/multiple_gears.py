@@ -97,6 +97,7 @@ class MultipleGears(Node):
             contours = self.remove_bad_contours(contours)
             if len(contours) >= 1:
                 for ind in self.closest_to_circle(contours):
+                    valid_contours.append(ind)
                     (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
                     if (int(x), int(y)) not in self.g_centers:
                         self.g_centers.append((int(x), int(y)))
