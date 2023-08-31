@@ -316,6 +316,9 @@ class GearPlace(Node):
             del arr[ind]
         return arr
 
+    def find_distance(self,arr):
+        return sqrt(arr[0]**2+arr[1]**2)
+
     def _call_pick_up_multiple_gears(self, object_width):
         """
         Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
@@ -452,6 +455,10 @@ class GearPlace(Node):
         distances_from_home = self.remove_identical_points(
             distances_from_home
         )  # since gears will be repeated from different positions, repetitions are removed
+        
+        for i in [j for j in range(len(distances_from_home)) if self.find_distance(distances_from_home[j])>0.27][::-1]: # removes points which are too far from the home position 
+            del distances_from_home[i]
+                
         self.get_logger().info(
             f"{len(distances_from_home)} gears found"
         )  # outputs the number of gears found
