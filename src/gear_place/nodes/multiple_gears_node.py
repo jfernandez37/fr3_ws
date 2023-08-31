@@ -26,8 +26,8 @@ def main(args=None):
                     gear_center_target.append(
                         [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
                     )
-                if gear_center_target.count([0,0,0]) != len(gear_center_target):
-                      break
+                # if gear_center_target.count([0,0,0]) != len(gear_center_target):
+                #       break
                 multiple_gears.destroy_node()
                 print(gear_center_target)
                 print("None count = ",sum([cent.count(None) for cent in gear_center_target]))
