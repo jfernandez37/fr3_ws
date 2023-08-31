@@ -62,7 +62,7 @@ class MultipleGears(Node):
         It then finds the center of the gear contour.
         """
         self.ran = True
-        min_thresh, max_thresh = 0,150
+        min_thresh, max_thresh = 0, 150
         thresh_value = (
             self.get_parameter("thresh_value").get_parameter_value().integer_value
         )
@@ -79,7 +79,7 @@ class MultipleGears(Node):
         contours_left = 0
         valid_contours = []
         self.get_logger().info("Starting scan")
-        for i in range(min_thresh,max_thresh+1):
+        for i in range(min_thresh, max_thresh + 1):
             thresh_value = i
             _, self.thresh_image = cv2.threshold(
                 blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV

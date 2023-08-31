@@ -336,14 +336,14 @@ class GearPlace(Node):
             [0.0, 0.1],
             [0.1, 0.0],
             [0.1, 0.0],
-            [-0.2, 0.1],
-            [0.1, 0.0],
-            [0.1, 0.0],
-            [0.1, 0.0]
+            [0.1, 0.1],
+            [-0.1, 0.0],
+            [-0.1, 0.0],
+            [-0.1, 0.0]
         ]  # cartesian movements starting at home position. Scans the area in front of the robot.
         x_movements = [a[0] for a in robot_moves]  # just the x direction movements
         y_movements = [a[1] for a in robot_moves]  # just the y direction movements
-        self.get_logger().info(f"Picking up gear")
+        self.get_logger().info(f"Scanning for gears")
         for ind in range(len(robot_moves)):  # loops through the scanning positions
             c = 0
             gear_center_target = [[0 for i in range(3)]]
@@ -354,7 +354,7 @@ class GearPlace(Node):
                 )
                 and len(gear_center_target) > 0
                 and c < 5
-            ):  # runs until nothing is found, or while something is found, but coordinates are not
+            ):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
                 c += 1
                 gear_center_target = [] # holds the coordinates for the gear centers
                 multiple_gears = MultipleGears()
