@@ -471,7 +471,7 @@ class GearPlace(Node):
             gear_point
         ) in distances_from_home:  # loops through the movements to the gears
             move = [
-                gear_point[i] - last_point[i] for _ in range(2)
+                gear_point[i] - last_point[i] for i in range(2)
             ]  # finds the next movement to the next gear
             last_point = gear_point
             self.get_logger().info("Next_move:" + str(move))
