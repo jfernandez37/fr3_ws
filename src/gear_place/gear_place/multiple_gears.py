@@ -34,7 +34,7 @@ class MultipleGears(Node):
             (_, _), radius = cv2.minEnclosingCircle(cnt)
             circle_areas.append(__import__("math").pi * radius**2)
         diffs = [areas[i] / circle_areas[i] for i in range(len(areas))]
-        return [i for i in range(len(diffs)) if diffs[i] >= 0.9]
+        return [i for i in range(len(diffs)) if diffs[i] >= 0.3]
 
     def remove_bad_contours(self, contours: tuple):
         """
