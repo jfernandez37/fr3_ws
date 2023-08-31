@@ -77,7 +77,8 @@ class MultipleGears(Node):
             for j in range(len(self.cv_image[i])):
                 if self.cv_image[i][j] == 255:
                     self.cv_image[i][j] = 0
-        for _ in range(4):
+        blurred_img = cv2.GaussianBlur(self.cv_image, (7,7),0)
+        for _ in range(3):
             blurred_img = cv2.GaussianBlur(blurred_img, (7, 7), 0)
         valid_contours = []
         self.get_logger().info("Starting scan")
