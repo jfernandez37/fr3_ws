@@ -456,9 +456,8 @@ class GearPlace(Node):
             distances_from_home
         )  # since gears will be repeated from different positions, repetitions are removed
         
-        for i in [j for j in range(len(distances_from_home)) if self.find_distance(distances_from_home[j])>0.27][::-1]: # removes points which are too far from the home position 
-            del distances_from_home[i]
-                
+        distances_from_home = [distances_from_home[i] for i in range(len(distances_from_home)) if self.find_distance(distances_from_home[i])<=0.27] # removes points which are too far from the home position
+        
         self.get_logger().info(
             f"{len(distances_from_home)} gears found"
         )  # outputs the number of gears found
