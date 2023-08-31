@@ -66,7 +66,7 @@ class MultipleGears(Node):
         It then finds the center of the gear contour.
         """
         self.ran = True
-        min_thresh, max_thresh = 0, 150
+        min_thresh, max_thresh = 0, 250
         thresh_value = (
             self.get_parameter("thresh_value").get_parameter_value().integer_value
         )
