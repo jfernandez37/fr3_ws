@@ -34,7 +34,11 @@ class MultipleGears(Node):
             (_, _), radius = cv2.minEnclosingCircle(cnt)
             circle_areas.append(__import__("math").pi * radius**2)
         diffs = [areas[i] / circle_areas[i] for i in range(len(areas))]
-        return [i for i in range(len(diffs)) if diffs[i] >= 0.9]
+        gears = [i for i in range(len(diffs)) if diffs[i] >= 0.9]
+        # for ind in range(len(diffs)):
+        #     if areas[ind] >7500 and diffs[ind] >=0.65:
+        #         gears.append(ind)
+        return sorted(list(set(gears)))
 
     def remove_bad_contours(self, contours: tuple):
         """
@@ -62,7 +66,7 @@ class MultipleGears(Node):
         It then finds the center of the gear contour.
         """
         self.ran = True
-        min_thresh, max_thresh = 0, 150
+        min_thresh, max_thresh = 0, 250
         thresh_value = (
             self.get_parameter("thresh_value").get_parameter_value().integer_value
         )
@@ -72,6 +76,10 @@ class MultipleGears(Node):
         alpha = 2.5  # Contrast control (1.0-3.0)
         beta = -65  # Brightness control (-100-100)
         self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
+        for i in range(len(self.cv_image)):
+            for j in range(len(self.cv_image[i])):
+                if self.cv_image[i][j] == 255:
+                    self.cv_image[i][j] = 0
         self.original_image = self.cv_image.copy()
         blurred_img = cv2.GaussianBlur(self.cv_image, (7, 7), 0)
         for _ in range(3):

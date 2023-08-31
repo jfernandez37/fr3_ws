@@ -200,7 +200,7 @@ class GearPlace(Node):
 
         request = PutGearDown.Request()
         z_movement = max(
-            -0.247, z + 0.048
+            -0.247, z + 0.047
         )  # z distance from current position to the gear
         request.z = z_movement + 0.0005
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
@@ -303,8 +303,8 @@ class GearPlace(Node):
             for j in range(i + 1, len(arr)):
                 if (
                     sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
-                    <= 0.02
-                ):  # Gets rid of the points which are within 20mm of each other
+                    <= 0.03
+                ):  # Gets rid of the points which are within 30mm of each other
                     bad_measurements.append(j)
         bad_measurements = list(set(bad_measurements))  # removes duplicated indicies
         print(len(arr))
@@ -347,7 +347,7 @@ class GearPlace(Node):
                     or sum([cent.count(None) for cent in gear_center_target]) > 0
                 )
                 and len(gear_center_target) > 0
-                and c < 5
+                and c < 3
             ):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
                 c += 1
                 gear_center_target = []  # holds the coordinates for the gear centers
@@ -406,8 +406,9 @@ class GearPlace(Node):
                 or sum([cent.count(None) for cent in gear_center_target]) > 0
             )
             and len(gear_center_target) > 0
-            and c < 5
+            and c < 3
         ):  # runs at the final position
+            c+=1
             gear_center_target = []
             multiple_gears = MultipleGears()
             rclpy.spin_once(multiple_gears)
@@ -527,7 +528,7 @@ class GearPlace(Node):
         self.x_offset = 0.03975  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = max(
-            -0.247, z + 0.048
+            -0.247, z + 0.047
         )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         request = PickUpGear.Request()
