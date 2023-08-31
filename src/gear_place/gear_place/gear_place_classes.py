@@ -140,7 +140,7 @@ class GearPlace(Node):
             -0.247
         )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
-        gear_center_target = [0 for i in range(3)]
+        gear_center_target = [0 for _ in range(3)]
         while (
             gear_center_target.count(0) == 3 or None in gear_center_target
         ):  # runs until valid coordinates are found
@@ -312,7 +312,7 @@ class GearPlace(Node):
         bad_measurements = sorted(bad_measurements)[
             ::-1
         ]  # sorts the indicies in decending order so the correct values are removed in next loop
-        for ind in bad_measurements:
+        for ind in bad_measurements: # deletes duplicated gears
             del arr[ind]
         return arr
 
@@ -464,7 +464,7 @@ class GearPlace(Node):
             gear_point
         ) in distances_from_home:  # loops through the movements to the gears
             move = [
-                gear_point[i] - last_point[i] for i in range(2)
+                gear_point[i] - last_point[i] for _ in range(2)
             ]  # finds the next movement to the next gear
             last_point = gear_point
             self.get_logger().info("Next_move:" + str(move))
