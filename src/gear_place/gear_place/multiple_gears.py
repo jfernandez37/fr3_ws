@@ -62,9 +62,7 @@ class MultipleGears(Node):
         It then finds the center of the gear contour.
         """
         self.ran = True
-        # min_thresh, max_thresh = 25, 75  # works on fr3
         min_thresh, max_thresh = 0,150
-        # min_thresh, max_thresh = 150, 225
         thresh_value = (
             self.get_parameter("thresh_value").get_parameter_value().integer_value
         )
@@ -79,7 +77,6 @@ class MultipleGears(Node):
         for _ in range(3):
             blurred_img = cv2.GaussianBlur(blurred_img, (7, 7), 0)
         contours_left = 0
-        c = 0
         valid_contours = []
         self.get_logger().info("Starting scan")
         for i in range(min_thresh,max_thresh+1):
@@ -93,12 +90,6 @@ class MultipleGears(Node):
             before_remove = len(contours)
             contours = self.remove_bad_contours(contours)
             contours_left = len(contours)
-            # if thresh_value <= min_thresh:
-            #     thresh_value = max_thresh
-            # thresh_value -= 1
-            # if c >= max_thresh:
-            #     self.get_logger().info("Gear not found. Trying again")
-            #     return
             if contours_left >= 1:
                 for ind in self.closest_to_circle(contours):
                     (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
@@ -107,10 +98,5 @@ class MultipleGears(Node):
         if len(valid_contours) == 0:
             return
         self.get_logger().info(
-            f"{len(valid_contours)} gears found at thresh value {thresh_value}! {before_remove - len(contours)} contours were removed. Took {c} different "
-            + ("threshold" if c == 1 else "thresholds")
+            f"{len(valid_contours)} gears found at thresh value {thresh_value}! {before_remove - len(contours)} contours were removed."
         )
-        # for ind in valid_contours:
-        #     (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
-        #     if (int(x), int(y)) not in self.g_centers:
-        #         self.g_centers.append((int(x), int(y)))
