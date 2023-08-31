@@ -311,7 +311,7 @@ class GearPlace(Node):
             for j in range(i + 1, len(arr)):
                 if (
                     sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
-                    <= 0.0175
+                    <= 0.02
                 ):  # Gets rid of the points which are within 20mm of each other
                     bad_measurements.append(j)
         bad_measurements = list(set(bad_measurements))
@@ -343,9 +343,11 @@ class GearPlace(Node):
         x_movements = [a[0] for a in robot_moves]  # just the x direction movements
         y_movements = [a[1] for a in robot_moves]  # just the y direction movements
         self.get_logger().info(f"Scanning for gears")
+        
         for ind in range(len(robot_moves)):  # loops through the scanning positions
+            
             c = 0
-            gear_center_target = [[0 for i in range(3)]]
+            gear_center_target = [[0 for _ in range(3)]]
             while (
                 (
                     [0, 0, 0] in gear_center_target
@@ -398,7 +400,9 @@ class GearPlace(Node):
             self._call_move_cartesian_service(
                 robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
             )  # moves to the next position
-        gear_center_target = [[0 for i in range(3)]]
+            
+            
+        gear_center_target = [[0 for _ in range(3)]]
         c = 0
         while (
             (
@@ -444,10 +448,12 @@ class GearPlace(Node):
             distances_from_home
         )  # since gears will be repeated from different positions, repetitions are removed
         self.get_logger().info(
-            f"{len(distances_from_home)} gears found\nMovements:"
+            f"{len(distances_from_home)} gears found"
         )  # outputs the number of gears found
         for movment in distances_from_home:
             self.get_logger().info("Movement: " + str(movment))
+            
+            
         self._call_move_to_named_pose_service("home")
         last_point = [0, 0]
         offset_needed = True
