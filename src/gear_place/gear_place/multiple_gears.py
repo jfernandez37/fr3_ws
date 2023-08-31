@@ -80,7 +80,6 @@ class MultipleGears(Node):
             for j in range(len(self.cv_image[i])):
                 if self.cv_image[i][j] == 255:
                     self.cv_image[i][j] = 0
-        self.original_image = self.cv_image.copy()
         for _ in range(4):
             blurred_img = cv2.GaussianBlur(blurred_img, (7, 7), 0)
         valid_contours = []
