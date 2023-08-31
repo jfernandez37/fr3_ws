@@ -200,7 +200,7 @@ class GearPlace(Node):
 
         request = PutGearDown.Request()
         z_movement = max(
-            -0.247, z + 0.048
+            -0.247, z + 0.047
         )  # z distance from current position to the gear
         request.z = z_movement + 0.0005
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
@@ -408,6 +408,7 @@ class GearPlace(Node):
             and len(gear_center_target) > 0
             and c < 3
         ):  # runs at the final position
+            c+=1
             gear_center_target = []
             multiple_gears = MultipleGears()
             rclpy.spin_once(multiple_gears)
@@ -527,7 +528,7 @@ class GearPlace(Node):
         self.x_offset = 0.03975  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = max(
-            -0.247, z + 0.048
+            -0.247, z + 0.047
         )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         request = PickUpGear.Request()
