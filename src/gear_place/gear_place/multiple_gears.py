@@ -35,9 +35,6 @@ class MultipleGears(Node):
             circle_areas.append(__import__("math").pi * radius**2)
         diffs = [areas[i] / circle_areas[i] for i in range(len(areas))]
         gears = [i for i in range(len(diffs)) if diffs[i] >= 0.9]
-        # for ind in range(len(diffs)):
-        #     if areas[ind] >7500 and diffs[ind] >=0.65:
-        #         gears.append(ind)
         return sorted(list(set(gears)))
 
     def remove_bad_contours(self, contours: tuple):
