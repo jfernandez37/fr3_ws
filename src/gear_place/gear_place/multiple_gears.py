@@ -78,8 +78,8 @@ class MultipleGears(Node):
         self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
         for i in range(len(self.cv_image)):
             for j in range(len(self.cv_image[i])):
-                if self.cv_image[i][j] == 0:
-                    self.cv_image[i][j] = 255
+                if self.cv_image[i][j] == 255:
+                    self.cv_image[i][j] = 0
         self.original_image = self.cv_image.copy()
         blurred_img = cv2.GaussianBlur(self.cv_image, (7, 7), 0)
         for _ in range(3):
