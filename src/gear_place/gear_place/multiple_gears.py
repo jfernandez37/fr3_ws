@@ -100,6 +100,3 @@ class MultipleGears(Node):
                         self.g_centers.append((int(x), int(y)))
         if len(valid_contours) == 0:
             return
-        self.get_logger().info(
-            f"{len(valid_contours)} gears found at thresh value {thresh_value}! {before_remove - len(contours)} contours were removed."
-        )
