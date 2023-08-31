@@ -347,7 +347,7 @@ class GearPlace(Node):
                     or sum([cent.count(None) for cent in gear_center_target]) > 0
                 )
                 and len(gear_center_target) > 0
-                and c < 2
+                and c < 3
             ):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
                 c += 1
                 gear_center_target = []  # holds the coordinates for the gear centers
@@ -406,7 +406,7 @@ class GearPlace(Node):
                 or sum([cent.count(None) for cent in gear_center_target]) > 0
             )
             and len(gear_center_target) > 0
-            and c < 2
+            and c < 3
         ):  # runs at the final position
             gear_center_target = []
             multiple_gears = MultipleGears()
