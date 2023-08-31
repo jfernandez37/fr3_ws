@@ -305,7 +305,7 @@ class GearPlace(Node):
                     sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
                     <= 0.03
                 ):  # Gets rid of the points which are within 30mm of each other
-                    bad_measurements.append(j)
+                    bad_measurements.append(j) # ensures that the first instance of a valid gear is saved
         bad_measurements = list(set(bad_measurements))  # removes duplicated indicies
         print(len(arr))
         print(bad_measurements)
