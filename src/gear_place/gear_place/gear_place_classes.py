@@ -323,8 +323,7 @@ class GearPlace(Node):
         return arr
 
     def _call_pick_up_multiple_gears(self, object_width):
-        """_summary_
-
+        """
         Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
         """
         distances_from_home = []
