@@ -12,7 +12,7 @@
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],
     "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
+        "editor.defaultFormatter": "ms-python.python"
     },
     "python.formatting.provider": "none"
 }

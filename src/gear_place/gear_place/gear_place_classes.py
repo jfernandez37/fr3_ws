@@ -536,12 +536,9 @@ class GearPlace(Node):
         self.get_logger().info(f"Picking up gear")
         request = PickUpGear.Request()
 
-        if offset_bool:
-            request.x = x + self.x_offset
-            request.y = y + self.y_offset
-        else:
-            request.x = x
-            request.y = y
+        request.x = x + (self.x_offset if offset_bool else 0)
+        request.y = y + (self.y_offset if offset_bool else 0)
+        
         request.z = z_movement
         request.object_width = object_width
 
