@@ -8,6 +8,7 @@ ROS2 package containing all of the code for controlling the robot and using the 
 * `gear_place_classes.py` - Contains all of the code to call services like move_cartesian or move_to_named_pose
 * `object_depth.py` - Contains all of the code to use the pointoud to find the distance between the camera and the top of the gear
 * `transform_utils.py` - Contains all functions to convert transforms to different forms
+* `multiple_gears.py` - Contains class for detecting multiple gears using the Realsense2 camera. Also can detect gears at different heights
 
 ### include/gear_place
 * `motion_generator.hpp` - Contains all of the code for the control loop like move cartesian
@@ -22,6 +23,7 @@ ROS2 package containing all of the code for controlling the robot and using the 
 * `gear_place_node.py` - Node that combines everything and moves the robot to above the gear, picks it up, moves to the conveyor belt, and places the gear on the conveyor belt
 * `moving_gear_node.py` - Node for testing the detection of a moving gear. Also estimates the distance from the center of the gear to the center of the camera
 * `point_cloud_node.py` - Node for testing the point cloud. The points are read in and then printed for a hard coded coordinate
+* `multiple_gears_node.py` - Node for testing the multiple_gears class. Similar to find_object_node
 * `robot_commander_node.cpp` - Starts the robot commander so the robot can be moved
 
 ### src
