@@ -40,7 +40,7 @@ Then, source the workspace:
 
 `. install/setup.bash`
 
-Every node needs the camera to be running with the correct settings. So, run
+Every node except for the launch everythin needs the camera to be running with the correct settings. So, run
  
 `ros2 launch realsense2_camera rs_launch.py pointcloud.enable:=true pointcloud.ordered_pc:=true pointcloud.stream_filter:=0 depth_module.profile:='640x480x30'`
 
@@ -75,6 +75,8 @@ There are four main nodes. Three of them are for testing and the final one is fo
     To launch everything with rviz, use the command:
 
     `ros2 launch gear_place gear.launch.py rviz:=True`
+  
+    This automatically launches the camera with the correct settings, so you do not need to run the camera launch command above.
 
 ## Packages
 * `gear_place` - Includes all code for moving the robot, identifying the gear with the realsense_camera, and the supervisors to control the robot

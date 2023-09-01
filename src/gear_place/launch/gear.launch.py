@@ -1,7 +1,5 @@
 from launch import LaunchDescription
 from launch.substitutions import (
-    Command,
-    FindExecutable,
     PathJoinSubstitution,
     LaunchConfiguration,
 )
@@ -9,7 +7,6 @@ from launch.actions import (
     DeclareLaunchArgument,
     OpaqueFunction,
     IncludeLaunchDescription,
-    Shutdown,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import IfCondition
@@ -45,7 +42,13 @@ def launch_setup(context, *args, **kwargs):
     realsense = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [FindPackageShare("realsense2_camera"), "/launch", "/rs_launch.py"]
-        )
+        ),
+        launch_arguments={
+            "pointcloud.enable": "true",
+            "pointcloud.ordered_pc": "true",
+            "pointcloud.stream_filter": "0",
+            "depth_module.profile": "'640x480x30'",
+        }.items(),
     )
 
     start_rviz = LaunchConfiguration("rviz")
@@ -73,12 +76,11 @@ def launch_setup(context, *args, **kwargs):
             robot_description,
         ],
     )
-    
+
     conveyor_node = Node(
-        package="conveyor_controller",
-        executable="conveyor_controller"
+        package="conveyor_controller", executable="conveyor_controller"
     )
-    
+
     supervisor = Node(
         package="gear_place",
         executable="gear_place_node.py",
@@ -88,7 +90,7 @@ def launch_setup(context, *args, **kwargs):
     nodes_to_start = [
         robot_state_publisher,
         conveyor_node,
-        # realsense,
+        realsense,
         rviz_node,
         robot_commander_node,
         supervisor,
