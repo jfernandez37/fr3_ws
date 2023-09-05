@@ -510,8 +510,6 @@ class GearPlace(Node):
         Uses the camera to put down the gear at the correct height
         """
         self.get_logger().info(f"Putting gear down")
-
-        run_bool = False
         depth_vals = []
         x_center = 100
         y_center = 100
@@ -522,11 +520,10 @@ class GearPlace(Node):
             camera_points = [
                 (x_center - 1 + i, y_center - 1 + j) for i in range(3) for j in range(3)
             ]
-            if run_bool:
+            if "object_depth" in locals():
                 object_depth.destroy_node()
             object_depth = ObjectDepth(camera_points)
             rclpy.spin_once(object_depth)
-            run_bool = True
             for coord in object_depth.coordinates:
                 if coord[2] not in [None, 0] and coord[2]<0.7:
                     depth_vals.append(coord[2])
