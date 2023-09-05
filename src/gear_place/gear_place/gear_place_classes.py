@@ -513,7 +513,7 @@ class GearPlace(Node):
         depth_vals = []
         x_center = 100
         y_center = 100
-        while len(depth_vals) < 5:
+        while len(depth_vals) < 7:
             self.get_logger().info(
             "Depth Values:" + ", ".join([str(val) for val in depth_vals])
             )
