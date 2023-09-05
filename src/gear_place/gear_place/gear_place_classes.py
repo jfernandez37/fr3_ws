@@ -535,8 +535,8 @@ class GearPlace(Node):
                     depth_vals.append(coord[2])
             x_center += 3
             y_center += 3
-            if c>=10 and len(depth_vals)<7:
-                depth_vals = [-100 for _ in range(10)]
+            if c>=10 and len(depth_vals)<7: # fills the list with bad values if the loop runs for too long
+                depth_vals = [100 for _ in range(10)]
 
         self.get_logger().info(
             "Depth Values:" + ", ".join([str(val) for val in depth_vals])
