@@ -522,6 +522,9 @@ class GearPlace(Node):
         x_center = 320
         y_center = 240
         while len(depth_vals) < 5:
+            self.get_logger().info(
+            "Depth Values:" + ", ".join([str(val) for val in depth_vals])
+            )
             camera_points = [
                 (x_center - 1 + i, y_center - 1 + j) for i in range(3) for j in range(3)
             ]
