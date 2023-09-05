@@ -368,7 +368,7 @@ class GearPlace(Node):
                 for coord in object_depth.coordinates:
                     gear_center_target.append(coord)
                     if (
-                        coord.count(0)!=3
+                        coord.count(0)==0
                     ):  # adds coordinates if not all 0. Duplicates are removed later
                         distances_from_home.append(
                             (
@@ -382,7 +382,7 @@ class GearPlace(Node):
             for (
                 arr
             ) in gear_center_target:  # adds the points to list which holds all points
-                if arr != [0, 0, 0]:
+                if arr.count(0.0)==0:
                     distances_from_home.append(
                         (
                             -1 * arr[1] + sum(x_movements[:ind]),
