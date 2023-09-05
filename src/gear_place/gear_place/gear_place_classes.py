@@ -158,20 +158,18 @@ class GearPlace(Node):
                     find_object.destroy_node()
                     find_object = FindObject()
                     rclpy.spin_once(find_object)
-            object_depth = ObjectDepth(find_object.ret_cent_gear())
+            object_depth = ObjectDepth([find_object.ret_cent_gear()])
             rclpy.spin_once(object_depth)  # Gets the distance from the camera
             object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
             find_object.destroy_node()
-            gear_center_target[0] = object_depth.dist_x
-            gear_center_target[1] = object_depth.dist_y
-            gear_center_target[2] = object_depth.dist_z
+            gear_center_target = object_depth.coordinates[0]
             # sleep(0.2)  # sleeps between tries
         print(gear_center_target)
 
         request = PickUpGear.Request()
 
-        request.x = -1 * object_depth.dist_y + self.x_offset
-        request.y = -1 * object_depth.dist_x + self.y_offset
+        request.x = -1 * gear_center_target[1] + self.x_offset
+        request.y = -1 * gear_center_target[2] + self.y_offset
         request.z = z_movement
         request.object_width = object_width
 
@@ -365,24 +363,21 @@ class GearPlace(Node):
                     multiple_gears = MultipleGears()
                     rclpy.spin_once(multiple_gears)
                 for g_center in multiple_gears.g_centers:
-                    object_depth = ObjectDepth(g_center)
+                    object_depth = ObjectDepth(multiple_gears.g_centers)
                     rclpy.spin_once(object_depth)  # Gets the distance from the camera
                     object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-                    gear_center_target.append(
-                        [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
-                    )
-                    if (
-                        object_depth.dist_x != 0
-                        and object_depth.dist_y != 0
-                        and object_depth.dist_z != 0
-                    ):  # adds coordinates if not all 0. Duplicates are removed later
-                        distances_from_home.append(
-                            (
-                                -1 * object_depth.dist_y + sum(x_movements[:ind]),
-                                -1 * object_depth.dist_x + sum(y_movements[:ind]),
-                                -1 * object_depth.dist_z,
+                    for coord in object_depth.coordinates:
+                        gear_center_target.append(coord)
+                        if (
+                            coord != [0.0,0.0,0.0]
+                        ):  # adds coordinates if not all 0. Duplicates are removed later
+                            distances_from_home.append(
+                                (
+                                    -1 * coord[1] + sum(x_movements[:ind]),
+                                    -1 * coord[0] + sum(y_movements[:ind]),
+                                    -1 * coord[2],
+                                )
                             )
-                        )
                 multiple_gears.destroy_node()
 
             for (
@@ -528,14 +523,14 @@ class GearPlace(Node):
             camera_points = [
                 (x_center - 1 + i, y_center - 1 + j) for i in range(3) for j in range(3)
             ]
-            for point in camera_points:
-                if run_bool:
-                    object_depth.destroy_node()
-                object_depth = ObjectDepth(point)
-                rclpy.spin_once(object_depth)
-                run_bool = True
-                if object_depth.dist_z not in [None, 0] and object_depth.dist_z<0.7:
-                    depth_vals.append(object_depth.dist_z)
+            if run_bool:
+                object_depth.destroy_node()
+            object_depth = ObjectDepth(camera_points)
+            rclpy.spin_once(object_depth)
+            run_bool = True
+            for coord in object_depth.coordinates:
+                if coord[2] not in [None, 0] and coord[2]<0.7:
+                    depth_vals.append(coord[2])
             x_center += 3
             y_center += 3
 

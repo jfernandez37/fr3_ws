@@ -103,7 +103,7 @@ def _get_struct_fmt(is_bigendian, fields, field_names=None):
 
 
 class ObjectDepth(Node):
-    def __init__(self, gear_c: tuple):
+    def __init__(self, points:list):
         """
         Takes in the gear center (or any other pixel) and finds the distance from the camera to that point
         """
@@ -112,20 +112,15 @@ class ObjectDepth(Node):
             PointCloud2, "/camera/depth/color/points", self.listener_callback, 10
         )
         self.subscription  # prevent unused variable warning
-        self.gx = gear_c[0]
-        self.gy = gear_c[1]
-        self.dist_x = None
-        self.dist_y = None
-        self.dist_z = None
+        self.points = points
+        self.coordinates = []
 
     def listener_callback(self, msg: PointCloud2):
         """
         Reads in the point cloud and returns the distance away from the given point.
         Used for finding the distance from the camera to the center of the gear
         """
-        data = read_points(msg, skip_nans=False, uvs=[[self.gx, self.gy]])
+        data = read_points(msg, skip_nans=False, uvs=[self.points])
 
         for i in data:
-            self.dist_x = i[0]
-            self.dist_y = i[1]
-            self.dist_z = i[2]
+            self.coordinates.append((i[0],i[1],i[2]))
