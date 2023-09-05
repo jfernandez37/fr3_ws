@@ -432,7 +432,7 @@ class GearPlace(Node):
             self._call_pick_up_gear_coord_service(
                 offset_needed, move[0], move[1], gear_point[2], object_width
             )  # picks up the gear
-            self._call_put_gear_down_camera()  # puts the gear down
+            self._call_put_gear_down_camera(gear_point[2])  # puts the gear down
             offset_needed = False
 
     def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
@@ -511,7 +511,7 @@ class GearPlace(Node):
             self.get_logger().error(f"Unable to pick up gear")
             raise Error("Unable to pick up gear")
 
-    def _call_put_gear_down_camera(self):
+    def _call_put_gear_down_camera(self, z):
         """
         Uses the camera to put down the gear at the correct height
         """
@@ -544,7 +544,9 @@ class GearPlace(Node):
         )
 
         request = PutGearDown.Request()
-        request.z = -1 * (sum(depth_vals) / len(depth_vals)) + 0.085
+        request.z = max(-1 * (sum(depth_vals) / len(depth_vals)) + 0.085,max(
+            -0.247, z + 0.0435
+        ))
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=30)
