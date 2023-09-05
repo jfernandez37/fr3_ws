@@ -77,7 +77,8 @@ class MultipleGears(Node):
             for j in range(len(self.cv_image[i])):
                 if self.cv_image[i][j] == 255:
                     self.cv_image[i][j] = 0
-        for _ in range(4):
+        blurred_img = cv2.GaussianBlur(self.cv_image, (7,7),0)
+        for _ in range(3):
             blurred_img = cv2.GaussianBlur(blurred_img, (7, 7), 0)
         valid_contours = []
         self.get_logger().info("Starting scan")
@@ -89,7 +90,6 @@ class MultipleGears(Node):
             contours, _ = cv2.findContours(
                 self.thresh_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
             )
-            before_remove = len(contours)
             contours = self.remove_bad_contours(contours)
             if len(contours) >= 1:
                 for ind in self.closest_to_circle(contours):
@@ -99,6 +99,3 @@ class MultipleGears(Node):
                         self.g_centers.append((int(x), int(y)))
         if len(valid_contours) == 0:
             return
-        self.get_logger().info(
-            f"{len(valid_contours)} gears found at thresh value {thresh_value}! {before_remove - len(contours)} contours were removed."
-        )

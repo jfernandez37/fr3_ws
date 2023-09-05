@@ -197,7 +197,7 @@ class GearPlace(Node):
 
         request = PutGearDown.Request()
         z_movement = max(
-            -0.247, z + 0.047
+            -0.247, z + 0.0435
         )  # z distance from current position to the gear
         request.z = z_movement + 0.0005
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
@@ -340,7 +340,7 @@ class GearPlace(Node):
         y_movements = [a[1] for a in robot_moves]  # just the y direction movements
         self.get_logger().info(f"Scanning for gears")
 
-        for ind in range(len(robot_moves)):  # loops through the scanning positions
+        for ind in range(len(robot_moves)+1):  # loops through the scanning positions
             c = 0
             gear_center_target = [[0 for _ in range(3)]]
             while (
@@ -396,6 +396,7 @@ class GearPlace(Node):
                             -1 * arr[2],
                         )
                     )  # adds the previous movements so that the measurements are from the home position instead of the current position
+<<<<<<< HEAD
             self._call_move_cartesian_service(
                 robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
             )  # moves to the next position
@@ -450,6 +451,12 @@ class GearPlace(Node):
                         -1 * arr[2],
                     )
                 )
+=======
+            if ind != len(robot_moves):
+                self._call_move_cartesian_service(
+                    robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
+                )  # moves to the next position
+>>>>>>> 57544281c3d61b215b92010150440bbbbed21e80
 
         distances_from_home = self.remove_identical_points(
             distances_from_home
@@ -536,17 +543,14 @@ class GearPlace(Node):
         self.x_offset = 0.03975  # offset from the camera to the gripper
         self.y_offset = 0.03  # offset from the camera to the gripper
         z_movement = max(
-            -0.247, z + 0.047
+            -0.247, z + 0.0435
         )  # z distance from the home position to where the gripper can grab the gear
         self.get_logger().info(f"Picking up gear")
         request = PickUpGear.Request()
 
-        if offset_bool:
-            request.x = x + self.x_offset
-            request.y = y + self.y_offset
-        else:
-            request.x = x
-            request.y = y
+        request.x = x + (self.x_offset if offset_bool else 0)
+        request.y = y + (self.y_offset if offset_bool else 0)
+        
         request.z = z_movement
         request.object_width = object_width
 
