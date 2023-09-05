@@ -120,7 +120,8 @@ class ObjectDepth(Node):
         Reads in the point cloud and returns the distance away from the given point.
         Used for finding the distance from the camera to the center of the gear
         """
-        data = read_points(msg, skip_nans=False, uvs=[self.points])
+        for point in self.points:
+            data = read_points(msg, skip_nans=False, uvs=[point])
 
-        for i in data:
-            self.coordinates.append((i[0],i[1],i[2]))
+            for i in data:
+                self.coordinates.append((i[0],i[1],i[2]))
