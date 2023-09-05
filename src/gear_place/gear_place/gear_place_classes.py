@@ -65,7 +65,6 @@ class GearPlace(Node):
         self.put_gear_down_client = self.create_client(PutGearDown, "put_gear_down")
 
     def wait(self, duration: float):
-
         start = self.get_clock().now()
 
         while self.get_clock().now() <= start + Duration(seconds=duration):
@@ -303,19 +302,21 @@ class GearPlace(Node):
                     sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
                     <= 0.03
                 ):  # Gets rid of the points which are within 30mm of each other
-                    bad_measurements.append(j) # ensures that the first instance of a valid gear is saved
+                    bad_measurements.append(
+                        j
+                    )  # ensures that the first instance of a valid gear is saved
         bad_measurements = list(set(bad_measurements))  # removes duplicated indicies
         print(len(arr))
         print(bad_measurements)
         bad_measurements = sorted(bad_measurements)[
             ::-1
         ]  # sorts the indicies in decending order so the correct values are removed in next loop
-        for ind in bad_measurements: # deletes duplicated gears
+        for ind in bad_measurements:  # deletes duplicated gears
             del arr[ind]
         return arr
 
-    def find_distance(self,arr):
-        return sqrt(arr[0]**2+arr[1]**2)
+    def find_distance(self, arr):
+        return sqrt(arr[0] ** 2 + arr[1] ** 2)
 
     def _call_pick_up_multiple_gears(self, object_width):
         """
@@ -333,7 +334,7 @@ class GearPlace(Node):
             [0.1, 0.1],
             [-0.1, 0.0],
             [-0.1, 0.0],
-            [-0.1, 0.0]
+            [-0.1, 0.0],
         ]  # cartesian movements starting at home position. Scans the area in front of the robot.
         x_movements = [a[0] for a in robot_moves]  # just the x direction movements
         y_movements = [a[1] for a in robot_moves]  # just the y direction movements
@@ -409,7 +410,7 @@ class GearPlace(Node):
             and len(gear_center_target) > 0
             and c < 3
         ):  # runs at the final position
-            c+=1
+            c += 1
             gear_center_target = []
             multiple_gears = MultipleGears()
             rclpy.spin_once(multiple_gears)
@@ -453,9 +454,13 @@ class GearPlace(Node):
         distances_from_home = self.remove_identical_points(
             distances_from_home
         )  # since gears will be repeated from different positions, repetitions are removed
-        
-        distances_from_home = [distances_from_home[i] for i in range(len(distances_from_home)) if self.find_distance(distances_from_home[i])<=0.27] # removes points which are too far from the home position
-        
+
+        distances_from_home = [
+            distances_from_home[i]
+            for i in range(len(distances_from_home))
+            if self.find_distance(distances_from_home[i]) <= 0.27
+        ]  # removes points which are too far from the home position
+
         self.get_logger().info(
             f"{len(distances_from_home)} gears found. Picking up the gears"
         )  # outputs the number of gears found
@@ -558,6 +563,53 @@ class GearPlace(Node):
         if not result.success:
             self.get_logger().error(f"Unable to pick up gear")
             raise Error("Unable to pick up gear")
+
+    def _call_put_gear_down_camera(self):
+        """
+        Uses the camera to put down the gear at the correct height
+        """
+        self.get_logger().info(f"Putting gear down")
+
+        run_bool = False
+        depth_vals = []
+        x_center = 320
+        y_center = 240
+        while len(depth_vals) < 5:
+            camera_points = [
+                (x_center - 1 + i, y_center - 1 + j) for i in range(3) for j in range(3)
+            ]
+            for point in camera_points:
+                if run_bool:
+                    object_depth.destroy_node()
+                object_depth = ObjectDepth(point)
+                rclpy.spin_once(object_depth)
+                run_bool = True
+                if object_depth.dist_z != 0:
+                    depth_vals.append(object_depth.dist_z)
+            x_center += 3
+            y_center += 3
+
+        self.get_logger().info(
+            "Depth Values:" + ", ".join([str(val) for val in depth_vals])
+        )
+
+        request = PutGearDown.Request()
+        request.z = -1 * (sum(depth_vals) / len(depth_vals)) + 0.01
+        future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
+
+        rclpy.spin_until_future_complete(self, future, timeout_sec=30)
+
+        if not future.done():
+            raise Error(
+                "Timeout reached when calling put gear down using camera service"
+            )
+
+        result: PutGearDown.Response
+        result = future.result()
+
+        if not result.success:
+            self.get_logger().error(f"Unable to put gear down using camera")
+            raise Error("Unable to put gear down using camera")
 
     def _calculate_world_pose(self, frame_id: str, rel_pose: Pose) -> Pose:
         """
