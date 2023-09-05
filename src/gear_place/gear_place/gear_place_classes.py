@@ -362,22 +362,21 @@ class GearPlace(Node):
                     multiple_gears.destroy_node()
                     multiple_gears = MultipleGears()
                     rclpy.spin_once(multiple_gears)
-                for g_center in multiple_gears.g_centers:
-                    object_depth = ObjectDepth(multiple_gears.g_centers)
-                    rclpy.spin_once(object_depth)  # Gets the distance from the camera
-                    object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-                    for coord in object_depth.coordinates:
-                        gear_center_target.append(coord)
-                        if (
-                            coord != [0.0,0.0,0.0]
-                        ):  # adds coordinates if not all 0. Duplicates are removed later
-                            distances_from_home.append(
-                                (
-                                    -1 * coord[1] + sum(x_movements[:ind]),
-                                    -1 * coord[0] + sum(y_movements[:ind]),
-                                    -1 * coord[2],
-                                )
+                object_depth = ObjectDepth(multiple_gears.g_centers)
+                rclpy.spin_once(object_depth)  # Gets the distance from the camera
+                object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+                for coord in object_depth.coordinates:
+                    gear_center_target.append(coord)
+                    if (
+                        coord != [0.0,0.0,0.0]
+                    ):  # adds coordinates if not all 0. Duplicates are removed later
+                        distances_from_home.append(
+                            (
+                                -1 * coord[1] + sum(x_movements[:ind]),
+                                -1 * coord[0] + sum(y_movements[:ind]),
+                                -1 * coord[2],
                             )
+                        )
                 multiple_gears.destroy_node()
 
             for (
