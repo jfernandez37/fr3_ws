@@ -531,7 +531,7 @@ class GearPlace(Node):
                 object_depth = ObjectDepth(point)
                 rclpy.spin_once(object_depth)
                 run_bool = True
-                if object_depth.dist_z != 0:
+                if object_depth.dist_z not in [None, 0]:
                     depth_vals.append(object_depth.dist_z)
             x_center += 3
             y_center += 3
