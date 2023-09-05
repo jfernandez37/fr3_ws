@@ -368,7 +368,7 @@ class GearPlace(Node):
                 for coord in object_depth.coordinates:
                     gear_center_target.append(coord)
                     if (
-                        coord != [0.0,0.0,0.0]
+                        coord.count(0)!=3
                     ):  # adds coordinates if not all 0. Duplicates are removed later
                         distances_from_home.append(
                             (
