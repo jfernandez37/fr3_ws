@@ -544,7 +544,7 @@ class GearPlace(Node):
         )
 
         request = PutGearDown.Request()
-        request.z = -1 * (sum(depth_vals) / len(depth_vals)) + 0.01
+        request.z = -1 * (sum(depth_vals) / len(depth_vals)) + 0.07
         future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
 
         rclpy.spin_until_future_complete(self, future, timeout_sec=30)
