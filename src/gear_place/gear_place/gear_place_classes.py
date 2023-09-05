@@ -396,67 +396,10 @@ class GearPlace(Node):
                             -1 * arr[2],
                         )
                     )  # adds the previous movements so that the measurements are from the home position instead of the current position
-<<<<<<< HEAD
-            self._call_move_cartesian_service(
-                robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
-            )  # moves to the next position
-
-        gear_center_target = [[0 for _ in range(3)]]
-        c = 0
-        while (
-            (
-                [0, 0, 0] in gear_center_target
-                or sum([cent.count(None) for cent in gear_center_target]) > 0
-            )
-            and len(gear_center_target) > 0
-            and c < 3
-        ):  # runs at the final position
-            c += 1
-            gear_center_target = []
-            multiple_gears = MultipleGears()
-            rclpy.spin_once(multiple_gears)
-            while (
-                sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
-                or not multiple_gears.ran
-            ):
-                multiple_gears.destroy_node()
-                multiple_gears = MultipleGears()
-                rclpy.spin_once(multiple_gears)
-            for g_center in multiple_gears.g_centers:
-                object_depth = ObjectDepth(g_center)
-                rclpy.spin_once(object_depth)
-                object_depth.destroy_node()
-                gear_center_target.append(
-                    [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
-                )
-                if (
-                    object_depth.dist_x != 0
-                    and object_depth.dist_y != 0
-                    and object_depth.dist_z != 0
-                ):
-                    distances_from_home.append(
-                        (
-                            -1 * object_depth.dist_y + sum(x_movements[:ind]),
-                            -1 * object_depth.dist_x + sum(y_movements[:ind]),
-                            -1 * object_depth.dist_z,
-                        )
-                    )
-            multiple_gears.destroy_node()
-        for arr in gear_center_target:
-            if arr != [0, 0, 0]:
-                distances_from_home.append(
-                    (
-                        -1 * arr[1] + sum(x_movements),
-                        -1 * arr[0] + sum(y_movements),
-                        -1 * arr[2],
-                    )
-                )
-=======
             if ind != len(robot_moves):
                 self._call_move_cartesian_service(
                     robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
                 )  # moves to the next position
->>>>>>> 57544281c3d61b215b92010150440bbbbed21e80
 
         distances_from_home = self.remove_identical_points(
             distances_from_home
