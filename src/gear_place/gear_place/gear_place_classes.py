@@ -381,9 +381,7 @@ class GearPlace(Node):
                       robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
                   )  # moves to the next position
 
-          distances_from_home = self.remove_identical_points(
-              distances_from_home
-          )  # since gears will be repeated from different positions, repetitions are removed
+          distances_from_home = self.remove_identical_points(distances_from_home)  # since gears will be repeated from different positions, repetitions are removed
 
           distances_from_home = [
               distances_from_home[i]
@@ -403,9 +401,7 @@ class GearPlace(Node):
       self._call_move_to_named_pose_service("home")
       last_point = [0, 0]
       offset_needed = True
-      for (
-          gear_point
-      ) in distances_from_home:  # loops through the movements to the gears
+      for gear_point in distances_from_home:  # loops through the movements to the gears
           move = [
               gear_point[i] - last_point[i] for i in range(2)
           ]  # finds the next movement to the next gear
