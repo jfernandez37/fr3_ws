@@ -340,9 +340,7 @@ class GearPlace(Node):
       gears_found = 0
       while gears_found == 0:
           for ind in range(len(robot_moves)+1):  # loops through the scanning positions
-              gear_center_target = [[0 for _ in range(3)]]
               for _ in range(5):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
-                  gear_center_target = []  # holds the coordinates for the gear centers
                   multiple_gears = MultipleGears()
                   rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
                   while (
@@ -357,7 +355,6 @@ class GearPlace(Node):
                   object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
                   for coord in object_depth.coordinates:
                       if coord.count(0.0)==0:  # adds coordinates if not all 0. Duplicates are removed later
-                          gear_center_target.append(coord)
                           distances_from_home.append(
                               (
                                   -1 * coord[1] + sum(x_movements[:ind]),
@@ -366,16 +363,6 @@ class GearPlace(Node):
                               )
                           )
                   multiple_gears.destroy_node()
-
-              for arr in gear_center_target:  # adds the points to list which holds all points
-                  if arr.count(0.0)==0:
-                      distances_from_home.append(
-                          (
-                              -1 * arr[1] + sum(x_movements[:ind]),
-                              -1 * arr[0] + sum(y_movements[:ind]),
-                              -1 * arr[2],
-                          )
-                      )  # adds the previous movements so that the measurements are from the home position instead of the current position
               if ind != len(robot_moves):
                   self._call_move_cartesian_service(
                       robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
