@@ -11,19 +11,29 @@ from cv_bridge import (
 
 
 class MultipleGears(Node):
-    def __init__(self):
+    def __init__(self, connected):
         super().__init__("multiple_gears")
         self.bridge = CvBridge()
         self.cv_image = None
         self.ran = False
         self.g_centers = []
+        self.connected = connected
         self.thresh_image = None
         self.declare_parameter("thresh_value", 50)
+        self.camera_sub = self.create_subscription(
+            Image, "camera/color/image_raw", self.camera_cb, 1
+        )
+        self.camera_sub
         self.subscription = self.create_subscription(
             Image, "/camera/depth/image_rect_raw", self.listener_callback, 1
         )
         self.subscription  # prevent unused variable warning
 
+    def camera_cb(self):
+        if not self.connected:
+            self.get_logger.info("Camera is connected")
+            self.connected = True
+        
     def closest_to_circle(self, contours : list) -> list:
         """
         Returns the contour which is closest to a circle
@@ -61,6 +71,9 @@ class MultipleGears(Node):
         Then, the functions above are used to find the gear out of all the contours that are found.
         It then finds the center of the gear contour.
         """
+        while not self.connected:
+            self.get_logger.info("Camera not connected yet. Waiting until ready")
+            __import__("time").sleep(3)
         self.ran = True
         min_thresh, max_thresh = 0, 250
         thresh_value = (

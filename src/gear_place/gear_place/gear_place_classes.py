@@ -338,18 +338,21 @@ class GearPlace(Node):
       y_movements = [a[1] for a in robot_moves]  # just the y direction movements
       self.get_logger().info(f"Scanning for gears")
       gears_found = 0
+      connected = False
       while gears_found == 0:
           for ind in range(len(robot_moves)+1):  # loops through the scanning positions
               for _ in range(5):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
-                  multiple_gears = MultipleGears()
+                  multiple_gears = MultipleGears(connected)
                   rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
+                  connected = multiple_gears.connected
                   while (
                       sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
                       or not multiple_gears.ran
                   ):  # loops until it has run and until there are no None values
                       multiple_gears.destroy_node()
-                      multiple_gears = MultipleGears()
+                      multiple_gears = MultipleGears(connected)
                       rclpy.spin_once(multiple_gears)
+                      connected = multiple_gears.connected
                   object_depth = ObjectDepth(multiple_gears.g_centers)
                   rclpy.spin_once(object_depth)  # Gets the distance from the camera
                   object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
