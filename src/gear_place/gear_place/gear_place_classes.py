@@ -499,10 +499,10 @@ class GearPlace(Node):
       x_center = 100
       y_center = 100
       c=0
-      while len(depth_vals) < 7:
+      while len(depth_vals) < 5:
           c+=1
           self.get_logger().info(
-          "Depth Values:" + ", ".join([str(val) for val in depth_vals])
+          "Depth Values: " + ", ".join([str(val) for val in depth_vals])
           )
           camera_points = [
               (x_center - 1 + i, y_center - 1 + j) for i in range(3) for j in range(3)
@@ -511,9 +511,7 @@ class GearPlace(Node):
               object_depth.destroy_node()
           object_depth = ObjectDepth(camera_points)
           rclpy.spin_once(object_depth)
-          for coord in object_depth.coordinates:
-              if coord[2] not in [None, 0] and coord[2]<0.7:
-                  depth_vals.append(coord[2])
+          depth_vals += [coord[2] for coord in object_depth.coordinates if coord[2] not in [None, 0] and coord[2]<0.7]
           x_center += 3
           y_center += 3
           if c>=10 and len(depth_vals)<7: # fills the list with bad values if the loop runs for too long
