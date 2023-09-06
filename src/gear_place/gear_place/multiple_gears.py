@@ -41,7 +41,7 @@ class MultipleGears(Node):
         """
         Removes contours which are too small and ones with too few sides to be the gear
         """
-        minimum_contour_area = 3000
+        minimum_contour_area = 1500
         maximum_contour_area = 100000
         new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
         filtered_contours = []
