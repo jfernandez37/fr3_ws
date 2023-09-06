@@ -39,7 +39,7 @@ class Error(Exception):
       return repr(self.value)
 
 
-def norm(x: float, y: float, z: float):
+def norm(x: float, y: float, z: float) -> float:
   return __import__("math").sqrt(x**2 + y**2 + z**2)
 
 
@@ -99,7 +99,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to move to pose: {named_pose}")
           raise Error("Unable to move to pose")
 
-  def _call_move_cartesian_service(self, x, y, z, v_max, acc):
+  def _call_move_cartesian_service(self, x : float, y : float, z : float, v_max : float, acc : float):
       """
       Calls the move_cartesian callback
       """
@@ -127,7 +127,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to move {x},{y},{z}")
           raise Error("Unable to move to location")
 
-  def _call_pick_up_gear_service(self, object_width):
+  def _call_pick_up_gear_service(self, object_width : float):
       """
       Calls the pick_up_gear callback
       """
@@ -187,7 +187,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to pick up gear")
           raise Error("Unable to pick up gear")
 
-  def _call_put_gear_down_service(self, z):
+  def _call_put_gear_down_service(self, z : float):
       """
       Calls the put_gear_down callback
       """
@@ -212,7 +212,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to put gear down")
           raise Error("Unable to put gear down")
 
-  def _call_pick_up_moving_gear_service(self, object_width):
+  def _call_pick_up_moving_gear_service(self, object_width : float):
       """
       Calls the pick_up_moving_gear callback
       """
@@ -289,7 +289,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to pick up gear")
           raise Error("Unable to pick up gear")
 
-  def remove_identical_points(self, arr):
+  def remove_identical_points(self, arr : list) -> list:
       """
       Removes duplicate coordinates from different positions
       """
@@ -313,10 +313,10 @@ class GearPlace(Node):
           del arr[ind]
       return arr
 
-  def find_distance(self, arr):
+  def find_distance(self, arr : list) -> float:
       return sqrt(arr[0] ** 2 + arr[1] ** 2)
 
-  def _call_pick_up_multiple_gears(self, object_width):
+  def _call_pick_up_multiple_gears(self, object_width : float):
       """
       Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
       """
@@ -445,7 +445,7 @@ class GearPlace(Node):
       if not result.success:
           raise Error("Unable to move to open gripper")
 
-  def _call_pick_up_gear_coord_service(self, offset_bool, x, y, z, object_width):
+  def _call_pick_up_gear_coord_service(self, offset_bool : bool, x : float, y : float, z : float, object_width : float):
       """
       Calls the pick_up_gear callback
       """
@@ -477,7 +477,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to pick up gear")
           raise Error("Unable to pick up gear")
 
-  def _call_put_gear_down_camera(self, z):
+  def _call_put_gear_down_camera(self, z : float):
       """
       Uses the camera to put down the gear at the correct height
       """
