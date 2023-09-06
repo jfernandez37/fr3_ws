@@ -56,11 +56,8 @@ class MultipleGears(Node):
         new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
         filtered_contours = []
         for cnt in new_contours:
-            epsilon = 0.01 * cv2.arcLength(cnt, True)
-            approx = cv2.approxPolyDP(cnt, epsilon, True)
             if (
-                len(approx) > 10
-                and maximum_contour_area > cv2.contourArea(cnt) > minimum_contour_area
+                maximum_contour_area > cv2.contourArea(cnt) > minimum_contour_area
             ):
                 filtered_contours.append(cnt)
         return filtered_contours
