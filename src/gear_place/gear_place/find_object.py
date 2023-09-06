@@ -17,6 +17,8 @@ class FindObject(Node):
         self.cv_image = None
         self.gx = None
         self.gy = None
+        self.ex = None
+        self.ey = None
         self.thresh_image = None
         self.declare_parameter("thresh_value", 50)
         self.subscription = self.create_subscription(
@@ -108,6 +110,8 @@ class FindObject(Node):
         (x, y), self.radius = cv2.minEnclosingCircle(contours[closest_to_circle])
         self.gx = int(x)
         self.gy = int(y)
+        self.ex = int(x)+int(self.radius)
+        self.ey = int(y)
         try:
             (h, w) = self.cv_image.shape[:2]
             self.cx = w // 2
@@ -123,3 +127,9 @@ class FindObject(Node):
         Returns the x and y coordinates of the pixel at the center of the gear
         """
         return self.gx, self.gy
+    
+    def ret_edge_gear(self):
+        """
+        Returns the x and y coordinates of a point on the edge of the gear
+        """
+        return self.ex, self.ey
