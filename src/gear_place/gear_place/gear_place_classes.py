@@ -356,8 +356,8 @@ class GearPlace(Node):
                   rclpy.spin_once(object_depth)  # Gets the distance from the camera
                   object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
                   for coord in object_depth.coordinates:
-                      gear_center_target.append(coord)
-                      if coord.count(0)==0:  # adds coordinates if not all 0. Duplicates are removed later
+                      if coord.count(0.0)==0:  # adds coordinates if not all 0. Duplicates are removed later
+                          gear_center_target.append(coord)
                           distances_from_home.append(
                               (
                                   -1 * coord[1] + sum(x_movements[:ind]),
