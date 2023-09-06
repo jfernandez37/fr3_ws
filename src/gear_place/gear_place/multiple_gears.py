@@ -24,7 +24,7 @@ class MultipleGears(Node):
         )
         self.subscription  # prevent unused variable warning
 
-    def closest_to_circle(self, contours):
+    def closest_to_circle(self, contours : list) -> list:
         """
         Returns the contour which is closest to a circle
         """
@@ -37,7 +37,7 @@ class MultipleGears(Node):
         gears = [i for i in range(len(diffs)) if diffs[i] >= 0.9]
         return sorted(list(set(gears)))
 
-    def remove_bad_contours(self, contours: tuple):
+    def remove_bad_contours(self, contours: tuple) -> list:
         """
         Removes contours which are too small and ones with too few sides to be the gear
         """
@@ -50,13 +50,12 @@ class MultipleGears(Node):
             approx = cv2.approxPolyDP(cnt, epsilon, True)
             if (
                 len(approx) > 10
-                and cv2.contourArea(cnt) > minimum_contour_area
-                and maximum_contour_area > cv2.contourArea(cnt)
+                and maximum_contour_area > cv2.contourArea(cnt) > minimum_contour_area
             ):
                 filtered_contours.append(cnt)
         return filtered_contours
 
-    def listener_callback(self, msg):
+    def listener_callback(self, msg : Image):
         """
         Gets the image from the contour, blurs it, applies a threshold, finds the contours.
         Then, the functions above are used to find the gear out of all the contours that are found.
