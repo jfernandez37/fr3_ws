@@ -7,11 +7,8 @@ from gear_place.object_depth import ObjectDepth
 def main(args=None):
     rclpy.init(args=args)
 
-    gear_center_target = [[0 for i in range(3)]]
-    while ((
-                [0, 0, 0] in gear_center_target
-                or sum([cent.count(None) for cent in gear_center_target]) > 0
-            ) and len(gear_center_target) > 0) or len(gear_center_target)==0:
+    gear_center_target = []
+    while len(gear_center_target)==0:
                 gear_center_target = []
                 multiple_gears = MultipleGears()
                 rclpy.spin_once(multiple_gears)
@@ -19,15 +16,12 @@ def main(args=None):
                     multiple_gears.destroy_node()
                     multiple_gears = MultipleGears()
                     rclpy.spin_once(multiple_gears)
-                for g_center in multiple_gears.g_centers:
-                    object_depth = ObjectDepth([g_center])
-                    rclpy.spin_once(object_depth)  # Gets the distance from the camera
-                    object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-                    gear_center_target.append(
-                        [object_depth.dist_x, object_depth.dist_y, object_depth.dist_z]
-                    )
+                object_depth = ObjectDepth(multiple_gears.g_centers)
+                rclpy.spin_once(object_depth)  # Gets the distance from the camera
+                object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
                 # if gear_center_target.count([0,0,0]) != len(gear_center_target):
                 #       break
+                gear_center_target = object_depth.coordinates
                 multiple_gears.destroy_node()
                 print(gear_center_target)
                 print("None count = ",sum([cent.count(None) for cent in gear_center_target]))
