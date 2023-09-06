@@ -340,15 +340,11 @@ class GearPlace(Node):
       gears_found = 0
       while gears_found == 0:
           for ind in range(len(robot_moves)+1):  # loops through the scanning positions
-              c = 0
               gear_center_target = [[0 for _ in range(3)]]
               for _ in range(5):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
-                  c += 1
                   gear_center_target = []  # holds the coordinates for the gear centers
                   multiple_gears = MultipleGears()
-                  rclpy.spin_once(
-                      multiple_gears
-                  )  # finds multiple gears if there are multiple
+                  rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
                   while (
                       sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
                       or not multiple_gears.ran
@@ -361,9 +357,7 @@ class GearPlace(Node):
                   object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
                   for coord in object_depth.coordinates:
                       gear_center_target.append(coord)
-                      if (
-                          coord.count(0)==0
-                      ):  # adds coordinates if not all 0. Duplicates are removed later
+                      if coord.count(0)==0:  # adds coordinates if not all 0. Duplicates are removed later
                           distances_from_home.append(
                               (
                                   -1 * coord[1] + sum(x_movements[:ind]),
@@ -373,9 +367,7 @@ class GearPlace(Node):
                           )
                   multiple_gears.destroy_node()
 
-              for (
-                  arr
-              ) in gear_center_target:  # adds the points to list which holds all points
+              for arr in gear_center_target:  # adds the points to list which holds all points
                   if arr.count(0.0)==0:
                       distances_from_home.append(
                           (
