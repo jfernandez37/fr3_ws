@@ -10,7 +10,7 @@ def dist_between_points(points : list):
 def main(args=None):
     rclpy.init(args=args)
 
-    gear_center_values = [[0 for i in range(3)],[[0 for i in range(3)]]]
+    gear_center_values = [[0 for i in range(3)],[0 for i in range(3)]]
     c=1
     while sum([1 for i in range(6) if gear_center_values[i//3][i%3] not in [0.0, None]])!=6:
         find_object = FindObject()
