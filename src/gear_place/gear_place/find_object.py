@@ -42,7 +42,7 @@ class FindObject(Node):
         """
         Removes contours which are too small and ones with too few sides to be the gear
         """
-        minimum_contour_area = 4000
+        minimum_contour_area = 2000
         maximum_contour_area = 15000
         new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
         filtered_contours = []
