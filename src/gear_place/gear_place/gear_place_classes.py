@@ -428,7 +428,7 @@ class GearPlace(Node):
               gear_color == "not found"
               self.get_logger().info("Could not find gear color")
           else:
-              thresholds = sorted([0.0275,0.04,updated_radius_vals[gear_point]])
+              thresholds = sorted([0.0275,0.041,updated_radius_vals[gear_point]])
               gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
               self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
           self._call_open_gripper_service()  # opens the gripper
