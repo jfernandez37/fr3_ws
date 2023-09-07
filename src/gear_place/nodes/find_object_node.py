@@ -13,6 +13,7 @@ def main(args=None):
     gear_center_values = [[0 for i in range(3)],[0 for i in range(3)]]
     c=1
     while sum([1 for i in range(6) if gear_center_values[i//3][i%3] not in [0.0, None]])!=6:
+        print(gear_center_values)
         find_object = FindObject()
         rclpy.spin_once(find_object)
         while find_object.ret_cent_gear().count(None) != 0:
