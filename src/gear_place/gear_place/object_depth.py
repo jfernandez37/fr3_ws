@@ -128,6 +128,7 @@ class ObjectDepth(Node):
             radius_point = [0 for _ in range(3)]
             data = read_points(msg, skip_nans=False, uvs=[point])
             if self.radius_coordinates!={}:
+                distances = []
                 for val in self.radius_coordinates[point]:
                     measurement = read_points(msg, skip_nans=False, uvs = [val])
                     for i in measurement:
@@ -135,11 +136,11 @@ class ObjectDepth(Node):
                             radius_point = i
                 for i in data:
                     if radius_point!=[0.0,0.0,0.0]:
-                        dist = dist_between_points([i,radius_point])
+                        distances.append(dist_between_points([i,radius_point]))
                     else:
-                        dist = 0
+                        distances.append(0)
                     self.coordinates.append((i[0],i[1],i[2]))
-                    self.radius_vals[(i[0],i[1],i[2])] = dist
+                self.radius_vals[(i[0],i[1],i[2])] = (min([val for val in distances if val!=0]) if distances.count(0)!= len(distances) else 0)
             else:
                 for i in data:
                     self.coordinates.append((i[0],i[1],i[2]))
