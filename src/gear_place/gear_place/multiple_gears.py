@@ -17,6 +17,7 @@ class MultipleGears(Node):
         self.cv_image = None
         self.ran = False
         self.g_centers = []
+        self.dist_points = {}
         self.connected = connected
         self.thresh_image = None
         self.declare_parameter("thresh_value", 50)
@@ -103,8 +104,13 @@ class MultipleGears(Node):
             if len(contours) >= 1:
                 for ind in self.closest_to_circle(contours):
                     valid_contours.append(ind)
-                    (x, y), self.radius = cv2.minEnclosingCircle(contours[ind])
+                    (x, y), radius = cv2.minEnclosingCircle(contours[ind])
                     if (int(x), int(y)) not in self.g_centers:
                         self.g_centers.append((int(x), int(y)))
+                        self.dist_points[(int(x), int(y))] = []
+                        self.dist_points[(int(x), int(y))].append((int(x)+radius,int(y)))
+                        self.dist_points[(int(x), int(y))].append((int(x)-radius,int(y)))
+                        self.dist_points[(int(x), int(y))].append((int(x),int(y))+radius)
+                        self.dist_points[(int(x), int(y))].append((int(x),int(y))-radius)
         if len(valid_contours) == 0:
             return
