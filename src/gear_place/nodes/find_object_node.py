@@ -32,7 +32,7 @@ def main(args=None):
     print("Gear edge: "+",".join([coord_str[i]+": "+str(object_depth.coordinates[1][i]) for i in range(3)]))
     distance_to_center_of_gear = dist_between_points(object_depth.coordinates)
     print("Distance between the edge and the center of the gear:",distance_to_center_of_gear)
-    thresholds = sorted([0.03,0.055,distance_to_center_of_gear])
+    thresholds = sorted([0.0325,0.055,distance_to_center_of_gear])
     print("The gear is "+["yellow","orange","green"][thresholds.index(distance_to_center_of_gear)])
     print(f"{c} tries to find the gear")
     cv2.imshow("Threshold image", find_object.thresh_image)
