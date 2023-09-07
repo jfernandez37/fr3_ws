@@ -9,6 +9,7 @@ from cv_bridge import (
     CvBridge,
 )  # for converting the sensor_msgs.msg.image to opencv image
 
+from math import sqrt
 
 class MultipleGears(Node):
     def __init__(self, connected):
@@ -108,10 +109,19 @@ class MultipleGears(Node):
                     radius = int(radius)
                     if (int(x), int(y)) not in self.g_centers:
                         self.g_centers.append((int(x), int(y)))
+                        unit_circle = sqrt(2)/2
+                        between_x_y = unit_circle*radius
                         self.dist_points[(int(x), int(y))] = []
+                        
                         self.dist_points[(int(x), int(y))].append((int(x)+radius,int(y)))
                         self.dist_points[(int(x), int(y))].append((int(x)-radius,int(y)))
                         self.dist_points[(int(x), int(y))].append((int(x),int(y)+radius))
                         self.dist_points[(int(x), int(y))].append((int(x),int(y)-radius))
+
+                        self.dist_points[(int(x), int(y))].append((int(x)+between_x_y,int(y)+between_x_y))
+                        self.dist_points[(int(x), int(y))].append((int(x)+between_x_y,int(y)-between_x_y))
+                        self.dist_points[(int(x), int(y))].append((int(x)-between_x_y,int(y)+between_x_y))
+                        self.dist_points[(int(x), int(y))].append((int(x)-between_x_y,int(y)-between_x_y))
+                        
         if len(valid_contours) == 0:
             return
