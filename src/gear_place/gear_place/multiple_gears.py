@@ -105,6 +105,7 @@ class MultipleGears(Node):
                 for ind in self.closest_to_circle(contours):
                     valid_contours.append(ind)
                     (x, y), radius = cv2.minEnclosingCircle(contours[ind])
+                    radius = int(radius)
                     if (int(x), int(y)) not in self.g_centers:
                         self.g_centers.append((int(x), int(y)))
                         self.dist_points[(int(x), int(y))] = []
