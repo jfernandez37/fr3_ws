@@ -339,6 +339,7 @@ class GearPlace(Node):
       self.get_logger().info(f"Scanning for gears")
       gears_found = 0
       connected = False
+      updated_radius_vals = {}
       while gears_found == 0:
           for ind in range(len(robot_moves)+1):  # loops through the scanning positions
               for _ in range(5):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
@@ -353,7 +354,7 @@ class GearPlace(Node):
                       multiple_gears = MultipleGears(connected)
                       rclpy.spin_once(multiple_gears)
                       connected = multiple_gears.connected
-                  object_depth = ObjectDepth(multiple_gears.g_centers)
+                  object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
                   rclpy.spin_once(object_depth)  # Gets the distance from the camera
                   object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
                   for coord in object_depth.coordinates:
@@ -365,6 +366,11 @@ class GearPlace(Node):
                                   -1 * coord[2],
                               )
                           )
+                          updated_radius_vals[(
+                                  -1 * coord[1] + sum(x_movements[:ind]),
+                                  -1 * coord[0] + sum(y_movements[:ind]),
+                                  -1 * coord[2],
+                              )] = object_depth.radius_vals[coord]
                   multiple_gears.destroy_node()
               if ind != len(robot_moves):
                   self._call_move_cartesian_service(
@@ -397,6 +403,9 @@ class GearPlace(Node):
           ]  # finds the next movement to the next gear
           last_point = gear_point
           self.get_logger().info("Next_move:" + str(move))
+          thresholds = sorted([0.0325,0.055,updated_radius_vals[gear_point]])
+          gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
+          self.get_logger().info(f"Picking up a {gear_color} gear")
           self._call_open_gripper_service()  # opens the gripper
           self._call_pick_up_gear_coord_service(
               offset_needed, move[0], move[1], gear_point[2], object_width

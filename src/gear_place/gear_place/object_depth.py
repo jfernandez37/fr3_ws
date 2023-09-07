@@ -14,6 +14,8 @@ _DATATYPES[PointField.UINT32] = ("I", 4)
 _DATATYPES[PointField.FLOAT32] = ("f", 4)
 _DATATYPES[PointField.FLOAT64] = ("d", 8)
 
+def dist_between_points(points : list):
+    return __import__("math").sqrt(sum([(points[0][i]-points[1][i])**2 for i in range(2)]))
 
 def read_points(cloud, field_names=None, skip_nans=False, uvs=[]):
     """
@@ -103,7 +105,7 @@ def _get_struct_fmt(is_bigendian, fields, field_names=None):
 
 
 class ObjectDepth(Node):
-    def __init__(self, points:list):
+    def __init__(self, points:list, width_vals:dict):
         """
         Takes in the gear center (or any other pixel) and finds the distance from the camera to that point
         """
@@ -113,7 +115,9 @@ class ObjectDepth(Node):
         )
         self.subscription  # prevent unused variable warning
         self.points = points
+        self.radius_coordinates = width_vals
         self.coordinates = []
+        self.radius_vals = {}
 
     def listener_callback(self, msg: PointCloud2):
         """
@@ -121,7 +125,18 @@ class ObjectDepth(Node):
         Used for finding the distance from the camera to the center of the gear
         """
         for point in self.points:
+            radius_point = [0 for _ in range(3)]
             data = read_points(msg, skip_nans=False, uvs=[point])
-
+            for val in self.radius_coordinates[point]:
+                measurement = read_points(msg, skip_nans=False, uvs = [val])
+                for i in measurement:
+                    if i.count(0.0) == 0 and i.count(None)==0:
+                        radius_point = i
             for i in data:
+                if radius_point!=[0.0,0.0,0.0]:
+                    dist = dist_between_points([i,radius_point])
+                else:
+                    dist = 0
                 self.coordinates.append((i[0],i[1],i[2]))
+                self.radius_vals[(i[0],i[1],i[2])] = dist
+
