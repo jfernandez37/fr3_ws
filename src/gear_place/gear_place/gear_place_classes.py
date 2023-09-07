@@ -321,18 +321,39 @@ class GearPlace(Node):
       Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
       """
       distances_from_home = []
+    #   robot_moves = [
+    #       [0.0, -0.1],
+    #       [-0.1, 0.0],
+    #       [-0.1, 0.0],
+    #       [-0.1, 0.0],
+    #       [0.0, 0.1],
+    #       [0.1, 0.0],
+    #       [0.1, 0.0],
+    #       [0.1, 0.1],
+    #       [-0.1, 0.0],
+    #       [-0.1, 0.0],
+    #       [-0.1, 0.0],
+    #   ]  # cartesian movements starting at home position. Scans the area in front of the robot.
       robot_moves = [
           [0.0, -0.1],
-          [-0.1, 0.0],
-          [-0.1, 0.0],
-          [-0.1, 0.0],
+          [-0.05, 0.0],
+          [-0.05, 0.0],
+          [-0.05, 0.0],
+          [-0.05, 0.0],
+          [-0.05, 0.0],
+          [-0.05, 0.0],
           [0.0, 0.1],
-          [0.1, 0.0],
-          [0.1, 0.0],
+          [0.05, 0.0],
+          [0.05, 0.0],
+          [0.05, 0.0],
+          [0.05, 0.0],
           [0.1, 0.1],
-          [-0.1, 0.0],
-          [-0.1, 0.0],
-          [-0.1, 0.0],
+          [-0.05, 0.0],
+          [-0.05, 0.0],
+          [-0.05, 0.0],
+          [-0.05, 0.0],
+          [-0.05, 0.0],
+          [-0.05, 0.0],
       ]  # cartesian movements starting at home position. Scans the area in front of the robot.
       x_movements = [a[0] for a in robot_moves]  # just the x direction movements
       y_movements = [a[1] for a in robot_moves]  # just the y direction movements
@@ -342,7 +363,7 @@ class GearPlace(Node):
       updated_radius_vals = {}
       while gears_found == 0:
           for ind in range(len(robot_moves)+1):  # loops through the scanning positions
-              for _ in range(3):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
+              for _ in range(2):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
                   multiple_gears = MultipleGears(connected)
                   rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
                   connected = multiple_gears.connected
