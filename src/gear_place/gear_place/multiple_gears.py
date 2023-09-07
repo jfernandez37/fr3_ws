@@ -110,7 +110,7 @@ class MultipleGears(Node):
                         self.dist_points[(int(x), int(y))] = []
                         self.dist_points[(int(x), int(y))].append((int(x)+radius,int(y)))
                         self.dist_points[(int(x), int(y))].append((int(x)-radius,int(y)))
-                        self.dist_points[(int(x), int(y))].append((int(x),int(y))+radius)
-                        self.dist_points[(int(x), int(y))].append((int(x),int(y))-radius)
+                        self.dist_points[(int(x), int(y))].append((int(x),int(y)+radius))
+                        self.dist_points[(int(x), int(y))].append((int(x),int(y)-radius))
         if len(valid_contours) == 0:
             return
