@@ -69,9 +69,9 @@ class MultipleGears(Node):
         Then, the functions above are used to find the gear out of all the contours that are found.
         It then finds the center of the gear contour.
         """
-        while not self.connected:
-            self.get_logger().info("Camera not connected yet. Waiting until ready")
-            __import__("time").sleep(3)
+        # while not self.connected:
+        #     self.get_logger().info("Camera not connected yet. Waiting until ready")
+        #     __import__("time").sleep(3)
         self.ran = True
         min_thresh, max_thresh = 0, 250
         thresh_value = (
