@@ -508,7 +508,7 @@ class GearPlace(Node):
           ]
           if "object_depth" in locals():
               object_depth.destroy_node()
-          object_depth = ObjectDepth(camera_points)
+          object_depth = ObjectDepth(camera_points,{})
           rclpy.spin_once(object_depth)
           depth_vals += [coord[2] for coord in object_depth.coordinates if coord[2] not in [None, 0] and coord[2]<0.7]
           x_center += 3
