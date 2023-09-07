@@ -110,7 +110,7 @@ class MultipleGears(Node):
                     if (int(x), int(y)) not in self.g_centers:
                         self.g_centers.append((int(x), int(y)))
                         unit_circle = sqrt(2)/2
-                        between_x_y = unit_circle*radius
+                        between_x_y = int(unit_circle*radius)
                         self.dist_points[(int(x), int(y))] = []
                         
                         self.dist_points[(int(x), int(y))].append((int(x)+radius,int(y)))
