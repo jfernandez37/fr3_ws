@@ -74,7 +74,7 @@ class MultipleGears(Node):
         #     self.get_logger().info("Camera not connected yet. Waiting until ready")
         #     __import__("time").sleep(3)
         self.ran = True
-        min_thresh, max_thresh = 0, 250
+        min_thresh, max_thresh = 10, 180
         thresh_value = (
             self.get_parameter("thresh_value").get_parameter_value().integer_value
         )
@@ -112,16 +112,13 @@ class MultipleGears(Node):
                         unit_circle = sqrt(2)/2
                         between_x_y = int(unit_circle*radius)
                         self.dist_points[(int(x), int(y))] = []
-                        
+
                         self.dist_points[(int(x), int(y))].append((int(x)+radius,int(y)))
                         self.dist_points[(int(x), int(y))].append((int(x)-radius,int(y)))
                         self.dist_points[(int(x), int(y))].append((int(x),int(y)+radius))
                         self.dist_points[(int(x), int(y))].append((int(x),int(y)-radius))
 
-                        self.dist_points[(int(x), int(y))].append((int(x)+between_x_y,int(y)+between_x_y))
-                        self.dist_points[(int(x), int(y))].append((int(x)+between_x_y,int(y)-between_x_y))
-                        self.dist_points[(int(x), int(y))].append((int(x)-between_x_y,int(y)+between_x_y))
-                        self.dist_points[(int(x), int(y))].append((int(x)-between_x_y,int(y)-between_x_y))
+                        self.dist_points[(int(x), int(y))]+=[(int(x)+between_x_y*[-1,1][i],int(y)+between_x_y*[-1,1][j]) for i in range(2) for j in range(2)]
                         
         if len(valid_contours) == 0:
             return
