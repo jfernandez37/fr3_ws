@@ -403,7 +403,7 @@ class GearPlace(Node):
           ]  # finds the next movement to the next gear
           last_point = gear_point
           self.get_logger().info("Next_move:" + str(move))
-          thresholds = sorted([0.0325,0.055,updated_radius_vals[gear_point]])
+          thresholds = sorted([0.0275,0.045,updated_radius_vals[gear_point]])
           gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
           self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
           self._call_open_gripper_service()  # opens the gripper
