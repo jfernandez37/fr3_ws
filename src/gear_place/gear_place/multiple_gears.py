@@ -93,7 +93,7 @@ class MultipleGears(Node):
             blurred_img = cv2.GaussianBlur(blurred_img, (7, 7), 0)
         valid_contours = []
         self.get_logger().info("Starting scan")
-        for i in range(min_thresh, max_thresh + 1):
+        for i in range(min_thresh, max_thresh + 1,3):
             thresh_value = i
             _, self.thresh_image = cv2.threshold(
                 blurred_img, thresh_value, 255, cv2.THRESH_BINARY_INV
