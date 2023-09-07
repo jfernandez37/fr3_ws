@@ -433,7 +433,7 @@ class GearPlace(Node):
               self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
           self._call_open_gripper_service()  # opens the gripper
           self._call_pick_up_gear_coord_service(
-              offset_needed, move[0], move[1], gear_point[2] - (0.008 if gear_color=="green"  else 0), object_width
+              offset_needed, move[0], move[1], gear_point[2] - (0.002 if gear_color=="green"  else 0), object_width
           )  # picks up the gear
           self._call_put_gear_down_camera(gear_point[2])  # puts the gear down
           offset_needed = False
