@@ -32,7 +32,7 @@ class MultipleGears(Node):
 
     def camera_cb(self):
         if not self.connected:
-            self.get_logger.info("Camera is connected")
+            self.get_logger().info("Camera is connected")
             self.connected = True
         
     def closest_to_circle(self, contours : list) -> list:
