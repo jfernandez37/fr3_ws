@@ -28,8 +28,8 @@ def main(args=None):
         find_object.destroy_node()
         gear_center_values = object_depth.coordinates
     coord_str = "xyz"
-    print("Gear center: "+",".join([coord_str[i]+": "+object_depth.coordinates[0][i] for i in range(3)]))
-    print("Gear edge: "+",".join([coord_str[i]+": "+object_depth.coordinates[1][i] for i in range(3)]))
+    print("Gear center: "+",".join([coord_str[i]+": "+str(object_depth.coordinates[0][i]) for i in range(3)]))
+    print("Gear edge: "+",".join([coord_str[i]+": "+str(object_depth.coordinates[1][i]) for i in range(3)]))
     distance_to_center_of_gear = dist_between_points(object_depth.coordinates)
     print("Distance between the edge and the center of the gear:",distance_to_center_of_gear)
     thresholds = sorted([0.03,0.07,distance_to_center_of_gear])
