@@ -45,14 +45,6 @@ def norm(x: float, y: float, z: float) -> float:
 
 class GearPlace(Node):
   def _init__(self):
-      # super().__init__("gear_place")
-
-      # TF
-      self.tf_buffer = Buffer()
-      self.tf_listener = TransformListener(self.tf_buffer, self)
-
-      self.tf_broadcaster = StaticTransformBroadcaster(self)
-      self.static_transforms = []
       # Service Clients
       self.move_to_named_pose_client = self.create_client(
           MoveToNamedPose, "move_to_named_pose"
@@ -133,16 +125,14 @@ class GearPlace(Node):
       """
       self.x_offset = 0.0425  # offset from the camera to the gripper
       self.y_offset = 0.03  # offset from the camera to the gripper
-      z_movement = (
-          -0.247
-      )  # z distance from the home position to where the gripper can grab the gear
+      z_movement = -0.247 # z distance from the home position to where the gripper can grab the gear
       self.get_logger().info(f"Picking up gear")
       gear_center_target = [0 for _ in range(3)]
       while (
           gear_center_target.count(0) == 3 or None in gear_center_target
       ):  # runs until valid coordinates are found
           find_object = FindObject()
-          rclpy.spin_once(find_object)  # Finds the gear
+          rclpy.spin_once(find_object) # Finds the gear
           c = 0
           while (
               find_object.ret_cent_gear().count(None) != 0
@@ -150,9 +140,9 @@ class GearPlace(Node):
               c += 1
 
               if c % 5 == 0:
-                  # self._call_move_cartesian_service(
-                  #     0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
-                  # )  # Moves to the center of the cart
+                  self._call_move_cartesian_service(
+                      0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
+                  )  # Moves to the center of the cart
                   sleep(1)
               else:
                   find_object.destroy_node()
@@ -163,7 +153,6 @@ class GearPlace(Node):
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
           find_object.destroy_node()
           gear_center_target = object_depth.coordinates[0]
-          # sleep(0.2)  # sleeps between tries
       print(gear_center_target)
 
       request = PickUpGear.Request()
@@ -224,10 +213,10 @@ class GearPlace(Node):
               c += 1
               self._call_move_cartesian_service(
                   0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
-              )  # Moves to the center of the cart
+              )  # Moves Around the cart scanning for a gear
               sleep(1)
-      self.x_offset = 0.042  # offset from the camera to the gripper
-      self.y_offset = 0.03  # offset from the camera to the gripper
+      self.x_offset = 0.042 # offset from the camera to the gripper
+      self.y_offset = 0.03 # offset from the camera to the gripper
       z_movement = -0.2465
       velocity = 0.15
       acceleration = 0.2
@@ -562,18 +551,6 @@ class GearPlace(Node):
       if not result.success:
           self.get_logger().error(f"Unable to put gear down using camera")
           raise Error("Unable to put gear down using camera")
-
-  def _calculate_world_pose(self, frame_id: str, rel_pose: Pose) -> Pose:
-      """
-      Looks up transform from the world to the given frame
-      """
-      try:
-          t = self.tf_buffer.lookup_transform("world", frame_id, rclpy.time.Time())
-      except TransformException as ex:
-          self.get_logger().info(f"Could not transform {frame_id} to world: {ex}")
-          raise Error("Unable to transform between frames")
-
-      return multiply_pose(convert_transform_to_pose(t), rel_pose)
 
 
 class ConveyorClass(Node):

@@ -75,10 +75,6 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       std::bind(&RobotCommander::pick_up_gear_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
 
-  move_to_position_srv_ = this->create_service<gear_place_interfaces::srv::MoveToPosition>(
-      "move_to_position",
-      std::bind(&RobotCommander::move_to_position_cb_, this,
-                std::placeholders::_1, std::placeholders::_2));
   put_gear_down_srv_ = this->create_service<gear_place_interfaces::srv::PutGearDown>(
       "put_gear_down",
       std::bind(&RobotCommander::put_gear_down_cb_, this,
@@ -306,28 +302,7 @@ void RobotCommander::put_gear_down_cb_(
   response->success = true;
 }
 
-void RobotCommander::move_to_position_cb_(
-    const std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Request> request,
-    std::shared_ptr<gear_place_interfaces::srv::MoveToPosition::Response> response)
-{
-  // Create target EE pose from home orientation and target position
-  KDL::Frame target_frame(
-      KDL::Rotation::RPY(M_PI, 0.0, 0.1),
-      KDL::Vector(request->target_position.x, request->target_position.y, request->target_position.z));
 
-  try
-  {
-    move_robot_to_frame(target_frame);
-  }
-  catch (CommanderError &e)
-  {
-    std::string err = e.what();
-    RCLCPP_ERROR(get_logger(), err.c_str());
-    response->success = false;
-    return;
-  }
-  response->success = true;
-}
 void RobotCommander::pick_up_moving_gear_cb_(
     const std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Request> request,
     std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Response> response)
