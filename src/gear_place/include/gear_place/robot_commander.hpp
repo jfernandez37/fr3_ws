@@ -12,6 +12,7 @@
 #include <gear_place_interfaces/srv/put_gear_down.hpp>
 #include <gear_place_interfaces/srv/pick_up_moving_gear.hpp>
 #include <gear_place_interfaces/srv/open_gripper.hpp>
+#include <gear_place_interfaces/srv/put_down_force.hpp>
 
 #include <std_msgs/msg/string.hpp>
 
@@ -74,6 +75,7 @@ private:
   rclcpp::Service<gear_place_interfaces::srv::PutGearDown>::SharedPtr put_gear_down_srv_;
   rclcpp::Service<gear_place_interfaces::srv::PickUpMovingGear>::SharedPtr pick_up_moving_gear_srv_;
   rclcpp::Service<gear_place_interfaces::srv::OpenGripper>::SharedPtr open_gripper_srv_;
+  rclcpp::Service<gear_place_interfaces::srv::PutDownForce>::SharedPtr put_down_force_srv;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
@@ -123,10 +125,13 @@ private:
                                std::shared_ptr<gear_place_interfaces::srv::PickUpMovingGear::Response> response);
   void open_gripper_cb_(const std::shared_ptr<gear_place_interfaces::srv::OpenGripper::Request> request,
                         std::shared_ptr<gear_place_interfaces::srv::OpenGripper::Response> response);
+  void put_down_force_cb_(const std::shared_ptr<gear_place_interfaces::srv::PutDownForce::Request> request,
+                        std::shared_ptr<gear_place_interfaces::srv::PutDownForce::Response> response);
 
   // Methods
   void move_robot_to_frame(KDL::Frame);
   void move_robot_cartesian(double, double, double, double, double);
+  void put_down_force();
   void open_gripper();
   void grasp_object(double);
   void set_default_behavior();
