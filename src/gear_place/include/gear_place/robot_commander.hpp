@@ -131,7 +131,7 @@ private:
   // Methods
   void move_robot_to_frame(KDL::Frame);
   void move_robot_cartesian(double, double, double, double, double);
-  void put_down_force();
+  void put_down_force(double);
   void open_gripper();
   void grasp_object(double);
   void set_default_behavior();

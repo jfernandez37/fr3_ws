@@ -243,6 +243,37 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
   }
 }
 
+void RobotCommander::put_down_force(double force)
+{
+  std::unique_ptr<ForceMotionGenerator> force_motion_generator;
+  franka::Model model = robot_->loadModel();
+
+  try
+  {
+    force_motion_generator = std::make_unique<ForceMotionGenerator>(force, model, current_state_);
+  }
+  catch(InvalidParameters &ip)
+  {
+    throw CommanderError(ip.what());
+    return false;
+  }
+
+  try
+  {
+    robot_->control(*force_motion_generator);
+  }
+  catch (const franka::Exception &e)
+  {
+    std::string ex = e.what();
+    throw CommanderError("Franka Exception: " + ex);
+    return false;
+  }
+
+  return force_motionGenerator->get_result
+  
+  
+}
+
 void RobotCommander::pick_up_gear_cb_(
     const std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Request> request,
     std::shared_ptr<gear_place_interfaces::srv::PickUpGear::Response> response)
