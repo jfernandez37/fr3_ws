@@ -10,3 +10,4 @@ ROS2 package containing all of the services and messages necessary for the ROS2 
 * `put_gear_down` - Takes in a z value. Goes down the given z value minus an offset, opens the gripper, and moves back up the same z distance.
 * `pick_up_moving_gear` - Takes the xyz value and picks up the gear. The values need to calculated before hand using the camera.
 * `open_gripper` - Opens the gripper.
+* `put_down_force` - Puts the gear down until the gear makes contact with a surface. Then the gripper opens.
