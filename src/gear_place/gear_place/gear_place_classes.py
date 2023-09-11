@@ -572,7 +572,7 @@ class GearPlace(Node):
       result = future.result()
 
       if not result.success:
-          raise Error("Unable to move to put down gear")
+          raise Error("Unable to move to put down gear using force motion generator")
 
 
 class ConveyorClass(Node):

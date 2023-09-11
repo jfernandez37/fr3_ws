@@ -246,6 +246,9 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
 void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfaces::srv::PutDownForce::Request> request,
                         std::shared_ptr<gear_place_interfaces::srv::PutDownForce::Response> response)
 {
+  /*
+  Uses the force generator to put down the gear until it makes contact with the surface
+  */
   try{
     put_down_force(request->force);
     sleep(5.0);
@@ -263,6 +266,9 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
 
 void RobotCommander::put_down_force(double force)
 {
+  /*
+  Uses the force generator to put down the gear until it makes contact with the surface
+  */
   std::unique_ptr<ForceMotionGenerator> force_motion_generator;
   franka::Model model = robot_->loadModel();
 
