@@ -310,3 +310,94 @@ franka::CartesianPose CartesianMotionGenerator::operator()(const franka::RobotSt
 
   return new_pose;
 }
+
+//----------------------------------------------------------------------
+//                  Force Motion Generator
+//----------------------------------------------------------------------
+
+class ForceMotionGenerator
+{
+public:
+  ForceMotionGenerator(double force, franka::Model &model, franka::RobotState &state);
+  franka::Torques operator()(const franka::RobotState &robot_state, franka::Duration period);
+  bool get_result() { return on_surface_; };
+
+private:
+  double time_ = 0.0;
+  double time_limit_ = 10.0;
+  double desired_force = 5.0;
+  const double k_p = 1.0;
+  const double k_i = 2.0;
+  const double filter_gain = 0.001;
+  double force_;
+  double max_travel_ = 0.005;
+  bool on_surface_ = false;
+
+  std::array<double, 7> gravity_array;
+  Eigen::Vector3d initial_position_;
+
+  franka::Model &model_;
+  franka::RobotState &state_;
+  franka::RobotState initial_state_;
+
+  Eigen::VectorXd initial_tau_ext_;
+  Eigen::VectorXd tau_error_integral_;
+};
+
+ForceMotionGenerator::ForceMotionGenerator(double force, franka::Model &model, franka::RobotState &state)
+    : force_(force), model_(model), state_(state), initial_tau_ext_(7), tau_error_integral_(7)
+{
+
+  gravity_array = model_.gravity(state_);
+
+  Eigen::Map<Eigen::Matrix<double, 7, 1>> initial_tau_measured(state_.tau_J.data());
+  Eigen::Map<Eigen::Matrix<double, 7, 1>> initial_gravity(gravity_array.data());
+
+  initial_tau_ext_ = initial_tau_measured - initial_gravity;
+  tau_error_integral_.setZero();
+}
+
+franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot_state,
+                                                 franka::Duration period)
+{
+  time_ += period.toSec();
+
+  auto current_position = Eigen::Vector3d(robot_state.O_T_EE[12], robot_state.O_T_EE[13],
+                                          robot_state.O_T_EE[14]);
+
+  state_ = robot_state;
+
+  if (time_ == 0.0)
+  {
+    initial_position_ = current_position;
+  }
+  else if (initial_position_[2] - current_position[2] <= max_travel_)
+  {
+    on_surface_ = true;
+  }
+  // get state variables
+  std::array<double, 42> jacobian_array =
+      model_.zeroJacobian(franka::Frame::kEndEffector, robot_state);
+  Eigen::Map<const Eigen::Matrix<double, 6, 7>> jacobian(jacobian_array.data());
+  Eigen::Map<const Eigen::Matrix<double, 7, 1>> tau_measured(robot_state.tau_J.data());
+  Eigen::Map<const Eigen::Matrix<double, 7, 1>> gravity(gravity_array.data());
+  Eigen::VectorXd tau_d(7), desired_force_torque(6), tau_cmd(7), tau_ext(7);
+  desired_force_torque.setZero();
+  desired_force_torque(2) = -desired_force;
+  tau_ext << tau_measured - gravity - initial_tau_ext_;
+  tau_d << jacobian.transpose() * desired_force_torque;
+  tau_error_integral_ += period.toSec() * (tau_d - tau_ext);
+  // FF + PI control
+  tau_cmd << tau_d + k_p * (tau_d - tau_ext) + k_i * tau_error_integral_;
+  // Smoothly update the mass to reach the desired target value
+  desired_force = filter_gain * force_ + (1 - filter_gain) * desired_force;
+  std::array<double, 7> tau_d_array{};
+  Eigen::VectorXd::Map(&tau_d_array[0], 7) = tau_cmd;
+
+  if (time_ > time_limit_ || on_surface_)
+  {
+    return franka::MotionFinished(franka::Torques(tau_d_array));
+  }
+
+  return tau_d_array;
+}
