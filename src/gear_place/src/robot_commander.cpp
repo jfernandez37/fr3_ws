@@ -243,6 +243,24 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
   }
 }
 
+void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfaces::srv::PutDownForce::Request> request,
+                        std::shared_ptr<gear_place_interfaces::srv::PutDownForce::Response> response)
+{
+  try{
+    put_down_force(request->force);
+    sleep(5.0);
+    open_gripper();
+  }
+  catch (CommanderError &e)
+  {
+    std::string err = e.what();
+    RCLCPP_ERROR(get_logger(), err.c_str());
+    response->success = false;
+    return;
+  }
+  response->success = true;
+}
+
 void RobotCommander::put_down_force(double force)
 {
   std::unique_ptr<ForceMotionGenerator> force_motion_generator;
