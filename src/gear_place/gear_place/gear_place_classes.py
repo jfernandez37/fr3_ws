@@ -17,6 +17,7 @@ from gear_place_interfaces.srv import (
   PutGearDown,
   PickUpMovingGear,
   OpenGripper,
+  PutDownForce,
 )
 
 from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
@@ -452,7 +453,7 @@ class GearPlace(Node):
 
   def _call_open_gripper_service(self):
       """
-      Calls the move_to_position callback
+      Calls the open_gripper callback
       """
       self.get_logger().info("Opening gripper")
 
@@ -463,7 +464,7 @@ class GearPlace(Node):
       rclpy.spin_until_future_complete(self, future, timeout_sec=8)
 
       if not future.done():
-          raise Error("Timeout reached when calling move_to_position service")
+          raise Error("Timeout reached when calling open_gripper service")
 
       result: OpenGripper.Response
       result = future.result()
@@ -551,6 +552,27 @@ class GearPlace(Node):
       if not result.success:
           self.get_logger().error(f"Unable to put gear down using camera")
           raise Error("Unable to put gear down using camera")
+    
+  def _call_put_down_force(self, force:float):
+      """
+      Calls the put_down_force callback
+      """
+      self.get_logger().info("Putting the gear down")
+
+      request = PutDownForce.Request()
+
+      future = self.create_client(PutDownForce, "put_down_force").call_async(request)
+
+      rclpy.spin_until_future_complete(self, future, timeout_sec=8)
+
+      if not future.done():
+          raise Error("Timeout reached when calling put_down_force service")
+
+      result: PutDownForce.Response
+      result = future.result()
+
+      if not result.success:
+          raise Error("Unable to move to put down gear")
 
 
 class ConveyorClass(Node):
