@@ -433,6 +433,8 @@ class GearPlace(Node):
       self._call_move_to_named_pose_service("home")
       last_point = [0, 0]
       offset_needed = True
+      low_gear_threshold = 0.275
+      high_gear_thershold = 0.041
       for gear_point in distances_from_home:  # loops through the movements to the gears
           move = [
               gear_point[i] - last_point[i] for i in range(2)
@@ -443,7 +445,7 @@ class GearPlace(Node):
               gear_color == "not found"
               self.get_logger().info("Could not find gear color")
           else:
-              thresholds = sorted([0.0275,0.041,updated_radius_vals[gear_point]])
+              thresholds = sorted([low_gear_threshold, high_gear_thershold,updated_radius_vals[gear_point]])
               gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
               self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
           self._call_open_gripper_service()  # opens the gripper
