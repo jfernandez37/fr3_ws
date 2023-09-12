@@ -279,7 +279,6 @@ void RobotCommander::put_down_force(double force)
   catch(InvalidParameters &ip)
   {
     throw CommanderError(ip.what());
-    return false;
   }
 
   try
@@ -290,12 +289,7 @@ void RobotCommander::put_down_force(double force)
   {
     std::string ex = e.what();
     throw CommanderError("Franka Exception: " + ex);
-    return false;
-  }
-
-  return force_motionGenerator->get_result
-  
-  
+  }  
 }
 
 void RobotCommander::pick_up_gear_cb_(
