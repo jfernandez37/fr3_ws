@@ -235,7 +235,9 @@ CartesianMotionGenerator::CartesianMotionGenerator(double x, double y, double z,
   t3_ = t1_ + t2_;
   if (t1_ * v_max_ > d_norm_)
   {
-    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Entered values not possible. Lowering v_max_");
+    if(x+y+z!=0.1){
+      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Entered values not possible. Lowering v_max_");
+    }
     v_max_ = d_norm_ / t1_ * 0.9;
     t1_ = v_max_ / a_;
     t2_ = d_norm_ / v_max_;
