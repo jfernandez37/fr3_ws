@@ -265,7 +265,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
   response->success = true;
 }
 
-void RobotCommander::put_down_force(double force)
+bool RobotCommander::put_down_force(double force)
 {
   /*
   Uses the force generator to put down the gear until it makes contact with the surface
@@ -280,6 +280,7 @@ void RobotCommander::put_down_force(double force)
   catch(InvalidParameters &ip)
   {
     throw CommanderError(ip.what());
+    return false;
   }
 
   try
@@ -290,7 +291,9 @@ void RobotCommander::put_down_force(double force)
   {
     std::string ex = e.what();
     throw CommanderError("Franka Exception: " + ex);
+    return false;
   }  
+  return force_motion_generator->get_result();
 }
 
 void RobotCommander::pick_up_gear_cb_(
