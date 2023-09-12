@@ -279,12 +279,25 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to pick up gear")
           raise Error("Unable to pick up gear")
 
+  def average_of_points(self, arr : list)-> list:
+      """
+      Takes in a list of points and returns the average of them
+      """
+      num_points = len(arr)
+      return [
+          sum([arr[i][0] for i in range(num_points)])/num_points,
+          sum([arr[i][1] for i in range(num_points)])/num_points,
+          sum([arr[i][2] for i in range(num_points)])/num_points
+      ]
+
   def remove_identical_points(self, arr : list) -> list:
       """
       Removes duplicate coordinates from different positions
       """
       bad_measurements = []
       for i in range(len(arr) - 1):
+          close_vals = []
+          close_vals.append(arr[i])
           for j in range(i + 1, len(arr)):
               if (
                   sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
@@ -293,6 +306,9 @@ class GearPlace(Node):
                   bad_measurements.append(
                       j
                   )  # ensures that the first instance of a valid gear is saved
+              if (sqrt(sum([(arr[i][k]-arr[j][k])**2 for k in range(3)]))<=0.01):
+                  close_vals.append(arr[j])
+              arr[i] = self.average_of_points(close_vals)
       bad_measurements = list(set(bad_measurements))  # removes duplicated indicies
       print(len(arr))
       print(bad_measurements)
