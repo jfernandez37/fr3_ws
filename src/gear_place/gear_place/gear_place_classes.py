@@ -460,7 +460,7 @@ class GearPlace(Node):
             )  # moves above the gear
           else:
             self._call_move_cartesian_service(
-                move[0], move[1], 0.0
+                move[0], move[1], 0.0, 0.15,0.2
             )  # moves above the gear
           multiple_gears = MultipleGears(connected)
           rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
