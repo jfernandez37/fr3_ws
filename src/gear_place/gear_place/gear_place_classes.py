@@ -481,8 +481,7 @@ class GearPlace(Node):
           self._call_pick_up_gear_coord_service(
               False, -1*correct_gear[1] +0.03975, -1*correct_gear[0]+0.03,gear_point[2] - (0.009 if gear_color=="green"  else 0), object_width
           )
-          last_point[0]+=-1*correct_gear[1] +0.03975
-          last_point[1]+=-1*correct_gear[0]+0.03
+          last_point=(last_point[0]+-1*correct_gear[1] +0.03975,last_point[1]+-1*correct_gear[0]+0.03)
           # self._call_put_gear_down_camera(gear_point[2])  # puts the gear down
           self._call_put_down_force(6.0)
           offset_needed = False
