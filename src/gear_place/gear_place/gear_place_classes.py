@@ -315,12 +315,9 @@ class GearPlace(Node):
                   close_vals.append(arr[j])
                   if radius_vals[(arr[j])]!=0:
                     radius_list.append(radius_vals[arr[j]])
-          print("values found close to the gear: ",len(close_vals))
           arr[i] = self.average_of_points(close_vals)
           radius_vals[arr[i]] = sum(radius_list)/len(radius_list) if len(radius_list)>0 else 0
       bad_measurements = list(set(bad_measurements))  # removes duplicated indicies
-      print(len(arr))
-      print(bad_measurements)
       bad_measurements = sorted(bad_measurements)[
           ::-1
       ]  # sorts the indicies in decending order so the correct values are removed in next loop
