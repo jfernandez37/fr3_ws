@@ -250,7 +250,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
   Uses the force generator to put down the gear until it makes contact with the surface
   */
   try{
-    move_robot_cartesian(0.0,0.0,0.001,default_velocity_/4,default_acceleration_)
+    move_robot_cartesian(0.0,0.0,0.001,default_velocity_/4,default_acceleration_);
     put_down_force(request->force);
     sleep(5.0);
     open_gripper();
