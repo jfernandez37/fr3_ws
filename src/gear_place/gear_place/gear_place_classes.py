@@ -302,6 +302,7 @@ class GearPlace(Node):
           close_vals = []
           close_vals.append(arr[i])
           for j in range(i + 1, len(arr)):
+              
               if (
                   sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
                   <= 0.03
@@ -309,6 +310,7 @@ class GearPlace(Node):
                   bad_measurements.append(
                       j
                   )  # ensures that the first instance of a valid gear is saved
+
               if (sqrt(sum([(arr[i][k]-arr[j][k])**2 for k in range(3)]))<=0.01): # adds point to list if it is close enough
                   close_vals.append(arr[j])
                   if radius_vals[(arr[j])]!=0:
