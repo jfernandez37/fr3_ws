@@ -480,7 +480,7 @@ class GearPlace(Node):
           correct_gear = closest_gears[self.closest_to_center(closest_gears)]
           self.get_logger().info(", ".join([str(val) for val in correct_gear]))
           self._call_pick_up_gear_coord_service(
-              offset_needed, -1*correct_gear[1], -1*correct_gear[0],gear_point[2] - (0.009 if gear_color=="green"  else 0), object_width
+              True, -1*correct_gear[1], -1*correct_gear[0],gear_point[2] - (0.009 if gear_color=="green"  else 0), object_width
           )
           last_point=(last_point[0]+-1*correct_gear[1] +0.03975,last_point[1]+-1*correct_gear[0]+0.03)
           self._call_put_gear_down_camera(gear_point[2])  # puts the gear down
