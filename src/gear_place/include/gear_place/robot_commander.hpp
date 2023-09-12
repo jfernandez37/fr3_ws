@@ -142,6 +142,7 @@ private:
       // {"home", {{0, 0.2, 0, -M_PI_2, 0, M_PI_2, M_PI_4}}},
       {"home", {{0.0182304, 0.196578, 0.0652365, -1.9388, -0.013601, 2.15806, 0.816665}}},
       {"position_1", {{0, 0, 0, -M_PI_2, 0, M_PI_2, 0.7}}},
+      {"position_2", {{0, -M_PI_4, 0, -3 * M_PI_4, 0, M_PI_2, M_PI_4}}}
   };
   const double gripper_speed_ = 0.1;
   const double gripper_force_ = 10;
