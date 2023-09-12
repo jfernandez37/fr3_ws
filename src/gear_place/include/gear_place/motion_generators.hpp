@@ -326,7 +326,7 @@ public:
 
 private:
   double time_ = 0.0;
-  double time_limit_ = 10.0;
+  double time_limit_ = 2.0;
   double desired_force = 5.0;
   const double k_p = 1.0;
   const double k_i = 2.0;
