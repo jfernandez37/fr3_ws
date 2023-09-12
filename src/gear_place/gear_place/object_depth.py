@@ -135,7 +135,7 @@ class ObjectDepth(Node):
                         if i.count(0.0) == 0 and i.count(None)==0:
                             radius_point = i
                 for i in data:
-                    if radius_point!=[0.0,0.0,0.0]:
+                    if radius_point.count(0.0)!=3:
                         distances.append(dist_between_points([i,radius_point]))
                     else:
                         distances.append(0)
