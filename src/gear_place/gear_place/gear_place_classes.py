@@ -480,7 +480,7 @@ class GearPlace(Node):
           correct_gear = closest_gears[self.closest_to_center(closest_gears)]
           self.get_logger().info(", ".join([str(val) for val in correct_gear]))
           if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
-              self._call_pick_up_gear_coord_service(False,0.0,0.0, gear_point, object_width)
+              self._call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2], object_width)
           else:
             self._call_pick_up_gear_coord_service(
                 True, -1*correct_gear[1], -1*correct_gear[0],gear_point[2], object_width
