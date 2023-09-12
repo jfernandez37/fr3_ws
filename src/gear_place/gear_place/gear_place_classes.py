@@ -449,8 +449,7 @@ class GearPlace(Node):
           self._call_pick_up_gear_coord_service(
               offset_needed, move[0], move[1], gear_point[2] - (0.009 if gear_color=="green"  else 0), object_width
           )  # picks up the gear
-          # self._call_put_gear_down_camera(gear_point[2])  # puts the gear down
-          self._call_put_down_force(100.0)
+          self._call_put_gear_down_camera(gear_point[2])  # puts the gear down
           offset_needed = False
 
   def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
