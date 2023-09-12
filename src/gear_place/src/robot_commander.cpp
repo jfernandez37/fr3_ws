@@ -395,6 +395,7 @@ void RobotCommander::open_gripper_cb_(
   /*
   Opens the gripper
   */
+  (void) request;
   try
   {
     open_gripper();
