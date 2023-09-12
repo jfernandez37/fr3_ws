@@ -478,6 +478,7 @@ class GearPlace(Node):
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
           closest_gears =  object_depth.coordinates
           correct_gear = closest_gears[self.closest_to_center(closest_gears)]
+          self.get_logger().info(correct_gear)
           self._call_pick_up_gear_coord_service(
               False, -1*correct_gear[1], -1*correct_gear[0],gear_point[2] - (0.009 if gear_color=="green"  else 0), object_width
           )
