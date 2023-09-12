@@ -453,9 +453,36 @@ class GearPlace(Node):
               gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
               self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
           self._call_open_gripper_service()  # opens the gripper
+          
+          if offset_needed:
+            self._call_move_cartesian_service(
+                move[0]+0.3975, move[1]+0.03, 0.0
+            )  # moves above the gear
+          else:
+            self._call_move_cartesian_service(
+                move[0], move[1], 0.0
+            )  # moves above the gear
+          multiple_gears = MultipleGears(connected)
+          rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
+          connected = multiple_gears.connected
+          while (
+              sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
+              or not multiple_gears.ran
+          ):  # loops until it has run and until there are no None values
+              multiple_gears.destroy_node()
+              multiple_gears = MultipleGears(connected)
+              rclpy.spin_once(multiple_gears)
+              connected = multiple_gears.connected
+          object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
+          rclpy.spin_once(object_depth)  # Gets the distance from the camera
+          object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+          closest_gears =  object_depth.coordinates
+          correct_gear = closest_gears[self.closest_to_center(closest_gears)]
           self._call_pick_up_gear_coord_service(
-              offset_needed, move[0], move[1], gear_point[2] - (0.009 if gear_color=="green"  else 0), object_width
-          )  # picks up the gear
+              False, -1*correct_gear[1] +0.03975, -1*correct_gear[0]+0.03,gear_point[2] - (0.009 if gear_color=="green"  else 0), object_width
+          )
+          last_point[0]+=-1*correct_gear[1] +0.03975
+          last_point[1]+=-1*correct_gear[0]+0.03
           # self._call_put_gear_down_camera(gear_point[2])  # puts the gear down
           self._call_put_down_force(6.0)
           offset_needed = False
