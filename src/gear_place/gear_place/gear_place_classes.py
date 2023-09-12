@@ -290,12 +290,13 @@ class GearPlace(Node):
           sum([arr[i][2] for i in range(num_points)])/num_points
       )
 
-  def remove_identical_points(self, arr : list) -> list:
+  def remove_identical_points(self, arr : list, radius_vals : list) -> list:
       """
       Removes duplicate coordinates from different positions
       """
       bad_measurements = []
       for i in range(len(arr) - 1):
+          radius_val = radius_vals[arr[i]]
           close_vals = []
           close_vals.append(arr[i])
           for j in range(i + 1, len(arr)):
@@ -309,6 +310,7 @@ class GearPlace(Node):
               if (sqrt(sum([(arr[i][k]-arr[j][k])**2 for k in range(3)]))<=0.01):
                   close_vals.append(arr[j])
               arr[i] = self.average_of_points(close_vals)
+              radius_vals[arr[i]] = radius_val
       bad_measurements = list(set(bad_measurements))  # removes duplicated indicies
       print(len(arr))
       print(bad_measurements)
@@ -404,7 +406,7 @@ class GearPlace(Node):
                       robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
                   )  # moves to the next position
 
-          distances_from_home = self.remove_identical_points(distances_from_home)  # since gears will be repeated from different positions, repetitions are removed
+          distances_from_home = self.remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
 
           distances_from_home = [
               distances_from_home[i]
