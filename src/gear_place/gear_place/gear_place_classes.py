@@ -284,11 +284,11 @@ class GearPlace(Node):
       Takes in a list of points and returns the average of them
       """
       num_points = len(arr)
-      return [
+      return (
           sum([arr[i][0] for i in range(num_points)])/num_points,
           sum([arr[i][1] for i in range(num_points)])/num_points,
           sum([arr[i][2] for i in range(num_points)])/num_points
-      ]
+      )
 
   def remove_identical_points(self, arr : list) -> list:
       """

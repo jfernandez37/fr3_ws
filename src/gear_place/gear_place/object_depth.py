@@ -141,6 +141,7 @@ class ObjectDepth(Node):
                         distances.append(0)
                     self.coordinates.append((i[0],i[1],i[2]))
                 self.radius_vals[(i[0],i[1],i[2])] = (min([val for val in distances if val!=0]) if distances.count(0)!= len(distances) else 0)
+                # the radius value is 0 if a radius can not be found
             else:
                 for i in data:
                     self.coordinates.append((i[0],i[1],i[2]))
