@@ -335,7 +335,7 @@ void RobotCommander::put_gear_down_cb_(
   */
   try
   {
-    move_robot_cartesian(0, 0, request->z + 0.002, default_velocity_/4, default_acceleration_);
+    move_robot_cartesian(0, 0, request->z + 0.002+0.1, default_velocity_/4, default_acceleration_);
     sleep(wait_time_);
     open_gripper();
     sleep(wait_time_);
