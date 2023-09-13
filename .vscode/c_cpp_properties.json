@@ -12,7 +12,7 @@
         "/home/jtf4/fr3_ws/src/realsense-ros/realsense2_camera/include/**",
         "/usr/include/**",
         "/home/jtf4/fr3_ws/install/**",
-        "/home/jtf4/fr3_ws/src/gear_place/include"
+        "/home/jtf4/fr3_ws/src/gear_place/include",
         "/home/jtf4/fr3_ws/src/gear_place_interfaces/srv/**"
       ],
       "name": "ROS",
