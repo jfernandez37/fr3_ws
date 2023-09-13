@@ -256,7 +256,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
   */
   try{
     while(!put_down_force(request->force)){
-      RCLCPP_INFO(get_logger(),"While loop running")
+      RCLCPP_INFO(get_logger(),"While loop running");
       move_robot_cartesian(0.0,0.0,0.01,default_velocity_/4,0.5);
     }
     sleep(5.0);

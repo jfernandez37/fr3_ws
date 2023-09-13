@@ -73,7 +73,7 @@ private:
   rclcpp::Service<gear_place_interfaces::srv::PutGearDown>::SharedPtr put_gear_down_srv_;
   rclcpp::Service<gear_place_interfaces::srv::PickUpMovingGear>::SharedPtr pick_up_moving_gear_srv_;
   rclcpp::Service<gear_place_interfaces::srv::OpenGripper>::SharedPtr open_gripper_srv_;
-  rclcpp::Service<gear_place_interfaces::srv::PutDownForce>::SharedPtr put_down_force_srv;
+  rclcpp::Service<gear_place_interfaces::srv::PutDownForce>::SharedPtr put_down_force_srv_;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
