@@ -486,8 +486,8 @@ class GearPlace(Node):
                 True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width
             )
           last_point=(last_point[0]+-1*correct_gear[1] +0.03975,last_point[1]+-1*correct_gear[0]+0.03)
-          self._call_put_gear_down_camera(gear_point[2])  # puts the gear down
-        #   self._call_put_down_force(6.0)
+        #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
+          self._call_put_down_force(6.0)
           offset_needed = False
 
   def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
