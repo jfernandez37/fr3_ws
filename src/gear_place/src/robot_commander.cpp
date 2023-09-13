@@ -259,7 +259,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
     //   RCLCPP_INFO(get_logger(),"While loop running");
     //   move_robot_cartesian(0.0,0.0,0.01,default_velocity_/4,0.5);
     // }
-    put_down_force(request->force)
+    put_down_force(request->force);
     sleep(5.0);
     open_gripper();
   }
