@@ -287,7 +287,7 @@ bool RobotCommander::put_down_force(double force)
   }
   catch(InvalidParameters &ip)
   {
-    RCLCPP_ERROR("Could not make force motion generator")
+    RCLCPP_ERROR(get_logger(),"Could not make force motion generator")
     throw CommanderError(ip.what());
     return false;
   }
@@ -298,7 +298,7 @@ bool RobotCommander::put_down_force(double force)
   }
   catch (const franka::Exception &e)
   {
-    RCLCPP_ERROR("Could not run force motion generator")
+    RCLCPP_ERROR(get_logger(),"Could not run force motion generator")
     std::string ex = e.what();
     throw CommanderError("Franka Exception: " + ex);
     return false;
