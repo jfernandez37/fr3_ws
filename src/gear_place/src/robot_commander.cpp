@@ -456,9 +456,12 @@ void RobotCommander::grasp_object(double object_width)
       break;
     }
   }
-  if (!gripper_->grasp(object_width, gripper_speed_, gripper_force_))
+  if (counter>=5)
   {
-    throw CommanderError("Unable to grasp object");
+    if (!gripper_->grasp(object_width, gripper_speed_, gripper_force_))
+    {
+      throw CommanderError("Unable to grasp object");
+    }
   }
 }
 
