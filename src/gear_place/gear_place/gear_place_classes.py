@@ -31,6 +31,8 @@ from gear_place.moving_gear import MovingGear
 from gear_place.multiple_gears import MultipleGears
 from math import sqrt
 
+X_OFFSET = 0.03975  # offset from the camera to the gripper
+Y_OFFSET = 0.03 
 
 class Error(Exception):
   def __init__(self, value: str):
@@ -124,8 +126,6 @@ class GearPlace(Node):
       """
       Calls the pick_up_gear callback
       """
-      self.x_offset = 0.0425  # offset from the camera to the gripper
-      self.y_offset = 0.03  # offset from the camera to the gripper
       z_movement = -0.247 # z distance from the home position to where the gripper can grab the gear
       self.get_logger().info(f"Picking up gear")
       gear_center_target = [0 for _ in range(3)]
@@ -158,8 +158,8 @@ class GearPlace(Node):
 
       request = PickUpGear.Request()
 
-      request.x = -1 * gear_center_target[1] + self.x_offset
-      request.y = -1 * gear_center_target[2] + self.y_offset
+      request.x = -1 * gear_center_target[1] + X_OFFSET
+      request.y = -1 * gear_center_target[2] + Y_OFFSET
       request.z = z_movement
       request.object_width = object_width
 
@@ -216,8 +216,6 @@ class GearPlace(Node):
                   0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
               )  # Moves Around the cart scanning for a gear
               sleep(1)
-      self.x_offset = 0.042 # offset from the camera to the gripper
-      self.y_offset = 0.03 # offset from the camera to the gripper
       z_movement = -0.2465
       velocity = 0.15
       acceleration = 0.2
@@ -254,12 +252,12 @@ class GearPlace(Node):
           or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 2
       ):  # runs if the gear is moving
           x_value, y_value = moving_gear.point_from_time(intersection_time)
-          request.x = y_value * -1 + self.x_offset
-          request.y = x_value * -1 + self.y_offset
+          request.x = y_value * -1 + X_OFFSET
+          request.y = x_value * -1 + Y_OFFSET
       else:  # runs if the gear is stationary
           print("Gear not moving")
-          request.x = moving_gear.y_vals[0] * -1 + self.x_offset
-          request.y = moving_gear.x_vals[0] * -1 + self.y_offset
+          request.x = moving_gear.y_vals[0] * -1 + X_OFFSET
+          request.y = moving_gear.x_vals[0] * -1 + Y_OFFSET
       request.z = z_movement
       request.object_width = object_width
 
@@ -456,7 +454,7 @@ class GearPlace(Node):
           
           if offset_needed:
             self._call_move_cartesian_service(
-                move[0]+0.03975, move[1]+0.03, 0.0, 0.15, 0.2
+                move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
             )  # moves above the gear
           else:
             self._call_move_cartesian_service(
@@ -485,7 +483,7 @@ class GearPlace(Node):
             self._call_pick_up_gear_coord_service(
                 True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width
             )
-          last_point=(last_point[0]+-1*correct_gear[1] +0.03975,last_point[1]+-1*correct_gear[0]+0.03)
+          last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
         #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
           self._call_put_down_force(6.0)
           offset_needed = False
@@ -538,16 +536,14 @@ class GearPlace(Node):
       """
       Calls the pick_up_gear callback
       """
-      self.x_offset = 0.03975  # offset from the camera to the gripper
-      self.y_offset = 0.03  # offset from the camera to the gripper
       z_movement = max(
           -0.247, z + 0.0465
       )  # z distance from the home position to where the gripper can grab the gear
       self.get_logger().info(f"Picking up gear")
       request = PickUpGear.Request()
 
-      request.x = x + (self.x_offset if offset_bool else 0)
-      request.y = y + (self.y_offset if offset_bool else 0)
+      request.x = x + (X_OFFSET if offset_bool else 0)
+      request.y = y + (Y_OFFSET if offset_bool else 0)
       
       request.z = z_movement
       request.object_width = object_width
