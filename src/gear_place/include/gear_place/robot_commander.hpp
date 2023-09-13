@@ -2,7 +2,6 @@
 
 #include <unistd.h>
 
-#include <gear_place/robot_transformations.hpp>
 #include <gear_place/motion_generators.hpp>
 
 #include <gear_place_interfaces/srv/move_cartesian.hpp>
