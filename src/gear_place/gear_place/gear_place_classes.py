@@ -625,7 +625,7 @@ class GearPlace(Node):
 
       future = self.create_client(PutDownForce, "put_down_force").call_async(request)
 
-      rclpy.spin_until_future_complete(self, future, timeout_sec=8)
+      rclpy.spin_until_future_complete(self, future, timeout_sec=100)
 
       if not future.done():
           raise Error("Timeout reached when calling put_down_force service")
