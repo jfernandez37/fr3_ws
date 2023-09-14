@@ -81,14 +81,10 @@ class GearPlace(Node):
       self.y_offset = cam_to_ee_pose.position.y
         
       # Service Clients
-      self.move_to_named_pose_client = self.create_client(
-          MoveToNamedPose, "move_to_named_pose"
-      )
+      self.move_to_named_pose_client = self.create_client(MoveToNamedPose, "move_to_named_pose")
       self.move_cartesian_client = self.create_client(MoveCartesian, "move_cartesian")
       self.pick_up_gear_client = self.create_client(PickUpGear, "pick_up_gear")
-      self.move_to_position_client = self.create_client(
-          MoveToPosition, "move_to_position"
-      )
+      self.move_to_position_client = self.create_client(MoveToPosition, "move_to_position")
       self.put_gear_down_client = self.create_client(PutGearDown, "put_gear_down")
 
   def wait(self, duration: float):
