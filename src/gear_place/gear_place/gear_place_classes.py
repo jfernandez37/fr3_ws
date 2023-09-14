@@ -185,7 +185,7 @@ class GearPlace(Node):
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
           find_object.destroy_node()
           gear_center_target = object_depth.coordinates[0]
-      print(gear_center_target)
+      self.get_logger().info("gear_center_target: "+str(gear_center_target))
 
       request = PickUpGear.Request()
 
@@ -286,7 +286,7 @@ class GearPlace(Node):
           request.x = y_value * -1 + X_OFFSET
           request.y = x_value * -1 + Y_OFFSET
       else:  # runs if the gear is stationary
-          print("Gear not moving")
+          self.get_logger().info("Gear not moving")
           request.x = moving_gear.y_vals[0] * -1 + X_OFFSET
           request.y = moving_gear.x_vals[0] * -1 + Y_OFFSET
       request.z = z_movement
