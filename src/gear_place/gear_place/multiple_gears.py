@@ -26,10 +26,10 @@ class MultipleGears(Node):
             Image, "/camera/color/image_raw", self.camera_cb, 10
         )
         self.camera_sub
-        self.subscription = self.create_subscription(
-            Image, "/camera/depth/image_rect_raw", self.listener_callback, 10
-        )
-        self.subscription  # prevent unused variable warning
+        # self.subscription = self.create_subscription(
+        #     Image, "/camera/depth/image_rect_raw", self.listener_callback, 10
+        # )
+        # self.subscription  # prevent unused variable warning
 
     def camera_cb(self, msg: Image):
         if not self.connected:
