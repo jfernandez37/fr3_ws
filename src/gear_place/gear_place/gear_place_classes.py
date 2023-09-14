@@ -452,7 +452,7 @@ class GearPlace(Node):
           distances_from_home = [
               distances_from_home[i]
               for i in range(len(distances_from_home))
-              if self.find_distance(distances_from_home[i]) <= 0.27
+              if self.find_distance(distances_from_home[i]) <= 0.4
           ]  # removes points which are too far from the home position
           gears_found = len(distances_from_home)
           if gears_found==0:
