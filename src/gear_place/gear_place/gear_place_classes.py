@@ -701,8 +701,8 @@ class ConveyorClass(Node):
       Calls the set_conveyor_state callback
       """
       self.get_logger().info(
-          "Moving the conveyor",
-          ("forward" if direction == 0 else "backward"),
+          "Moving the conveyor"+
+          ("forward" if direction == 0 else "backward")+
           f"at a speed of {speed}",
       )
       request = SetConveyorState.Request()
