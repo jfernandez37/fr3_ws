@@ -57,30 +57,30 @@ class GearPlace(Node):
   def __init__(self):
       super().__init__('gear_place')
 
-      self.declare_parameter('transforms_config', "")
-      transforms_path = self.get_parameter('transforms_config').get_parameter_value().string_value
+    #   self.declare_parameter('transforms_config', "")
+    #   transforms_path = self.get_parameter('transforms_config').get_parameter_value().string_value
 
-      if transforms_path == "":
-        raise Error("Transforms config parameter not set")
+    #   if transforms_path == "":
+    #     raise Error("Transforms config parameter not set")
     
-      with open(transforms_path, "r") as stream:
-        try:
-            self.transforms = yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
-            raise Error("unable to open transforms config")
+    #   with open(transforms_path, "r") as stream:
+    #     try:
+    #         self.transforms = yaml.safe_load(stream)
+    #     except yaml.YAMLError as exc:
+    #         raise Error("unable to open transforms config")
     
-      # TF
-      self.tf_buffer = Buffer()
-      self.tf_listener = TransformListener(self.tf_buffer, self)
+    #   # TF
+    #   self.tf_buffer = Buffer()
+    #   self.tf_listener = TransformListener(self.tf_buffer, self)
 
-      self.tf_broadcaster = StaticTransformBroadcaster(self)
-      self.static_transforms = []
+    #   self.tf_broadcaster = StaticTransformBroadcaster(self)
+    #   self.static_transforms = []
 
-      # Camera to end effector transform
-      cam_to_ee_tranform = self.tf_buffer.lookup_transform("franka_hand","camera_mount", rclpy.time.Time())
-      cam_to_ee_pose = convert_transform_to_pose(cam_to_ee_tranform)
-      self.x_offset = cam_to_ee_pose.position.x
-      self.y_offset = cam_to_ee_pose.position.y
+    #   # Camera to end effector transform
+    #   cam_to_ee_tranform = self.tf_buffer.lookup_transform("franka_hand","camera_mount", rclpy.time.Time())
+    #   cam_to_ee_pose = convert_transform_to_pose(cam_to_ee_tranform)
+    #   self.x_offset = cam_to_ee_pose.position.x
+    #   self.y_offset = cam_to_ee_pose.position.y
         
       # Service Clients
       self.move_to_named_pose_client = self.create_client(MoveToNamedPose, "move_to_named_pose")
