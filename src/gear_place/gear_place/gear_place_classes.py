@@ -518,7 +518,7 @@ class GearPlace(Node):
             )
           last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
         #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
-          self._call_put_down_force(0.1)
+          self._call_put_down_force(6.0)
           offset_needed = False
 
   def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
@@ -647,6 +647,8 @@ class GearPlace(Node):
       self.get_logger().info("Putting the gear down")
 
       request = PutDownForce.Request()
+      
+      request.force = force
 
       future = self.put_down_force_client.call_async(request)
 
