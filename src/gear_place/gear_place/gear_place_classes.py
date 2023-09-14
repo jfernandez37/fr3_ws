@@ -47,6 +47,9 @@ class Error(Exception):
 def norm(x: float, y: float, z: float) -> float:
   return __import__("math").sqrt(x**2 + y**2 + z**2)
 
+def avg(arr : list) -> float:
+    return sum(arr)/len(arr)
+
 
 class GearPlace(Node):
   def _init__(self):
@@ -324,7 +327,7 @@ class GearPlace(Node):
                   if radius_vals[(arr[j])]!=0:
                     radius_list.append(radius_vals[arr[j]])
           arr[i] = self.average_of_points(close_vals)
-          radius_vals[arr[i]] = sum(radius_list)/len(radius_list) if len(radius_list)>0 else 0
+          radius_vals[arr[i]] = avg(radius_list) if len(radius_list)>0 else 0
       bad_measurements = sorted(bad_measurements)[
           ::-1
       ]  # sorts the indicies in decending order so the correct values are removed in next loop
@@ -592,7 +595,7 @@ class GearPlace(Node):
               depth_vals = [100 for _ in range(10)]
 
       request = PutGearDown.Request()
-      request.z = max(-1 * (sum(depth_vals) / len(depth_vals)) + 0.0795,Z_TO_TABLE, z + Z_CAMERA_OFFSET) # does not go further down than where it picked it up
+      request.z = max(-1 * (avg(depth_vals)) + 0.0795,Z_TO_TABLE, z + Z_CAMERA_OFFSET) # does not go further down than where it picked it up
       future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=30)
