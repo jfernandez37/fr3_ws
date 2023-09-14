@@ -217,8 +217,8 @@ class GearPlace(Node):
       request = PutGearDown.Request()
       z_movement = max(
           Z_TO_TABLE, z + Z_CAMERA_OFFSET
-      )  # z distance from current position to the gear and makes sure it does not try to go below the table
-      request.z = z_movement + 0.0005
+      )  + 0.0005 # z distance from current position to the gear and makes sure it does not try to go below the table
+      request.z = z_movement 
       future = self.put_gear_down_client.call_async(request)
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=30)
