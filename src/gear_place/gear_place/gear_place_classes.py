@@ -32,7 +32,9 @@ from gear_place.multiple_gears import MultipleGears
 from math import sqrt
 
 X_OFFSET = 0.03975  # offset from the camera to the gripper
-Y_OFFSET = 0.03 
+Y_OFFSET = 0.03
+Z_TO_TABLE = -0.247
+Z_CAMERA_OFFSET = 0.0435
 
 class Error(Exception):
   def __init__(self, value: str):
@@ -126,7 +128,7 @@ class GearPlace(Node):
       """
       Calls the pick_up_gear callback
       """
-      z_movement = -0.247 # z distance from the home position to where the gripper can grab the gear
+      z_movement = Z_TO_TABLE # z distance from the home position to where the gripper can grab the gear
       self.get_logger().info(f"Picking up gear")
       gear_center_target = [0 for _ in range(3)]
       while (
@@ -185,7 +187,7 @@ class GearPlace(Node):
 
       request = PutGearDown.Request()
       z_movement = max(
-          -0.247, z + 0.0435
+          Z_TO_TABLE, z + Z_CAMERA_OFFSET
       )  # z distance from current position to the gear and makes sure it does not try to go below the table
       request.z = z_movement + 0.0005
       future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
@@ -537,7 +539,7 @@ class GearPlace(Node):
       Calls the pick_up_gear callback
       """
       z_movement = max(
-          -0.247, z + 0.0465
+          Z_TO_TABLE, z + Z_CAMERA_OFFSET
       )  # z distance from the home position to where the gripper can grab the gear
       self.get_logger().info(f"Picking up gear")
       request = PickUpGear.Request()
@@ -594,7 +596,7 @@ class GearPlace(Node):
       )
 
       request = PutGearDown.Request()
-      request.z = max(-1 * (sum(depth_vals) / len(depth_vals)) + 0.0795,max(-0.247, z + 0.0435)) # does not go further down than where it picked it up
+      request.z = max(-1 * (sum(depth_vals) / len(depth_vals)) + 0.0795,Z_TO_TABLE, z + Z_CAMERA_OFFSET) # does not go further down than where it picked it up
       future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=30)
