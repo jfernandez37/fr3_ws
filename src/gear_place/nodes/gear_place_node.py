@@ -8,8 +8,7 @@ def main(args=None):
     rclpy.init(args=args)
     gear_width = 0.0095
     try:
-        supervisor = GearPlace("gear_place")
-        supervisor = GearPlace("gear_place")
+        supervisor = GearPlace()
         conveyor_supervisor = ConveyorClass("aprs_ros_conveyor")
         supervisor.wait(3)
         supervisor._call_open_gripper_service()
