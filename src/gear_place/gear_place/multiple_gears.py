@@ -55,13 +55,7 @@ class MultipleGears(Node):
         """
         minimum_contour_area = 1500
         new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
-        filtered_contours = []
-        for cnt in new_contours:
-            if (
-                cv2.contourArea(cnt) > minimum_contour_area
-            ):
-                filtered_contours.append(cnt)
-        return filtered_contours
+        return [cnt  for cnt in new_contours if cv2.contourArea(cnt) > minimum_contour_area]
 
     def listener_callback(self, msg : Image):
         """
