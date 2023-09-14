@@ -345,10 +345,9 @@ class GearPlace(Node):
                   sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
                   <= 0.03
               ):  # Gets rid of the points which are within 30mm of each other
-                  if j not in bad_measurements:
-                    bad_measurements.append(
-                        j
-                    )  # ensures that the first instance of a valid gear is saved
+                  bad_measurements.append(
+                      j
+                  )  # ensures that the first instance of a valid gear is saved
 
               if (sqrt(sum([(arr[i][k]-arr[j][k])**2 for k in range(3)]))<=0.01): # adds point to list if it is close enough
                   close_vals.append(arr[j])
@@ -356,7 +355,7 @@ class GearPlace(Node):
                     radius_list.append(radius_vals[arr[j]])
           arr[i] = self.average_of_points(close_vals)
           radius_vals[arr[i]] = avg(radius_list) if len(radius_list)>0 else 0
-      bad_measurements = sorted(bad_measurements)[
+      bad_measurements = sorted(list(set(bad_measurements)))[
           ::-1
       ]  # sorts the indicies in decending order so the correct values are removed in next loop
       for ind in bad_measurements:  # deletes duplicated gears
