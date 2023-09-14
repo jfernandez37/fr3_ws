@@ -22,10 +22,10 @@ class MultipleGears(Node):
         self.connected = connected
         self.thresh_image = None
         self.declare_parameter("thresh_value", 50)
-        # self.camera_sub = self.create_subscription(
-        #     Image, "/camera/color/camera_info", self.camera_cb, 1
-        # )
-        # self.camera_sub
+        self.camera_sub = self.create_subscription(
+            Image, "/camera/color/camera_info", self.camera_cb, 1
+        )
+        self.camera_sub
         self.subscription = self.create_subscription(
             Image, "/camera/depth/image_rect_raw", self.listener_callback, 10
         )
@@ -33,7 +33,7 @@ class MultipleGears(Node):
 
     def camera_cb(self, msg: Image):
         if not self.connected:
-            self.get_logger().info("\n\n==============Camera is connected==============\n\n")
+            self.get_logger().info("\n\n\n==============Camera is connected==============\n\n")
             self.connected = True
         
     def closest_to_circle(self, contours : list) -> list:
