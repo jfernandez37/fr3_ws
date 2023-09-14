@@ -2,6 +2,8 @@ import rclpy
 from rclpy.node import Node
 from rclpy.time import Duration
 
+import yaml
+
 from time import sleep
 
 from tf2_ros import TransformException
@@ -53,6 +55,25 @@ def avg(arr : list) -> float:
 
 class GearPlace(Node):
   def _init__(self):
+      self.declare_parameter('transforms_config', "")
+      transforms_path = self.get_parameter('transforms_config').get_parameter_value().string_value
+
+      if transforms_path == "":
+        raise Error("Transforms config parameter not set")
+    
+      with open(transforms_path, "r") as stream:
+        try:
+            self.transforms = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            raise Error("unable to open transforms config")
+    
+      # TF
+      self.tf_buffer = Buffer()
+      self.tf_listener = TransformListener(self.tf_buffer, self)
+
+      self.tf_broadcaster = StaticTransformBroadcaster(self)
+      self.static_transforms = []
+        
       # Service Clients
       self.move_to_named_pose_client = self.create_client(
           MoveToNamedPose, "move_to_named_pose"
