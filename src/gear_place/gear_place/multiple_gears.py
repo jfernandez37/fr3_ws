@@ -22,10 +22,10 @@ class MultipleGears(Node):
         self.connected = connected
         self.thresh_image = None
         self.declare_parameter("thresh_value", 50)
-        # self.camera_sub = self.create_subscription(
-        #     Image, "camera/color/image_raw", self.camera_cb, 1
-        # )
-        # self.camera_sub
+        self.camera_sub = self.create_subscription(
+            Image, "camera/color/image_raw", self.camera_cb, 1
+        )
+        self.camera_sub
         self.subscription = self.create_subscription(
             Image, "/camera/depth/image_rect_raw", self.listener_callback, 1
         )
