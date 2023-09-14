@@ -591,10 +591,6 @@ class GearPlace(Node):
           if c>=10 and len(depth_vals)<7: # fills the list with bad values if the loop runs for too long
               depth_vals = [100 for _ in range(10)]
 
-      self.get_logger().info(
-          "Depth Values:" + ", ".join([str(val) for val in depth_vals])
-      )
-
       request = PutGearDown.Request()
       request.z = max(-1 * (sum(depth_vals) / len(depth_vals)) + 0.0795,Z_TO_TABLE, z + Z_CAMERA_OFFSET) # does not go further down than where it picked it up
       future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
