@@ -55,6 +55,7 @@ def avg(arr : list) -> float:
 
 class GearPlace(Node):
   def _init__(self):
+      self.get_logger().info("Class constructor is running")
       self.declare_parameter('transforms_config', "")
       transforms_path = self.get_parameter('transforms_config').get_parameter_value().string_value
 
