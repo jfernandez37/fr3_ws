@@ -23,7 +23,7 @@ class MultipleGears(Node):
         self.thresh_image = None
         self.declare_parameter("thresh_value", 50)
         self.camera_sub = self.create_subscription(
-            Image, "camera/color/image_raw", self.camera_cb, 1
+            Image, "/camera/color/image_raw", self.camera_cb, 1
         )
         self.camera_sub
         self.subscription = self.create_subscription(
@@ -71,9 +71,9 @@ class MultipleGears(Node):
         Then, the functions above are used to find the gear out of all the contours that are found.
         It then finds the center of the gear contour.
         """
-        # while not self.connected:
-        #     self.get_logger().info("Camera not connected yet. Waiting until ready")
-        #     __import__("time").sleep(3)
+        while not self.connected:
+            self.get_logger().info("Camera not connected yet. Waiting until ready")
+            __import__("time").sleep(3)
         self.ran = True
         min_thresh, max_thresh = 10, 180
         thresh_value = (
