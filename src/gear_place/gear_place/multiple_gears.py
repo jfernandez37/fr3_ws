@@ -32,7 +32,6 @@ class MultipleGears(Node):
         self.subscription  # prevent unused variable warning
 
     def camera_cb(self, msg: Image):
-        self.get_logger().info("CALLBACK RUNNING")
         if not self.connected:
             self.get_logger().info("\n\n==============Camera is connected==============\n\n")
             self.connected = True
