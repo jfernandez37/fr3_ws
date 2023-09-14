@@ -86,6 +86,9 @@ class GearPlace(Node):
       self.pick_up_gear_client = self.create_client(PickUpGear, "pick_up_gear")
       self.move_to_position_client = self.create_client(MoveToPosition, "move_to_position")
       self.put_gear_down_client = self.create_client(PutGearDown, "put_gear_down")
+      self.pick_up_moving_gear_client = self.create_client(PickUpMovingGear, "pick_up_moving_gear")
+      self.open_gripper_client = self.create_client(OpenGripper, "open_gripper")
+      self.put_down_force_client = self.create_client(PutDownForce, "put_down_force")
 
   def wait(self, duration: float):
       start = self.get_clock().now()
@@ -106,7 +109,7 @@ class GearPlace(Node):
 
       request.pose = named_pose
 
-      future = self.create_client(MoveToNamedPose, "move_to_named_pose").call_async(
+      future = self.move_to_named_pose_client.call_async(
           request
       )
 
@@ -136,7 +139,7 @@ class GearPlace(Node):
       request.max_velocity = v_max
       request.acceleration = acc
 
-      future = self.create_client(MoveCartesian, "move_cartesian").call_async(request)
+      future = self.move_cartesian_client.call_async(request)
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=10)
 
@@ -191,7 +194,7 @@ class GearPlace(Node):
       request.z = z_movement
       request.object_width = object_width
 
-      future = self.create_client(PickUpGear, "pick_up_gear").call_async(request)
+      future = self.pick_up_gear_client.call_async(request)
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=30)
 
@@ -216,7 +219,7 @@ class GearPlace(Node):
           Z_TO_TABLE, z + Z_CAMERA_OFFSET
       )  # z distance from current position to the gear and makes sure it does not try to go below the table
       request.z = z_movement + 0.0005
-      future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
+      future = self.put_gear_down_client.call_async(request)
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=30)
 
@@ -289,7 +292,7 @@ class GearPlace(Node):
       request.z = z_movement
       request.object_width = object_width
 
-      future = self.create_client(PickUpMovingGear, "pick_up_moving_gear").call_async(
+      future = self.pick_up_moving_gear_client.call_async(
           request
       )
 
@@ -547,7 +550,7 @@ class GearPlace(Node):
 
       request = OpenGripper.Request()
 
-      future = self.create_client(OpenGripper, "open_gripper").call_async(request)
+      future = self.open_gripper_client.call_async(request)
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=8)
 
@@ -576,7 +579,7 @@ class GearPlace(Node):
       request.z = z_movement
       request.object_width = object_width
 
-      future = self.create_client(PickUpGear, "pick_up_gear").call_async(request)
+      future = self.pick_up_gear_client.call_async(request)
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=30)
 
@@ -619,7 +622,7 @@ class GearPlace(Node):
 
       request = PutGearDown.Request()
       request.z = max(-1 * (avg(depth_vals)) + 0.0795,Z_TO_TABLE, z + Z_CAMERA_OFFSET) # does not go further down than where it picked it up
-      future = self.create_client(PutGearDown, "put_gear_down").call_async(request)
+      future = self.put_gear_down_client.call_async(request)
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=30)
 
@@ -643,7 +646,7 @@ class GearPlace(Node):
 
       request = PutDownForce.Request()
 
-      future = self.create_client(PutDownForce, "put_down_force").call_async(request)
+      future = self.put_down_force_client.call_async(request)
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=100)
 
