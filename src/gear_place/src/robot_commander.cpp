@@ -256,14 +256,14 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
   */
   bool successful_put_down;
   try{
-    // while(!put_down_force(request->force)){
-    //   RCLCPP_INFO(get_logger(),"While loop running");
-    //   move_robot_cartesian(0.0,0.0,0.01,default_velocity_/4,0.5);
-    // }
-    successful_put_down = put_down_force(request->force);
-    if(!successful_put_down){
-      RCLCPP_INFO(get_logger(), "Gear was not put down successfuly. (this is inside callback)");
+    while(!put_down_force(request->force)){
+      RCLCPP_INFO(get_logger(),"While loop running");
+      move_robot_cartesian(0.0,0.0,0.01,default_velocity_/4,0.5);
     }
+    // successful_put_down = put_down_force(request->force);
+    // if(!successful_put_down){
+    //   RCLCPP_INFO(get_logger(), "Gear was not put down successfuly. (this is inside callback)");
+    // }
     sleep(5.0);
     open_gripper();
   }
