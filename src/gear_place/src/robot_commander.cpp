@@ -244,7 +244,7 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
   catch (const franka::Exception &e)
   {
     std::string ex = e.what();
-    throw CommanderError("Franka Exception: " + ex);
+    throw CommanderError("Franka Exception in cartesian motion: " + ex);
   }
 }
 
