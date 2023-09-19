@@ -126,11 +126,19 @@ class ObjectDepth(Node):
         """
         for point in self.points:
             radius_point = [0 for _ in range(3)]
-            data = read_points(msg, skip_nans=False, uvs=[point])
+            try:
+                data = read_points(msg, skip_nans=False, uvs=[point])
+            except:
+                self.get_logger().error("Buffer out of bounds for gear center")
+                return
             if self.radius_coordinates!={}:
                 distances = []
                 for val in self.radius_coordinates[point]:
-                    measurement = read_points(msg, skip_nans=False, uvs = [val])
+                    try:
+                        measurement = read_points(msg, skip_nans=False, uvs = [val])
+                    except:
+                        self.get_logger().error("Buffer out of bounds for gear edge")
+                        measurement = [[None for _ in range(3)]]
                     for i in measurement:
                         if i.count(0.0) == 0 and i.count(None)==0:
                             radius_point = i
