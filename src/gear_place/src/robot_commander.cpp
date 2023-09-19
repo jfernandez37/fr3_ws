@@ -267,7 +267,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
     //   sleep(1.0);
     // }
     while(true){
-      move_robot_cartesian(0.0,0.0,-0.01,default_velocity_,0.5);
+      move_robot_cartesian(0.0,0.0,-0.01,default_velocity_/5,0.5);
     }
     // successful_put_down = put_down_force(request->force);
     // if(!successful_put_down){
