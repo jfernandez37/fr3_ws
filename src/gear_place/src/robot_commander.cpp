@@ -254,13 +254,11 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
   /*
   Uses the force generator to put down the gear until it makes contact with the surface
   */
-  bool successful_put_down;
+  bool successful_put_down = false;
   try{
-    move_robot_cartesian(0.0,0.0,-0.01,default_velocity_,0.5);
-    while(!(put_down_force(request->force))){
-      sleep(1.0);
+    while(!successful_put_down){
       move_robot_cartesian(0.0,0.0,-0.01,default_velocity_,0.5);
-      sleep(1.0);
+      successful_put_down = put_down_force(request->force);
     }
     // successful_put_down = put_down_force(request->force);
     // if(!successful_put_down){
