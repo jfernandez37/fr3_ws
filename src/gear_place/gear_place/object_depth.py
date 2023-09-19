@@ -138,7 +138,7 @@ class ObjectDepth(Node):
                         measurement = read_points(msg, skip_nans=False, uvs = [val])
                     except:
                         self.get_logger().error("Buffer out of bounds for gear edge")
-                        measurement = [[None for _ in range(3)]]
+                        measurement = []
                     for i in measurement:
                         if i.count(0.0) == 0 and i.count(None)==0:
                             radius_point = i
