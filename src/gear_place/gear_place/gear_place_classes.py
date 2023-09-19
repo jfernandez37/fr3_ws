@@ -649,6 +649,8 @@ class GearPlace(Node):
       
       request.force = force
 
+      print(force)
+
       future = self.put_down_force_client.call_async(request)
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=100)
