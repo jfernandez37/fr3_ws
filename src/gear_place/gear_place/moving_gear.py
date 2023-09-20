@@ -25,7 +25,7 @@ class MovingGear:
             find_object = FindObject()
             rclpy.spin_once(find_object)
             if find_object.ret_cent_gear().count(None) == 0:
-                object_depth = ObjectDepth([(find_object.ret_cent_gear())],[])
+                object_depth = ObjectDepth([(find_object.ret_cent_gear())],{})
                 rclpy.spin_once(object_depth)
                 object_depth.destroy_node()
                 find_object.destroy_node()
