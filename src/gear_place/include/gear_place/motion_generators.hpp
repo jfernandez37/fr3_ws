@@ -374,6 +374,13 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
   if (time_ == 0.0) {
     initial_position_ = current_position;
   }
+  if (current_position[2]-initial_position_[2]<=0.001){
+    on_surface_ = true;
+    return franka::MotionFinished(franka::Torques(tau_d_array));
+  }
+  if (counter_>=150){
+    return franka::MotionFinished(franka::Torques(tau_d_array));
+  }
   if (time_ > 0 && (current_position - initial_position_).norm() > 0.01) {
     throw std::runtime_error("Aborting; too far away from starting pose!");
   }
