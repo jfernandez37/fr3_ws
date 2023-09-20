@@ -312,7 +312,8 @@ bool RobotCommander::put_down_force(double force)
   catch (const franka::Exception &e)
   {
     read_state_.unlock();
-    RCLCPP_ERROR(get_logger(), "Could not run force motion generator with error "+e.what());
+    std::string ex = e.what();
+    RCLCPP_ERROR(get_logger(), "Could not run force motion generator. Error: "+ex);
     return false;
   }  
   return force_motion_generator->get_result();
