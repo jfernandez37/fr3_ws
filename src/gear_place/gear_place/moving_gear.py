@@ -37,6 +37,7 @@ class MovingGear:
                     self.x_pix.append(x)
                     self.y_pix.append(y)
                     self.times.append(time() - self.start_time)
+                    print(coord)
                     self.x_vals.append(coord[0])
                     self.y_vals.append(coord[1])
                     self.found_gear = True
