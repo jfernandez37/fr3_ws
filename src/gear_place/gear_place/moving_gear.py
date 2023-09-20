@@ -31,6 +31,7 @@ class MovingGear:
                 object_depth.destroy_node()
                 find_object.destroy_node()
                 for coord in object_depth.coordinates:
+                    print(coord)
                     gear_center_values[0] = coord[2]
                 print(gear_center_values)
                 if gear_center_values.count(0) == 0:
