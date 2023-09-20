@@ -299,9 +299,12 @@ bool RobotCommander::put_down_force(double force)
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}});
   std::unique_ptr<ForceMotionGenerator> force_motion_generator;
   franka::Model model = robot_->loadModel();
-
+  
   try
   {
+    read_state_.lock();
+    current_state_ = robot_->readOnce();
+    read_state_.unlock();
     force_motion_generator = std::make_unique<ForceMotionGenerator>(force, model, current_state_);
   }
   catch(InvalidParameters &ip)
