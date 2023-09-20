@@ -400,6 +400,7 @@ void RobotCommander::pick_up_moving_gear_cb_(
   Moves to above the object, opens the gripper, moves down to the object, grasps it, and picks it up.
   Returns false if the object is not grasped or if there is an issue moving to it.
   */
+  std::cout << request->x << "\t" << request->y << "\t" << request->z << std::endl;
   try
   {
     move_robot_cartesian(request->x, request->y, 0, default_velocity_, default_acceleration_);
