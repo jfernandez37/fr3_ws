@@ -12,7 +12,7 @@ def main(args=None):
         conveyor_supervisor = ConveyorClass("aprs_ros_conveyor")
         supervisor.wait(3)
         supervisor._call_open_gripper_service()
-        # supervisor._call_move_to_named_pose_service("home")  # starts in the home position
+        supervisor._call_move_to_named_pose_service("home")  # starts in the home position
         # # supervisor._call_move_cartesian_service(-0.3, 0.0, 0.0, 0.15, 0.2)  # Moves to the center of the cart
         # supervisor._call_open_gripper_service() # opens the gripper so that time delay is easier to calculate on moving gear pick up
         # supervisor._call_pick_up_multiple_gears(gear_width)
