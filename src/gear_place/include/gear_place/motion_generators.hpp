@@ -396,7 +396,7 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
   std::array<double, 7> tau_d_array{};
   Eigen::VectorXd::Map(&tau_d_array[0], 7) = tau_cmd;
   counter_+=1;
-  if (current_position[2]-initial_position_[2]<=0.0001){
+  if (current_position[2]-initial_position_[2]<=0.0001 and counter_>=75){
     on_surface_ = true;
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
