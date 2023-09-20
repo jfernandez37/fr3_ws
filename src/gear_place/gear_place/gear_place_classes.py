@@ -285,7 +285,7 @@ class GearPlace(Node):
           self.get_logger().info("Gear not moving")
           request.x = moving_gear.y_vals[0] * -1 + X_OFFSET
           request.y = moving_gear.x_vals[0] * -1 + Y_OFFSET
-      request.z = sum(moving_gear.z_height)/len(moving_gear.z_height)
+      request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1
       request.object_width = object_width
 
       future = self.pick_up_moving_gear_client.call_async(
