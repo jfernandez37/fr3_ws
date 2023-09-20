@@ -224,6 +224,10 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
   /*
   Makes an CartesianMotionGenerator object with the paramaters and starts a control loop with it
   */
+  robot_->setCollisionBehavior({{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}});
   std::unique_ptr<CartesianMotionGenerator> cartesian_motion_generator;
 
   try
