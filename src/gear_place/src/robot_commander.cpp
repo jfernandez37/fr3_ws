@@ -244,7 +244,7 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
   catch (const franka::Exception &e)
   {
     std::string ex = e.what();
-    throw CommanderError("Franka Exception: " + ex);
+    throw CommanderError("Franka Exception in cartesian motion: " + ex);
   }
 }
 
@@ -254,14 +254,24 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
   /*
   Uses the force generator to put down the gear until it makes contact with the surface
   */
+  bool successful_put_down = false;
   try{
-    // while(!put_down_force(request->force)){
-    //   RCLCPP_INFO(get_logger(),"While loop running");
-    //   move_robot_cartesian(0.0,0.0,0.01,default_velocity_/4,0.5);
+    move_robot_cartesian(0.0,0.0,-0.01,default_velocity_,0.5);
+    sleep(1.0);
+    successful_put_down = put_down_force(request->force);
+    sleep(1.0);
+    if(!successful_put_down){
+      move_robot_cartesian(0.0,0.0,-0.01,default_velocity_,0.5);
+      sleep(1.0);
+      successful_put_down = put_down_force(request->force);
+      sleep(1.0);
+    }
+    // successful_put_down = put_down_force(request->force);
+    // if(!successful_put_down){
+    //   RCLCPP_INFO(get_logger(), "Gear was not put down successfuly. (this is inside callback)");
     // }
-    put_down_force(request->force);
     sleep(5.0);
-    open_gripper();
+    // open_gripper();
   }
   catch (CommanderError &e)
   {
@@ -300,9 +310,8 @@ bool RobotCommander::put_down_force(double force)
   }
   catch (const franka::Exception &e)
   {
-    RCLCPP_ERROR(get_logger(),"Could not run force motion generator");
-    std::string ex = e.what();
-    throw CommanderError("Franka Exception: " + ex);
+    read_state_.unlock();
+    RCLCPP_ERROR(get_logger(), "Could not run force motion generator");
     return false;
   }  
   return force_motion_generator->get_result();
