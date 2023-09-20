@@ -6,7 +6,7 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
   // Connect to robot
   try
   {
-    robot_ = std::make_unique<franka::Robot>(robot_ip);
+    robot_ = std::make_unique<franka::Robot>(robot_ip, franka::RealtimeConfig::kEnforce);
     robot_model_ = std::make_unique<franka::Model>(robot_->loadModel());
 
     set_default_behavior();
