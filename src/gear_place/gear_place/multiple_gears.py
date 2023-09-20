@@ -105,13 +105,16 @@ class MultipleGears(Node):
                         unit_circle = sqrt(2)/2
                         between_x_y = int(unit_circle*radius)
                         self.dist_points[(int(x), int(y))] = []
+                        if int(x)+radius <=640:
+                            self.dist_points[(int(x), int(y))].append((int(x)+radius,int(y)))
+                        if int(x)-radius >=0:
+                            self.dist_points[(int(x), int(y))].append((int(x)-radius,int(y)))
+                        if int(y)+radius <= 480:
+                            self.dist_points[(int(x), int(y))].append((int(x),int(y)+radius))
+                        if int(y)-radius >=0:
+                            self.dist_points[(int(x), int(y))].append((int(x),int(y)-radius))
 
-                        self.dist_points[(int(x), int(y))].append((int(x)+radius,int(y)))
-                        self.dist_points[(int(x), int(y))].append((int(x)-radius,int(y)))
-                        self.dist_points[(int(x), int(y))].append((int(x),int(y)+radius))
-                        self.dist_points[(int(x), int(y))].append((int(x),int(y)-radius))
-
-                        self.dist_points[(int(x), int(y))]+=[(int(x)+between_x_y*[-1,1][i],int(y)+between_x_y*[-1,1][j]) for i in range(2) for j in range(2)]
+                        self.dist_points[(int(x), int(y))]+=[(int(x)+between_x_y*[-1,1][i],int(y)+between_x_y*[-1,1][j]) for i in range(2) for j in range(2) if 0<=int(x)+between_x_y*[-1,1][i]<=640 and 0<=int(y)+between_x_y*[-1,1][i]<=480]
                         
         if len(valid_contours) == 0:
             return
