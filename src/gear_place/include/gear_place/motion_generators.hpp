@@ -288,7 +288,6 @@ franka::CartesianPose CartesianMotionGenerator::operator()(const franka::RobotSt
   Function used for the control loop
   Uses the calculate_displacement function above to calculate the next distance and move to it
   */
-  std::cout <<"Control loop"<<std::endl;
   time_ += period.toSec();
 
   if (time_ == 0.0)
@@ -366,6 +365,7 @@ ForceMotionGenerator::ForceMotionGenerator(double force, franka::Model &model, f
 franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot_state,
                                                  franka::Duration period)
 {
+      std::cout <<"Control loop"<<std::endl;
       auto current_position = Eigen::Vector3d(robot_state.O_T_EE[12], robot_state.O_T_EE[13],
                                           robot_state.O_T_EE[14]);
 
