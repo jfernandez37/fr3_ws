@@ -396,7 +396,7 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
   std::array<double, 7> tau_d_array{};
   Eigen::VectorXd::Map(&tau_d_array[0], 7) = tau_cmd;
   return tau_d_array;
-  counter+=1;
+  counter_+=1;
 
       /*
       time_ += period.toSec();
