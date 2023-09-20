@@ -13,6 +13,7 @@ class MovingGear:
         self.y_vals = []
         self.x_pix = []
         self.y_pix = []
+        self.z_height = []
         self.start_time = time()
         self.found_gear = False
 
@@ -36,6 +37,7 @@ class MovingGear:
                     x,y = find_object.ret_cent_gear()
                     self.x_pix.append(x)
                     self.y_pix.append(y)
+                    self.z_height.append(coord[2])
                     self.times.append(time() - self.start_time)
                     self.x_vals.append(coord[0])
                     self.y_vals.append(coord[1])
