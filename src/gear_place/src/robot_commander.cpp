@@ -260,17 +260,17 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
     // sleep(1.0);
     successful_put_down = put_down_force(request->force);
     RCLCPP_INFO(get_logger(),"After put_down_force()");
-    // sleep(1.0);
-    // if(!successful_put_down){
-    //   move_robot_cartesian(0.0,0.0,-0.01,default_velocity_,0.5);
-    //   sleep(1.0);
-    //   successful_put_down = put_down_force(request->force);
-    //   sleep(1.0);
-    // }
+    sleep(1.0);
+    if(!successful_put_down){
+      move_robot_cartesian(0.0,0.0,-0.01,default_velocity_,0.5);
+      sleep(1.0);
+      successful_put_down = put_down_force(request->force);
+      sleep(1.0);
+    }
     // successful_put_down = put_down_force(request->force);
-    // if(!successful_put_down){
-    //   RCLCPP_INFO(get_logger(), "Gear was not put down successfuly. (this is inside callback)");
-    // }
+    if(!successful_put_down){
+      RCLCPP_INFO(get_logger(), "Gear was not put down successfuly. (this is inside callback)");
+    }
     sleep(5.0);
     // open_gripper();
   }
