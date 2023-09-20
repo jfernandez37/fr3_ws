@@ -243,12 +243,6 @@ class GearPlace(Node):
       c = 0
       while not moving_gear.found_gear or len(moving_gear.x_vals) == 0:
           moving_gear.run()
-          if not moving_gear.found_gear:
-              c += 1
-              self._call_move_cartesian_service(
-                  0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
-              )  # Moves Around the cart scanning for a gear
-              sleep(1)
       z_movement = -0.2465
       velocity = 0.15
       acceleration = 0.2
