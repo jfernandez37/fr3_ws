@@ -63,6 +63,10 @@ class FindObject(Node):
         beta = -65  # Brightness control (-100-100)
         self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
         self.original_image = self.cv_image.copy()
+        for i in range(len(self.cv_image)):
+            for j in range(len(self.cv_image[i])):
+                if self.cv_image[i][j] == 255:
+                    self.cv_image[i][j] = 0
         blurred_img = cv2.GaussianBlur(self.cv_image, (7, 7), 0)
         for _ in range(3):
             blurred_img = cv2.GaussianBlur(blurred_img, (7, 7), 0)
