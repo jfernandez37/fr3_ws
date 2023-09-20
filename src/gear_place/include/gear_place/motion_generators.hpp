@@ -326,7 +326,7 @@ public:
 
 private:
   double time_ = 0.0;
-  double time_limit_ = 0.5;
+  double time_limit_ = 10;
   double desired_force = 5.0;
   const double k_p = 1.0;
   const double k_i = 2.0;
@@ -334,6 +334,9 @@ private:
   double force_;
   double max_travel_ = 0.005;
   bool on_surface_ = false;
+
+  double desired_mass = 0.0;
+  double target_mass = 1.0;
 
   std::array<double, 7> gravity_array;
   Eigen::Vector3d initial_position_;
@@ -362,7 +365,38 @@ ForceMotionGenerator::ForceMotionGenerator(double force, franka::Model &model, f
 franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot_state,
                                                  franka::Duration period)
 {
-  time_ += period.toSec();
+      auto current_position = Eigen::Vector3d(robot_state.O_T_EE[12], robot_state.O_T_EE[13],
+                                          robot_state.O_T_EE[14]);
+
+      time_ += period.toSec();
+      if (time_ == 0.0) {
+        initial_position_ = current_position;
+      }
+      if (time_ > 0 && (current_position - initial_position_).norm() > 0.01) {
+        throw std::runtime_error("Aborting; too far away from starting pose!");
+      }
+      // get state variables
+      std::array<double, 42> jacobian_array =
+          model_.zeroJacobian(franka::Frame::kEndEffector, robot_state);
+      Eigen::Map<const Eigen::Matrix<double, 6, 7>> jacobian(jacobian_array.data());
+      Eigen::Map<const Eigen::Matrix<double, 7, 1>> tau_measured(robot_state.tau_J.data());
+      Eigen::Map<const Eigen::Matrix<double, 7, 1>> gravity(gravity_array.data());
+      Eigen::VectorXd tau_d(7), desired_force_torque(6), tau_cmd(7), tau_ext(7);
+      desired_force_torque.setZero();
+      desired_force_torque(2) = desired_mass * -9.81;
+      tau_ext << tau_measured - gravity - initial_tau_ext_;
+      tau_d << jacobian.transpose() * desired_force_torque;
+      tau_error_integral_ += period.toSec() * (tau_d - tau_ext);
+      // FF + PI control
+      tau_cmd << tau_d + k_p * (tau_d - tau_ext) + k_i * tau_error_integral_;
+      // Smoothly update the mass to reach the desired target value
+      desired_mass = filter_gain * target_mass + (1 - filter_gain) * desired_mass;
+      std::array<double, 7> tau_d_array{};
+      Eigen::VectorXd::Map(&tau_d_array[0], 7) = tau_cmd;
+      return tau_d_array;
+
+      /*
+      time_ += period.toSec();
 
   auto current_position = Eigen::Vector3d(robot_state.O_T_EE[12], robot_state.O_T_EE[13],
                                           robot_state.O_T_EE[14]);
@@ -402,4 +436,5 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
   }
 
   return tau_d_array;
+      */
 }
