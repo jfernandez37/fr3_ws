@@ -29,15 +29,16 @@ class MovingGear:
                 rclpy.spin_once(object_depth)
                 object_depth.destroy_node()
                 find_object.destroy_node()
-                gear_center_values[0] = object_depth.dist_z
+                for coord in object_depth.coordinates:
+                    gear_center_values[0] = coord[2]
                 print(gear_center_values)
                 if gear_center_values.count(0) == 0:
                     x,y = find_object.ret_cent_gear()
                     self.x_pix.append(x)
                     self.y_pix.append(y)
                     self.times.append(time() - self.start_time)
-                    self.x_vals.append(object_depth.dist_x)
-                    self.y_vals.append(object_depth.dist_y)
+                    self.x_vals.append(coord[0])
+                    self.y_vals.append(coord[1])
                     self.found_gear = True
                 object_depth.destroy_node()
             find_object.destroy_node()
