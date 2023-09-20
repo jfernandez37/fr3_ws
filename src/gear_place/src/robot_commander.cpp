@@ -289,6 +289,10 @@ bool RobotCommander::put_down_force(double force)
   /*
   Uses the force generator to put down the gear until it makes contact with the surface
   */
+  robot_->setCollisionBehavior({{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}});
   std::unique_ptr<ForceMotionGenerator> force_motion_generator;
   franka::Model model = robot_->loadModel();
 
