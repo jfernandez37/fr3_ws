@@ -42,20 +42,8 @@ class FindObject(Node):
         """
         Removes contours which are too small and ones with too few sides to be the gear
         """
-        minimum_contour_area = 2000
-        maximum_contour_area = 15000
-        new_contours = [cnt for cnt in contours if not cv2.isContourConvex(cnt)]
-        filtered_contours = []
-        for cnt in new_contours:
-            epsilon = 0.01 * cv2.arcLength(cnt, True)
-            approx = cv2.approxPolyDP(cnt, epsilon, True)
-            if (
-                len(approx) > 10
-                and cv2.contourArea(cnt) > minimum_contour_area
-                and maximum_contour_area > cv2.contourArea(cnt)
-            ):
-                filtered_contours.append(cnt)
-        return filtered_contours
+        minimum_contour_area = 1500
+        return [cnt  for cnt in contours if cv2.contourArea(cnt) > minimum_contour_area and not cv2.isContourConvex(cnt)]
 
     def listener_callback(self, msg):
         """
@@ -63,7 +51,7 @@ class FindObject(Node):
         Then, the functions above are used to find the gear out of all the contours that are found.
         It then finds the center of the gear contour.
         """
-        min_thresh, max_thresh = 25, 250 # works on fr3
+        min_thresh, max_thresh = 0, 250 # works on fr3
         # min_thresh, max_thresh = 150,225
         thresh_value = (
             self.get_parameter("thresh_value").get_parameter_value().integer_value
@@ -76,7 +64,7 @@ class FindObject(Node):
         self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
         self.original_image = self.cv_image.copy()
         blurred_img = cv2.GaussianBlur(self.cv_image, (7, 7), 0)
-        for i in range(3):
+        for _ in range(3):
             blurred_img = cv2.GaussianBlur(blurred_img, (7, 7), 0)
         contours_left = 0
         c = 0
