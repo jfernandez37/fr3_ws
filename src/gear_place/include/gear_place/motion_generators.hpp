@@ -399,6 +399,7 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
   std::cout<<"Difference between z values: "<<current_position[2]-initial_position_[2]<<std::endl;
   if (abs(current_position[2]-initial_position_[2])<=0.0001 and counter_>=75){
     on_surface_ = true;
+    std::cout << "on_surface_: "<<on_surface_ << std::endl;
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
   if (counter_>=150){
