@@ -18,7 +18,7 @@ def main(args=None):
         # supervisor._call_pick_up_multiple_gears(gear_width)
         # # while True:
         # #   supervisor._call_pick_up_gear_service(0.0095) 
-        supervisor._call_pick_up_moving_gear_service(0.0095)  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
+        supervisor._call_pick_up_moving_gear_service(0.0095, True)  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
         # supervisor._call_put_gear_down_service()  # moves down, releases the gear, and moves back up
         # conveyor_supervisor._enable_conveyor_service(True)
         # conveyor_supervisor._set_conveyor_state_service(speed=50, direction=0)
