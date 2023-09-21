@@ -404,7 +404,7 @@ void RobotCommander::pick_up_moving_gear_cb_(
   {
     move_robot_cartesian(0, 0, request->z*3/4, default_velocity_, default_acceleration_);
     move_robot_cartesian(request->x, request->y, 0, default_velocity_, default_acceleration_);
-    move_robot_cartesian(0, 0, request->z/4, default_velocity_, default_acceleration_);
+    move_robot_cartesian(0, 0, request->z/4+0.001, default_velocity_, default_acceleration_);
     grasp_object(request->object_width);
     move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);
     // move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);
