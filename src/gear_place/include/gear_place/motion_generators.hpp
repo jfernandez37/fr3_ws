@@ -366,7 +366,6 @@ ForceMotionGenerator::ForceMotionGenerator(double force, franka::Model &model, f
 franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot_state,
                                                  franka::Duration period)
 {
-  std::cout<< counter_ << std::endl;
   auto current_position = Eigen::Vector3d(robot_state.O_T_EE[12], robot_state.O_T_EE[13],
                                       robot_state.O_T_EE[14]);
 
@@ -396,10 +395,8 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
   std::array<double, 7> tau_d_array{};
   Eigen::VectorXd::Map(&tau_d_array[0], 7) = tau_cmd;
   counter_+=1;
-  std::cout<<"Difference between z values: "<<current_position[2]-initial_position_[2]<<std::endl;
   if (abs(current_position[2]-initial_position_[2])<=0.0001 and counter_>=75){
     on_surface_ = true;
-    std::cout << "on_surface_: "<<on_surface_ << std::endl;
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
   if (counter_>=150){
