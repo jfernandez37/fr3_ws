@@ -56,6 +56,8 @@ def norm(x: float, y: float, z: float) -> float:
 def avg(arr : list) -> float:
     return sum(arr)/len(arr)
 
+def dist_from_point(x_val : float, y_val : float)->float:
+    return sqrt(x_val**2+y_val**2)
 
 class GearPlace(Node):
   def __init__(self):
@@ -239,12 +241,53 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to put gear down")
           raise Error("Unable to put gear down")
 
+  def _call_move_above_gear(self, object_width:float, rotated : bool):
+      """
+      Moves the robot above the gear
+      """
+      moving_gear = MovingGear()
+      while not moving_gear.found_gear or len(moving_gear.x_vals) == 0:
+          moving_gear.run()
+      velocity = 0.15
+      acceleration = 0.2
+      slope, intercept = moving_gear.distance_formula()
+
+      intersection_time = (
+              -(velocity**2) / acceleration - intercept
+          ) / (
+              slope - velocity
+          )
+      distance_at_intersection = moving_gear.distance_to_point(
+          moving_gear.point_from_time(intersection_time)
+      )
+
+      if (
+          velocity**2
+      ) / acceleration > distance_at_intersection:  # runs if max velocity needs to be lowered in move_cartesian
+          velocity = (
+              distance_at_intersection / (velocity / acceleration) * 0.9
+          )  # lowers the velocity
+          intersection_time = (
+              -(velocity**2) / acceleration
+              - intercept
+          ) / (
+              slope - velocity
+          )
+      
+      x_value, y_value = moving_gear.point_from_time(intersection_time)
+      
+      self._call_move_cartesian_service(x_value,y_value,0.0,velocity, acceleration)
+
+      final_x, final_y = moving_gear.point_from_time(10)
+      gear_speed = (dist_from_point(moving_gear.x_vals[1],moving_gear.y_vals[1])-dist_from_point(moving_gear.x_vals[0],moving_gear.y_vals[0])) / moving_gear.times[1]-moving_gear.times[0]
+
+      self._call_move_cartesian_service(final_x, final_y, 0.0, gear_speed, 0.3)
+      
   def _call_pick_up_moving_gear_service(self, object_width : float, rotated : bool):
       """
       Calls the pick_up_moving_gear callback
       """
       moving_gear = MovingGear()
-      c = 0
       while not moving_gear.found_gear or len(moving_gear.x_vals) == 0:
           moving_gear.run()
       z_movement = -0.2465
