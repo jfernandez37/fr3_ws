@@ -59,6 +59,9 @@ def avg(arr : list) -> float:
 def dist_from_point(x_val : float, y_val : float)->float:
     return sqrt(x_val**2+y_val**2)
 
+def distance_between_two_points(x_vals : list, y_vals : list):
+    return abs(dist_from_point(x_vals[1],y_vals[1])-dist_from_point(x_vals[0],y_vals[0]))
+
 class GearPlace(Node):
   def __init__(self):
       super().__init__('gear_place')
@@ -279,10 +282,10 @@ class GearPlace(Node):
       self._call_move_cartesian_service(x_value,y_value,0.0,velocity, acceleration)
 
       final_x, final_y = moving_gear.point_from_time(10)
-      gear_speed = (dist_from_point(moving_gear.x_vals[1],moving_gear.y_vals[1])-dist_from_point(moving_gear.x_vals[0],moving_gear.y_vals[0])) / moving_gear.times[1]-moving_gear.times[0]
+      gear_speed = (distance_between_two_points(moving_gear.x_vals, moving_gear.y_vals)) / (moving_gear.times[1]-moving_gear.times[0])
 
       self._call_move_cartesian_service(final_x, final_y, 0.0, gear_speed, 0.3)
-      
+
   def _call_pick_up_moving_gear_service(self, object_width : float, rotated : bool):
       """
       Calls the pick_up_moving_gear callback
