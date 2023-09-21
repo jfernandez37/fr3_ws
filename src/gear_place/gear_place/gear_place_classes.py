@@ -279,12 +279,12 @@ class GearPlace(Node):
       
       x_value, y_value = moving_gear.point_from_time(intersection_time)
       
-      self._call_move_cartesian_service(x_value * -1 + Y_OFFSET,y_value * -1 + X_OFFSET,0.0,velocity, acceleration)
+      self._call_move_cartesian_service((x_value * -1 + Y_OFFSET)*-1,y_value * -1 + X_OFFSET,0.0,velocity, acceleration)
 
       final_x, final_y = moving_gear.point_from_time(10)
       gear_speed = (distance_between_two_points(moving_gear.x_vals, moving_gear.y_vals)) / (moving_gear.times[1]-moving_gear.times[0])
 
-      self._call_move_cartesian_service(final_x * -1 + Y_OFFSET, final_y * -1 + X_OFFSET, 0.0, gear_speed, 0.3)
+      self._call_move_cartesian_service((final_x * -1 + Y_OFFSET)*-1, final_y * -1 + X_OFFSET, 0.0, gear_speed, 0.3)
 
   def _call_pick_up_moving_gear_service(self, object_width : float, rotated : bool):
       """
@@ -342,7 +342,7 @@ class GearPlace(Node):
             or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 5
         ):  # runs if the gear is moving
             x_value, y_value = moving_gear.point_from_time(intersection_time)
-            request.x = x_value * -1 + Y_OFFSET
+            request.x = (x_value * -1 + Y_OFFSET) * -1
             request.y = y_value * -1 + X_OFFSET
           else:  # runs if the gear is stationary
             self.get_logger().info("Gear not moving")
