@@ -474,7 +474,8 @@ void RobotCommander::grasp_object(double object_width)
   }
   while(!gripper_->grasp(object_width, gripper_speed_, gripper_force_)){
     counter++;
-    move_robot_cartesian(0.0,0.0,-0.005, default_velocity_, default_acceleration_);
+    open_gripper();
+    // move_robot_cartesian(0.0,0.0,-0.005, default_velocity_, default_acceleration_);
     if(counter>=3){
       break;
     }
