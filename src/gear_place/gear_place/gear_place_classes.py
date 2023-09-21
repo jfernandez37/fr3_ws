@@ -296,7 +296,7 @@ class GearPlace(Node):
             request.y = y_value * -1 + X_OFFSET
           else:  # runs if the gear is stationary
             self.get_logger().info("Gear not moving")
-            request.x = moving_gear.x_vals[0] * -1 + Y_OFFSET
+            request.x = (moving_gear.x_vals[0] * -1 + Y_OFFSET) * -1
             request.y = moving_gear.y_vals[0] * -1 + X_OFFSET
       request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1 + Z_CAMERA_OFFSET
       request.object_width = object_width
