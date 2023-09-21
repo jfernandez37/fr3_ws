@@ -37,6 +37,9 @@ X_OFFSET = 0.03975  # offset from the camera to the gripper
 Y_OFFSET = 0.03
 Z_TO_TABLE = -0.247
 Z_CAMERA_OFFSET = 0.0435
+
+X_CONVEYOR_OFFSET = 0.3975
+Y_CONVEYOR_OFFSET = 0.03
 Z_CONVEYOR_OFFSET = 0.05
 
 class Error(Exception):
@@ -297,8 +300,8 @@ class GearPlace(Node):
             request.y = y_value * -1 + X_OFFSET
           else:  # runs if the gear is stationary
             self.get_logger().info("Gear not moving")
-            request.x = (moving_gear.x_vals[0] * -1 + Y_OFFSET) * -1
-            request.y = moving_gear.y_vals[0] * -1 + X_OFFSET
+            request.x = (moving_gear.x_vals[0] * -1 + X_OFFSET) * -1
+            request.y = moving_gear.y_vals[0] * -1 + Y_OFFSET
       request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1 + Z_CONVEYOR_OFFSET
       request.object_width = object_width
 
