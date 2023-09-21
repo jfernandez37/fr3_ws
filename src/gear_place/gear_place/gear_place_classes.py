@@ -301,8 +301,8 @@ class GearPlace(Node):
           else:  # runs if the gear is stationary
             self.get_logger().info("Gear not moving")
             request.x = (moving_gear.x_vals[0] * -1 + Y_OFFSET) * -1 
-            request.y = moving_gear.y_vals[0] * -1 + X_OFFSET
-      request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1 + Z_CAMERA_OFFSET
+            request.y = moving_gear.y_vals[0] * -1 + X_OFFSET + 0.005
+      request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1 + Z_CONVEYOR_OFFSET
       request.object_width = object_width
 
       future = self.pick_up_moving_gear_client.call_async(
