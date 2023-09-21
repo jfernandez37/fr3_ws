@@ -6,7 +6,7 @@ from gear_place.gear_place_classes import GearPlace, Error, ConveyorClass
 
 def main(args=None):
     rclpy.init(args=args)
-    gear_width = 0.0095
+    gear_width = 0.0085
     try:
         supervisor = GearPlace()
         conveyor_supervisor = ConveyorClass("aprs_ros_conveyor")
