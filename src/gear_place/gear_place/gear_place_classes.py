@@ -235,7 +235,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to put gear down")
           raise Error("Unable to put gear down")
 
-  def _call_pick_up_moving_gear_service(self, object_width : float):
+  def _call_pick_up_moving_gear_service(self, object_width : float, rotated : bool):
       """
       Calls the pick_up_moving_gear callback
       """
@@ -274,17 +274,30 @@ class GearPlace(Node):
               slope - velocity
           )  # calculates the new intersection time
       request = PickUpMovingGear.Request()
-      if (
-          abs(moving_gear.x_pix[1] - moving_gear.x_pix[0]) > 2
-          or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 2
-      ):  # runs if the gear is moving
-          x_value, y_value = moving_gear.point_from_time(intersection_time)
-          request.x = y_value * -1 + X_OFFSET
-          request.y = x_value * -1 + Y_OFFSET
-      else:  # runs if the gear is stationary
-          self.get_logger().info("Gear not moving")
-          request.x = moving_gear.y_vals[0] * -1 + Y_OFFSET
-          request.y = moving_gear.x_vals[0] * -1 + X_OFFSET
+      if not rotated:
+        if (
+            abs(moving_gear.x_pix[1] - moving_gear.x_pix[0]) > 2
+            or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 2
+        ):  # runs if the gear is moving
+            x_value, y_value = moving_gear.point_from_time(intersection_time)
+            request.x = y_value * -1 + X_OFFSET
+            request.y = x_value * -1 + Y_OFFSET
+        else:  # runs if the gear is stationary
+            self.get_logger().info("Gear not moving")
+            request.x = moving_gear.y_vals[0] * -1 + X_OFFSET
+            request.y = moving_gear.x_vals[0] * -1 + Y_OFFSET
+      else:
+          if (
+            abs(moving_gear.x_pix[1] - moving_gear.x_pix[0]) > 2
+            or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 2
+        ):  # runs if the gear is moving
+            x_value, y_value = moving_gear.point_from_time(intersection_time)
+            request.x = x_value * -1 + Y_OFFSET
+            request.y = y_value * -1 + X_OFFSET
+          else:  # runs if the gear is stationary
+            self.get_logger().info("Gear not moving")
+            request.x = moving_gear.x_vals[0] * -1 + Y_OFFSET
+            request.y = moving_gear.y_vals[0] * -1 + X_OFFSET
       request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1 + Z_CAMERA_OFFSET
       request.object_width = object_width
 
