@@ -33,6 +33,7 @@ class MovingGear:
                     gear_center_values[0] = coord[2]
                 print(gear_center_values)
                 if gear_center_values.count(0) == 0:
+                    __import__("time").sleep(1)
                     x,y = find_object.ret_cent_gear()
                     self.x_pix.append(x)
                     self.y_pix.append(y)
