@@ -21,7 +21,7 @@ def main(args=None):
             find_object = FindObject()
             rclpy.spin_once(find_object)
             c+=1
-        object_depth = ObjectDepth([find_object.ret_cent_gear(), find_object.ret_edge_gear()])
+        object_depth = ObjectDepth([find_object.ret_cent_gear(), find_object.ret_edge_gear()], {})
         rclpy.spin_once(object_depth)
 
         object_depth.destroy_node()
