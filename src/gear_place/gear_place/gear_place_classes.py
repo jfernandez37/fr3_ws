@@ -36,7 +36,8 @@ from math import sqrt
 X_OFFSET = 0.03975  # offset from the camera to the gripper
 Y_OFFSET = 0.03
 Z_TO_TABLE = -0.247
-Z_CAMERA_OFFSET = 0.0475
+Z_CAMERA_OFFSET = 0.0435
+Z_CONVEYOR_OFFSET = 0.05
 
 class Error(Exception):
   def __init__(self, value: str):
@@ -298,7 +299,7 @@ class GearPlace(Node):
             self.get_logger().info("Gear not moving")
             request.x = (moving_gear.x_vals[0] * -1 + Y_OFFSET) * -1
             request.y = moving_gear.y_vals[0] * -1 + X_OFFSET
-      request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1 + Z_CAMERA_OFFSET
+      request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1 + Z_CONVEYOR_OFFSET
       request.object_width = object_width
 
       future = self.pick_up_moving_gear_client.call_async(
