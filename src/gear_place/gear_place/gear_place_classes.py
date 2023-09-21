@@ -40,7 +40,7 @@ Z_CAMERA_OFFSET = 0.0435
 
 X_CONVEYOR_OFFSET = 0.3975
 Y_CONVEYOR_OFFSET = 0.03
-Z_CONVEYOR_OFFSET = 0.05
+Z_CONVEYOR_OFFSET = 0.055
 
 class Error(Exception):
   def __init__(self, value: str):
