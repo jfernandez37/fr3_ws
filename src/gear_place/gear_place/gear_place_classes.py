@@ -36,7 +36,7 @@ from math import sqrt
 X_OFFSET = 0.03975  # offset from the camera to the gripper
 Y_OFFSET = 0.03
 Z_TO_TABLE = -0.247
-Z_CAMERA_OFFSET = 0.0435
+Z_CAMERA_OFFSET = 0.0475
 
 class Error(Exception):
   def __init__(self, value: str):
