@@ -292,8 +292,8 @@ class GearPlace(Node):
             request.y = moving_gear.x_vals[0] * -1 + Y_OFFSET
       else:
           if (
-            abs(moving_gear.x_pix[1] - moving_gear.x_pix[0]) > 2
-            or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 2
+            abs(moving_gear.x_pix[1] - moving_gear.x_pix[0]) > 5
+            or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 5
         ):  # runs if the gear is moving
             x_value, y_value = moving_gear.point_from_time(intersection_time)
             request.x = x_value * -1 + Y_OFFSET
