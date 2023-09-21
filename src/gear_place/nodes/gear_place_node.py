@@ -12,7 +12,7 @@ def main(args=None):
         conveyor_supervisor = ConveyorClass("aprs_ros_conveyor")
         supervisor.wait(5)
         supervisor._call_open_gripper_service()
-        supervisor._call_move_to_position_service("home")
+        supervisor._call_move_to_named_pose_service("home")
         supervisor._call_move_to_named_pose_service("above_conveyor")
         supervisor.wait(2)
         # # supervisor._call_move_cartesian_service(-0.3, 0.0, 0.0, 0.15, 0.2)  # Moves to the center of the cart
