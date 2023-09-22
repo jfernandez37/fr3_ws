@@ -279,15 +279,23 @@ class GearPlace(Node):
       
       x_value, y_value = moving_gear.point_from_time(intersection_time)
       
-
+      ratio_x = x_value/(x_value+y_value)
+      ratio_y = 1 - ratio_x
+      
       final_x, final_y = moving_gear.point_from_time(intersection_time*3)
       gear_speed = (distance_between_two_points(moving_gear.x_vals, moving_gear.y_vals)) / (moving_gear.times[1]-moving_gear.times[0])
+
+      second_acceleration = 0.3
+      second_t1 = gear_speed/second_acceleration
+
+      distance_lost_to_acc = gear_speed * second_t1 / 2
+      
       if rotated:
-        self._call_move_cartesian_service((x_value * -1 + Y_OFFSET)*-1,y_value * -1 + X_OFFSET,0.0,velocity, acceleration)
-        self._call_move_cartesian_service((final_x * -1 + Y_OFFSET)*-1, final_y * -1 + X_OFFSET, 0.0, gear_speed, 0.3)
+        self._call_move_cartesian_service((x_value * -1 + Y_OFFSET + ratio_x*distance_lost_to_acc)*-1,y_value * -1 + X_OFFSET + ratio_y*distance_lost_to_acc,0.0,velocity, acceleration)
+        self._call_move_cartesian_service((final_x * -1 + Y_OFFSET)*-1, final_y * -1 + X_OFFSET, 0.0, gear_speed, second_acceleration)
       else:
-        self._call_move_cartesian_service(y_value * -1 + X_OFFSET,x_value * -1 + Y_OFFSET,0.0,velocity, acceleration)
-        self._call_move_cartesian_service(final_y * -1 + X_OFFSET,final_x * -1 + Y_OFFSET, 0.0, gear_speed, 0.3)
+        self._call_move_cartesian_service(y_value * -1 + X_OFFSET + ratio_y * distance_lost_to_acc,x_value * -1 + Y_OFFSET + ratio_x * distance_lost_to_acc,0.0,velocity, acceleration)
+        self._call_move_cartesian_service(final_y * -1 + X_OFFSET,final_x * -1 + Y_OFFSET, 0.0, gear_speed, second_acceleration)
 
   
   def _call_pick_up_moving_gear_service(self, object_width : float, rotated : bool):
