@@ -52,4 +52,8 @@ This file has the classes which is used for the node to call the services. Both 
 
 * _call_put_down_force
 
-    This function uses the tourque control of the FR3 robot to detect when the gear has hit the surface. ***THIS IS NOT WORKING YET***
+    This function uses the tourque control of the FR3 robot to detect when the gear has hit the surface. It moves down a centimeter at a time and tests if contact has been made with the surface. If it has, the robot rises and if not, the robot continues to move down.
+
+* _call_move_above_gear
+
+    The code for this function is similar to pick up moving gear. However, instead of trying to pick up the gear, the end effector tracks the gear from above. This is to test the coordinates for a moving gear.
