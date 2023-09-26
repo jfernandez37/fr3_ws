@@ -327,8 +327,8 @@ bool RobotCommander::put_down_force(double force)
     read_state_.unlock();
     RCLCPP_ERROR(get_logger(), e.what());
     return false;
-  }  
-  return *on_surface;
+  }
+  return *on_surface!=0;
 }
 
 void RobotCommander::pick_up_gear_cb_(
