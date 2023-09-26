@@ -356,7 +356,6 @@ ForceMotionGenerator::ForceMotionGenerator(double force, franka::Model &model, f
 {
   on_surface_ = val;
   *on_surface_ = false;
-  std::cout << "IN concstructor: "<<*on_surface_ <<std::endl;
   gravity_array = model_.gravity(state_);
 
   Eigen::Map<Eigen::Matrix<double, 7, 1>> initial_tau_measured(state_.tau_J.data());
@@ -400,16 +399,15 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
   Eigen::VectorXd::Map(&tau_d_array[0], 7) = tau_cmd;
   counter_+=1;
   if ((abs(current_position[2]-initial_position_[2])<=0.000025 || current_position[2]-initial_position_[2]>0.0) && counter_>=75){
-    std::cout <<"75 counter before set: "<<*on_surface_<<std::endl;
+    std::cout <<"75"<<std::endl;
     *on_surface_ = true;
-    std::cout <<"75 counter after set: "<<*on_surface_<<std::endl;
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
   else{
     *on_surface_ = false;
   }
   if (counter_>=150){
-    std::cout <<"150 counter: "<<*on_surface_<<std::endl;
+    std::cout <<"150"<<std::endl;
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
   return tau_d_array;
