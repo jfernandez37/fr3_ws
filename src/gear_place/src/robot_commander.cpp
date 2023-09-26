@@ -316,13 +316,13 @@ bool RobotCommander::put_down_force(double force)
   try
   {
     read_state_.lock();
-    std::cout << "Before start"<<std::endl;
-    auto start = std::chrono::high_resolution_clock::now();
-    std::cout << "after start"<<std::endl;
+    // std::cout << "Before start"<<std::endl;
+    // auto start = std::chrono::high_resolution_clock::now();
+    // std::cout << "after start"<<std::endl;
     robot_->control(*force_motion_generator);
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> duration = end - start;
-    std::cout <<"Duration: "<<duration.count() << std::endl;
+    // auto end = std::chrono::high_resolution_clock::now();
+    // std::chrono::duration<double> duration = end - start;
+    // std::cout <<"Duration: "<<duration.count() << std::endl;
     read_state_.unlock();
   }
   catch (const franka::Exception &e)
