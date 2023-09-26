@@ -313,8 +313,9 @@ bool RobotCommander::put_down_force(double force)
     throw CommanderError(ip.what());
     return false;
   }
-  time(&start);
-  // auto start = std::chrono::high_resolution_clock::now();
+  std::cout << "Before start"<<std::endl;
+  auto start = std::chrono::high_resolution_clock::now();
+  std::cout << "after start"<<std::endl;
   try
   {
     read_state_.lock();
@@ -327,12 +328,9 @@ bool RobotCommander::put_down_force(double force)
     RCLCPP_ERROR(get_logger(), e.what());
     return false;
   }
-  time(&end);
-  double duration = double(end - start);
-  std::cout << double(start) << std::endl;
-  // auto end = std::chrono::high_resolution_clock::now();
-  // std::chrono::duration<double> duration = end - start;
-  // std::cout <<"Duration: "<<duration.count() << std::endl;
+  auto end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> duration = end - start;
+  std::cout <<"Duration: "<<duration.count() << std::endl;
   return force_motion_generator->get_result() == 75;
 }
 
