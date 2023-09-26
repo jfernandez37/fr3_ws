@@ -320,7 +320,7 @@ bool RobotCommander::put_down_force(double force)
     read_state_.lock();
     robot_->control(*force_motion_generator);
     read_state_.unlock();
-    std::cout << "Commander val: " << *on_surface << std::endl;
+    std::cout << "Commander val in control try: " << *on_surface << std::endl;
   }
   catch (const franka::Exception &e)
   {
