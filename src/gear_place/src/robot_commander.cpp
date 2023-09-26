@@ -472,16 +472,6 @@ void RobotCommander::grasp_object(double object_width)
   {
     throw CommanderError("Object width is larger than gripper max width");
   }
-  // while(!gripper_->grasp(object_width, gripper_speed_, gripper_force_)){
-  //   counter++;
-  //   open_gripper();
-  //   // move_robot_cartesian(0.0,0.0,-0.005, default_velocity_, default_acceleration_);
-  //   if(counter>=3){
-  //     break;
-  //   }
-  // }
-  // if (counter>=3)
-  // {
   for(int i = 0; i < 3; i++){
     if (!gripper_->grasp(object_width, gripper_speed_, gripper_force_))
     {
