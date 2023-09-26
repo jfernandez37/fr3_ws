@@ -320,7 +320,6 @@ bool RobotCommander::put_down_force(double force)
     read_state_.lock();
     robot_->control(*force_motion_generator);
     read_state_.unlock();
-    std::cout << "Commander val in control try: " << *on_surface << std::endl;
   }
   catch (const franka::Exception &e)
   {
@@ -328,6 +327,7 @@ bool RobotCommander::put_down_force(double force)
     RCLCPP_ERROR(get_logger(), e.what());
     return false;
   }
+  std::cout << force_motion_generator->get_result();
   return force_motion_generator->get_result();
 }
 
