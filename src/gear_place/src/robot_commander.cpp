@@ -328,6 +328,7 @@ bool RobotCommander::put_down_force(double force)
     RCLCPP_ERROR(get_logger(), e.what());
     return false;
   }
+  std::cout << "Counter from loop: " << force_motion_generator->get_result() << std::endl;
   return *on_surface!=0;
 }
 
