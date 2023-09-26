@@ -368,6 +368,7 @@ ForceMotionGenerator::ForceMotionGenerator(double force, franka::Model &model, f
 franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot_state,
                                                  franka::Duration period)
 {
+  std::cout << "In operator(): " << *on_surface_ << std::endl;
   auto current_position = Eigen::Vector3d(robot_state.O_T_EE[12], robot_state.O_T_EE[13],
                                       robot_state.O_T_EE[14]);
 
