@@ -292,8 +292,6 @@ bool RobotCommander::put_down_force(double force)
   /*
   Uses the force generator to put down the gear until it makes contact with the surface
   */
-  bool *on_surface;
-  *on_surface = false;
   robot_->setCollisionBehavior({{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
@@ -306,7 +304,7 @@ bool RobotCommander::put_down_force(double force)
     read_state_.lock();
     current_state_ = robot_->readOnce();
     read_state_.unlock();
-    force_motion_generator = std::make_unique<ForceMotionGenerator>(force, model, current_state_, on_surface);
+    force_motion_generator = std::make_unique<ForceMotionGenerator>(force, model, current_state_);
   }
   catch(InvalidParameters &ip)
   {
