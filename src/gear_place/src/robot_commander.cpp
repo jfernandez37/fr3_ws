@@ -266,7 +266,11 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
     while(!successful_put_down){
       move_robot_cartesian(0.0,0.0,-0.01,default_velocity_,0.5);
       sleep(1.0);
+      auto start = std::chrono::high_resolution_clock::now();
       successful_put_down = put_down_force(request->force);
+      auto end = std::chrono::high_resolution_clock::now();
+      std::chrono::duration<double> duration = end - start;
+      std::cout <<"Duration: "<<duration.count() << std::endl;
     }
     // successful_put_down = put_down_force(request->force);
     if(!successful_put_down){
@@ -316,11 +320,7 @@ bool RobotCommander::put_down_force(double force)
   try
   {
     read_state_.lock();
-    auto start = std::chrono::high_resolution_clock::now();
     robot_->control(*force_motion_generator);
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> duration = end - start;
-    std::cout <<"Duration: "<<duration.count() << std::endl;
     read_state_.unlock();
   }
   catch (const franka::Exception &e)
