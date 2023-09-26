@@ -313,7 +313,7 @@ bool RobotCommander::put_down_force(double force)
     return false;
   }
 
-  auto start = std::chrono::high_resolution_clock::now();
+  // auto start = std::chrono::high_resolution_clock::now();
   try
   {
     read_state_.lock();
@@ -327,8 +327,8 @@ bool RobotCommander::put_down_force(double force)
     return false;
   }
   auto end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> duration = end - start;
-  std::cout <<"Duration: "<<duration.count() << std::endl;
+  // std::chrono::duration<double> duration = end - start;
+  // std::cout <<"Duration: "<<duration.count() << std::endl;
   return force_motion_generator->get_result() == 75;
 }
 
