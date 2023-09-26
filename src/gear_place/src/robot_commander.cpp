@@ -293,6 +293,7 @@ bool RobotCommander::put_down_force(double force)
   */
   bool *on_surface;
   *on_surface = false;
+  std::cout << "Commander val: " << *on_surface << std::endl;
   robot_->setCollisionBehavior({{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
