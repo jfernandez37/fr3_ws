@@ -403,9 +403,10 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
     std::cout <<"75 counter before set: "<<*on_surface_<<std::endl;
     *on_surface_ = true;
     std::cout <<"75 counter after set: "<<*on_surface_<<std::endl;
-  }
-  if(*on_surface_){
     return franka::MotionFinished(franka::Torques(tau_d_array));
+  }
+  else{
+    *on_surface_ = false;
   }
   if (counter_>=150){
     std::cout <<"150 counter: "<<*on_surface_<<std::endl;
