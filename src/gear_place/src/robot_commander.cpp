@@ -317,6 +317,7 @@ bool RobotCommander::put_down_force(double force)
     read_state_.lock();
     robot_->control(*force_motion_generator);
     read_state_.unlock();
+    std::cout << "Commander val: " << force_motion_generator->get_result() << std::endl;
   }
   catch (const franka::Exception &e)
   {
