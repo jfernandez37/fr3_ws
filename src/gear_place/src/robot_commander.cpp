@@ -292,6 +292,7 @@ bool RobotCommander::put_down_force(double force)
   */
   bool *on_surface;
   *on_surface = false;
+  time_t start, end;
   robot_->setCollisionBehavior({{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
@@ -312,7 +313,7 @@ bool RobotCommander::put_down_force(double force)
     throw CommanderError(ip.what());
     return false;
   }
-
+  time(&start);
   // auto start = std::chrono::high_resolution_clock::now();
   try
   {
@@ -326,7 +327,10 @@ bool RobotCommander::put_down_force(double force)
     RCLCPP_ERROR(get_logger(), e.what());
     return false;
   }
-  auto end = std::chrono::high_resolution_clock::now();
+  time(&end);
+  double duration = double(end - start);
+  // std::cout << duration << std::endl;
+  // auto end = std::chrono::high_resolution_clock::now();
   // std::chrono::duration<double> duration = end - start;
   // std::cout <<"Duration: "<<duration.count() << std::endl;
   return force_motion_generator->get_result() == 75;
