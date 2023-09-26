@@ -353,8 +353,9 @@ private:
 ForceMotionGenerator::ForceMotionGenerator(double force, franka::Model &model, franka::RobotState &state, bool* val)
     : force_(force), model_(model), state_(state), initial_tau_ext_(7), tau_error_integral_(7)
 {
-  std::cout << "IN concstructor: "<<*val <<std::endl;
   on_surface_ = val;
+  *on_surface_ = false;
+  std::cout << "IN concstructor: "<<*on_surface_ <<std::endl;
   gravity_array = model_.gravity(state_);
 
   Eigen::Map<Eigen::Matrix<double, 7, 1>> initial_tau_measured(state_.tau_J.data());
