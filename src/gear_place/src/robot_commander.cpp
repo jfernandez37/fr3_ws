@@ -267,7 +267,6 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
       move_robot_cartesian(0.0,0.0,-0.01,default_velocity_,0.5);
       sleep(1.0);
       successful_put_down = put_down_force(request->force);
-      std::cout << successful_put_down << std::endl;
     }
     // successful_put_down = put_down_force(request->force);
     if(!successful_put_down){
@@ -293,7 +292,6 @@ bool RobotCommander::put_down_force(double force)
   */
   bool *on_surface;
   *on_surface = false;
-  std::cout << "Commander val: " << *on_surface << std::endl;
   robot_->setCollisionBehavior({{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
@@ -331,7 +329,6 @@ bool RobotCommander::put_down_force(double force)
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> duration = end - start;
   std::cout <<"Duration: "<<duration.count() << std::endl;
-  std::cout << force_motion_generator->get_result()<<std::endl;
   return force_motion_generator->get_result() == 75;
 }
 
