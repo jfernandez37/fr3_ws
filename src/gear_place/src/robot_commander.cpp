@@ -309,7 +309,6 @@ void RobotCommander::put_down_force(double force)
   {
     RCLCPP_ERROR(get_logger(),"Could not make force motion generator");
     throw CommanderError(ip.what());
-    return false;
   }
   
   try
@@ -322,9 +321,7 @@ void RobotCommander::put_down_force(double force)
   {
     read_state_.unlock();
     RCLCPP_ERROR(get_logger(), e.what());
-    return false;
   }
-  return force_motion_generator->get_result() == 75;
 }
 
 void RobotCommander::pick_up_gear_cb_(
