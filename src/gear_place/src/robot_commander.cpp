@@ -312,13 +312,17 @@ bool RobotCommander::put_down_force(double force)
     throw CommanderError(ip.what());
     return false;
   }
-  std::cout << "Before start"<<std::endl;
-  auto start = std::chrono::high_resolution_clock::now();
-  std::cout << "after start"<<std::endl;
+  
   try
   {
     read_state_.lock();
+    std::cout << "Before start"<<std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
+    std::cout << "after start"<<std::endl;
     robot_->control(*force_motion_generator);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end - start;
+    std::cout <<"Duration: "<<duration.count() << std::endl;
     read_state_.unlock();
   }
   catch (const franka::Exception &e)
@@ -327,9 +331,6 @@ bool RobotCommander::put_down_force(double force)
     RCLCPP_ERROR(get_logger(), e.what());
     return false;
   }
-  auto end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> duration = end - start;
-  std::cout <<"Duration: "<<duration.count() << std::endl;
   return force_motion_generator->get_result() == 75;
 }
 
