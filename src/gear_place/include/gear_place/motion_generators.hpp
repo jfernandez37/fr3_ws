@@ -412,47 +412,4 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
   return tau_d_array;
-
-      /*
-      time_ += period.toSec();
-
-  auto current_position = Eigen::Vector3d(robot_state.O_T_EE[12], robot_state.O_T_EE[13],
-                                          robot_state.O_T_EE[14]);
-
-  state_ = robot_state;
-
-  if (time_ == 0.0)
-  {
-    initial_position_ = current_position;
-  }
-  else if (initial_position_[2] - current_position[2] <= max_travel_)
-  {
-    on_surface_ = true;
-  }
-  // get state variables
-  std::array<double, 42> jacobian_array =
-      model_.zeroJacobian(franka::Frame::kEndEffector, robot_state);
-  Eigen::Map<const Eigen::Matrix<double, 6, 7>> jacobian(jacobian_array.data());
-  Eigen::Map<const Eigen::Matrix<double, 7, 1>> tau_measured(robot_state.tau_J.data());
-  Eigen::Map<const Eigen::Matrix<double, 7, 1>> gravity(gravity_array.data());
-  Eigen::VectorXd tau_d(7), desired_force_torque(6), tau_cmd(7), tau_ext(7);
-  desired_force_torque.setZero();
-  desired_force_torque(2) = -desired_force;
-  tau_ext << tau_measured - gravity - initial_tau_ext_;
-  tau_d << jacobian.transpose() * desired_force_torque;
-  tau_error_integral_ += period.toSec() * (tau_d - tau_ext);
-  // FF + PI control
-  tau_cmd << tau_d + k_p * (tau_d - tau_ext) + k_i * tau_error_integral_;
-  // Smoothly update the mass to reach the desired target value
-  desired_force = filter_gain * force_ + (1 - filter_gain) * desired_force;
-  std::array<double, 7> tau_d_array{};
-  Eigen::VectorXd::Map(&tau_d_array[0], 7) = tau_cmd;
-
-  if (time_ > time_limit_ || on_surface_)
-  {
-    return franka::MotionFinished(franka::Torques(tau_d_array));
-  }
-
-  return tau_d_array;
-      */
 }
