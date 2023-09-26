@@ -327,8 +327,8 @@ bool RobotCommander::put_down_force(double force)
     RCLCPP_ERROR(get_logger(), e.what());
     return false;
   }
-  std::cout << force_motion_generator->get_result();
-  return force_motion_generator->get_result();
+  std::cout << force_motion_generator->get_result()<<std::endl;
+  return force_motion_generator->get_result() == 75;
 }
 
 void RobotCommander::pick_up_gear_cb_(

@@ -323,7 +323,7 @@ public:
   ForceMotionGenerator(double force, franka::Model &model, franka::RobotState &state, bool*);
   franka::Torques operator()(const franka::RobotState &robot_state, franka::Duration period);
   // bool get_result() {return on_surface_;};
-  bool get_result(){return counter_==75;};
+  int get_result(){return counter_;};
 
 private:
   double time_ = 0.0;
