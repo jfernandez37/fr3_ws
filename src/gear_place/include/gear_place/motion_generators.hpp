@@ -366,7 +366,6 @@ ForceMotionGenerator::ForceMotionGenerator(double force, franka::Model &model, f
 franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot_state,
                                                  franka::Duration period)
 {
-  *on_surface_ = false;
   auto current_position = Eigen::Vector3d(robot_state.O_T_EE[12], robot_state.O_T_EE[13],
                                       robot_state.O_T_EE[14]);
 
@@ -403,9 +402,6 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
     std::cout <<"75"<<std::endl;
     *on_surface_ = true;
     return franka::MotionFinished(franka::Torques(tau_d_array));
-  }
-  else{
-    *on_surface_ = false;
   }
   if (counter_>=150){
     std::cout <<"150"<<std::endl;
