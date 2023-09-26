@@ -452,27 +452,6 @@ class GearPlace(Node):
           [-0.1, 0.0],
           [-0.1, 0.0],
       ]  # cartesian movements starting at home position. Scans the area in front of the robot.
-      # robot_moves = [
-      #     [0.0, -0.1],
-      #     [-0.05, 0.0],
-      #     [-0.05, 0.0],
-      #     [-0.05, 0.0],
-      #     [-0.05, 0.0],
-      #     [-0.05, 0.0],
-      #     [-0.05, 0.0],
-      #     [0.0, 0.1],
-      #     [0.05, 0.0],
-      #     [0.05, 0.0],
-      #     [0.05, 0.0],
-      #     [0.05, 0.0],
-      #     [0.1, 0.1],
-      #     [-0.05, 0.0],
-      #     [-0.05, 0.0],
-      #     [-0.05, 0.0],
-      #     [-0.05, 0.0],
-      #     [-0.05, 0.0],
-      #     [-0.05, 0.0],
-      # ]  # cartesian movements starting at home position. Scans the area in front of the robot.
       x_movements = [a[0] for a in robot_moves]  # just the x direction movements
       y_movements = [a[1] for a in robot_moves]  # just the y direction movements
       self.get_logger().info(f"Scanning for gears")

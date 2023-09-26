@@ -322,8 +322,6 @@ class ForceMotionGenerator
 public:
   ForceMotionGenerator(double force, franka::Model &model, franka::RobotState &state);
   franka::Torques operator()(const franka::RobotState &robot_state, franka::Duration period);
-  // bool get_result() {return on_surface_;};
-  int get_result(){return counter_;};
 
 private:
   double time_ = 0.0;
