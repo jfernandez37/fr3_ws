@@ -320,7 +320,7 @@ franka::CartesianPose CartesianMotionGenerator::operator()(const franka::RobotSt
 class ForceMotionGenerator
 {
 public:
-  ForceMotionGenerator(double force, franka::Model &model, franka::RobotState &state, bool*);
+  ForceMotionGenerator(double force, franka::Model &model, franka::RobotState &state);
   franka::Torques operator()(const franka::RobotState &robot_state, franka::Duration period);
   // bool get_result() {return on_surface_;};
   int get_result(){return counter_;};
