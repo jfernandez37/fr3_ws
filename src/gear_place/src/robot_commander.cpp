@@ -291,6 +291,8 @@ bool RobotCommander::put_down_force(double force)
   /*
   Uses the force generator to put down the gear until it makes contact with the surface
   */
+  bool *on_surface;
+  *on_surface = false;
   robot_->setCollisionBehavior({{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
@@ -303,7 +305,7 @@ bool RobotCommander::put_down_force(double force)
     read_state_.lock();
     current_state_ = robot_->readOnce();
     read_state_.unlock();
-    force_motion_generator = std::make_unique<ForceMotionGenerator>(force, model, current_state_);
+    force_motion_generator = std::make_unique<ForceMotionGenerator>(force, model, current_state_, on_surface);
   }
   catch(InvalidParameters &ip)
   {
@@ -317,7 +319,7 @@ bool RobotCommander::put_down_force(double force)
     read_state_.lock();
     robot_->control(*force_motion_generator);
     read_state_.unlock();
-    std::cout << "Commander val: " << force_motion_generator->get_result() << std::endl;
+    std::cout << "Commander val: " << *on_surface << std::endl;
   }
   catch (const franka::Exception &e)
   {
@@ -325,7 +327,7 @@ bool RobotCommander::put_down_force(double force)
     RCLCPP_ERROR(get_logger(), e.what());
     return false;
   }  
-  return force_motion_generator->get_result();
+  return *on_surface;
 }
 
 void RobotCommander::pick_up_gear_cb_(

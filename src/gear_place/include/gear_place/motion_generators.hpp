@@ -320,9 +320,9 @@ franka::CartesianPose CartesianMotionGenerator::operator()(const franka::RobotSt
 class ForceMotionGenerator
 {
 public:
-  ForceMotionGenerator(double force, franka::Model &model, franka::RobotState &state);
+  ForceMotionGenerator(double force, franka::Model &model, franka::RobotState &state, bool*);
   franka::Torques operator()(const franka::RobotState &robot_state, franka::Duration period);
-  bool get_result() {return on_surface_;};
+  // bool get_result() {return on_surface_;};
 
 private:
   double time_ = 0.0;
@@ -333,7 +333,7 @@ private:
   const double filter_gain = 0.001;
   double force_;
   double max_travel_ = 0.005;
-  bool on_surface_ = false;
+  bool *on_surface_;
   int counter_ = 0;
 
   double desired_mass = 0.0;
@@ -350,9 +350,10 @@ private:
   Eigen::VectorXd tau_error_integral_;
 };
 
-ForceMotionGenerator::ForceMotionGenerator(double force, franka::Model &model, franka::RobotState &state)
+ForceMotionGenerator::ForceMotionGenerator(double force, franka::Model &model, franka::RobotState &state, bool* val)
     : force_(force), model_(model), state_(state), initial_tau_ext_(7), tau_error_integral_(7)
 {
+  on_surface_ = val;
 
   gravity_array = model_.gravity(state_);
 
@@ -396,16 +397,15 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
   Eigen::VectorXd::Map(&tau_d_array[0], 7) = tau_cmd;
   counter_+=1;
   if ((abs(current_position[2]-initial_position_[2])<=0.000075 || current_position[2]-initial_position_[2]>0.0) && counter_>=75){
-    std::cout <<"75 counter before set: "<<on_surface_<<std::endl;
-    on_surface_ = true;
-    std::cout <<"75 counter after set: "<<on_surface_<<std::endl;
+    std::cout <<"75 counter before set: "<<*on_surface_<<std::endl;
+    *on_surface_ = true;
+    std::cout <<"75 counter after set: "<<*on_surface_<<std::endl;
   }
-  if(on_surface_){
-    std::cout << "on_surface_function: " << get_result() << std::endl;
+  if(*on_surface_){
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
   if (counter_>=150){
-    std::cout <<"150 counter: "<<on_surface_<<std::endl;
+    std::cout <<"150 counter: "<<*on_surface_<<std::endl;
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
   return tau_d_array;
