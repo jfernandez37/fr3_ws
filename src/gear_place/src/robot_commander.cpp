@@ -273,7 +273,6 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
       std::cout <<"Duration: "<<duration.count() << std::endl;
       time = duration.count();
     }
-    // successful_put_down = put_down_force(request->force);
     open_gripper();
   }
   catch (CommanderError &e)
@@ -401,7 +400,6 @@ void RobotCommander::pick_up_moving_gear_cb_(
     move_robot_cartesian(0, 0, request->z/4+0.001, default_velocity_, default_acceleration_);
     grasp_object(request->object_width);
     move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);
-    // move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);
   }
   catch (CommanderError &e)
   {
@@ -472,7 +470,6 @@ void RobotCommander::grasp_object(double object_width)
       open_gripper();
       RCLCPP_ERROR(get_logger(),"Unable to grasp object");
       move_robot_cartesian(0.0,0.0,-0.015, default_velocity_, default_acceleration_);
-      // throw CommanderError("Unable to grasp object");
     }
     else{
       break;
