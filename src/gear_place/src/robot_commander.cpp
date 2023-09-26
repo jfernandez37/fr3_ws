@@ -329,7 +329,7 @@ bool RobotCommander::put_down_force(double force)
   }
   time(&end);
   double duration = double(end - start);
-  std::cout << duration << std::endl;
+  std::cout << double(start) << std::endl;
   // auto end = std::chrono::high_resolution_clock::now();
   // std::chrono::duration<double> duration = end - start;
   // std::cout <<"Duration: "<<duration.count() << std::endl;
