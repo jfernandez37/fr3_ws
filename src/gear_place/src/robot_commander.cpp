@@ -236,7 +236,7 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
   std::cout << "X after: " << x_val << "\tY after: "<<y_val<<std::endl;
   try
   {
-    cartesian_motion_generator = std::make_unique<CartesianMotionGenerator>(x_val, y_val, z, maximum_velocity, acceleration, current_state_);
+    cartesian_motion_generator = std::make_unique<CartesianMotionGenerator>(x, y, z, maximum_velocity, acceleration, current_state_);
   }
   catch (InvalidParameters &ip)
   {
