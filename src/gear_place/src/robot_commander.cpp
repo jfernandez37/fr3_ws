@@ -272,7 +272,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
     put_down_force(request->force);
     sleep(1.0);
     while(time>=0.15){
-      move_robot_cartesian(0.0015,0.0,-0.01,default_velocity_,0.5);
+      move_robot_cartesian(0.0013,0.0,-0.01,default_velocity_,0.5);
       sleep(1);
       auto start = std::chrono::high_resolution_clock::now();
       put_down_force(request->force);
