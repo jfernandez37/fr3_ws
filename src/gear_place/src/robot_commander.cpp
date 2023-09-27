@@ -263,17 +263,16 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
   Uses the force generator to put down the gear until it makes contact with the surface
   */
   double time = 1.0;
-  double distance_up = 0.0;
+  vector<float> initial_pose;
+  for(int i = 0; i < 7; i++){
+      initial_pose.push_back(joint_state_msg_.position[i]);
+  }
   try{
     sleep(1.0);
     put_down_force(request->force);
     sleep(1.0);
     while(time>=0.15){
-      for(int i = 0; i < 7; i++){
-        std::cout << "Joint " << i+1 <<": "<<joint_state_msg_.position[i] << std::endl;
-      }
       move_robot_cartesian(0.0015,0.0,-0.01,default_velocity_,0.5);
-      distance_up+=0.01;
       sleep(1);
       auto start = std::chrono::high_resolution_clock::now();
       put_down_force(request->force);
@@ -284,25 +283,24 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
       time = duration.count();
     }
     open_gripper();
-    std::cout<<"Moving up "<<distance_up<<std::endl;
-    move_robot_cartesian(0.0,0.0, distance_up, default_velocity_, 0.5);
-    // try
-    // {
-    //   MotionGenerator motion_generator(0.2,
-    //   {{joint_state_msg_.position[0],joint_state_msg_.position[1],joint_state_msg_.position[2],
-    //   joint_state_msg_.position[3],joint_state_msg_.position[4],2.15806, joint_state_msg_.position[6]}}
-    //   , current_state_);
+    move_robot_cartesian(0.0,0.0, 0.01, default_velocity_, 0.5);
+    try
+    {
+      MotionGenerator motion_generator(0.2,
+      {{initial_pose[0],initial_pose[1],initial_pose[2],
+      initial_pose[3],initial_pose[4],2.15806, initial_pose[6]}}
+      , current_state_);
 
-    //   read_state_.lock();
-    //   robot_->control(motion_generator);
-    //   read_state_.unlock();
-    // }
-    // catch (const franka::Exception &e)
-    // {
-    //   response->success = false;
-    //   RCLCPP_WARN_STREAM(get_logger(), "Franka Exception: " << e.what());
-    //   return;
-    // }
+      read_state_.lock();
+      robot_->control(motion_generator);
+      read_state_.unlock();
+    }
+    catch (const franka::Exception &e)
+    {
+      response->success = false;
+      RCLCPP_WARN_STREAM(get_logger(), "Franka Exception: " << e.what());
+      return;
+    }
   }
   catch (CommanderError &e)
   {
