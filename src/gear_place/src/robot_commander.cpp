@@ -288,7 +288,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
     {
       MotionGenerator motion_generator(0.2,
       {{initial_pose[0],initial_pose[1],initial_pose[2],
-      initial_pose[3],initial_pose[4],2.15806, initial_pose[6]}}
+      initial_pose[3],initial_pose[4],initial_pose[5], initial_pose[6]}}
       , current_state_);
 
       read_state_.lock();
