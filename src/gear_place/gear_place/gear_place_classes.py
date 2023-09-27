@@ -65,19 +65,19 @@ def distance_between_two_points(x_vals : list, y_vals : list):
 class GearPlace(Node):
   def __init__(self):
       super().__init__('gear_place')
-      
-    #   # TF
-    #   self.tf_buffer = Buffer()
-    #   self.tf_listener = TransformListener(self.tf_buffer, self)
 
-    #   self.tf_broadcaster = StaticTransformBroadcaster(self)
-    #   self.static_transforms = []
+      # TF
+      self.tf_buffer = Buffer()
+      self.tf_listener = TransformListener(self.tf_buffer, self)
 
-    #   # Camera to end effector transform
-    #   cam_to_ee_tranform = self.tf_buffer.lookup_transform("franka_hand","camera_mount", rclpy.time.Time())
-    #   cam_to_ee_pose = convert_transform_to_pose(cam_to_ee_tranform)
-    #   self.x_offset = cam_to_ee_pose.position.x
-    #   self.y_offset = cam_to_ee_pose.position.y
+      self.tf_broadcaster = StaticTransformBroadcaster(self)
+      self.static_transforms = []
+
+      # Camera to end effector transform
+      cam_to_ee_tranform = self.tf_buffer.lookup_transform("franka_hand","camera_mount", rclpy.time.Time())
+      cam_to_ee_pose = convert_transform_to_pose(cam_to_ee_tranform)
+      self.x_offset = cam_to_ee_pose.position.x
+      self.y_offset = cam_to_ee_pose.position.y
         
       # Service Clients
       self.move_to_named_pose_client = self.create_client(MoveToNamedPose, "move_to_named_pose")
