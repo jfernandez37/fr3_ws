@@ -554,5 +554,5 @@ void RobotCommander::move_robot_to_frame(KDL::Frame target_frame)
   }
 }
 double RobotCommander::get_main_rotation(){
-  return joint_state_msg_.position[0]-0.0182304;
+  return joint_state_msg_.position[0]+joint_state_msg_.position[2]+joint_state_msg_.position[4]+joint_state_msg_.position[6];
 }
