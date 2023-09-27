@@ -265,6 +265,9 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
     put_down_force(request->force);
     sleep(1.0);
     while(time>=0.15){
+      for(int i = 0; i < 7; i++){
+        std::cout << "Joint " << i+1 <<": "<<joint_state_msg_.position[i] << std::endl;
+      }
       move_robot_cartesian(0.0008,0.0,-0.01,default_velocity_,0.5);
       distance_up+=0.01;
       sleep(1);
@@ -279,6 +282,23 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
     open_gripper();
     std::cout<<"Moving up "<<distance_up<<std::endl;
     move_robot_cartesian(0.0,0.0, distance_up, default_velocity_, 0.5);
+    try
+    {
+      MotionGenerator motion_generator(0.2,
+      {{joint_state_msg_.position[0],joint_state_msg_.position[1],joint_state_msg_.position[2],
+      joint_state_msg_.position[3],joint_state_msg_.position[4],2.15806, joint_state_msg_.position[7]}}
+      , current_state_);
+
+      read_state_.lock();
+      robot_->control(motion_generator);
+      read_state_.unlock();
+    }
+    catch (const franka::Exception &e)
+    {
+      response->success = false;
+      RCLCPP_WARN_STREAM(get_logger(), "Franka Exception: " << e.what());
+      return;
+    }
   }
   catch (CommanderError &e)
   {
