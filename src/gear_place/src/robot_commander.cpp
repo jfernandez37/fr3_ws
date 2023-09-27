@@ -277,6 +277,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
       time = duration.count();
     }
     open_gripper();
+    std::cout<<"Moving up "<<distance_up<<std::endl;
     move_robot_cartesian(0.0,0.0, distance_up, default_velocity_, 0.5);
   }
   catch (CommanderError &e)
