@@ -263,9 +263,9 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
   Uses the force generator to put down the gear until it makes contact with the surface
   */
   double time = 1.0;
-  vector<double> initial_pose;
+  double initial_pose[7];
   for(int i = 0; i < 7; i++){
-      initial_pose.push_back(joint_state_msg_.position[i]);
+      initial_pose[i]=joint_state_msg_.position[i];
   }
   try{
     sleep(1.0);

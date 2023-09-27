@@ -45,7 +45,6 @@
 #include <mutex>
 #include <ctime>
 #include <chrono>
-#include <vector>
 
 
 class CommanderError : public std::exception
