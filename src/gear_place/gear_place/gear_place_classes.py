@@ -697,6 +697,16 @@ class GearPlace(Node):
 
       if not result.success:
           raise Error("Unable to put down gear using force motion generator")
+    
+  def _calculate_world_pose(self, frame_id: str) -> Pose:
+        # Lookup transform from world to frame_id
+        try:
+            t = self.tf_buffer.lookup_transform('world', frame_id, rclpy.time.Time())
+        except TransformException as ex:
+            self.get_logger().info(f'Could not transform {frame_id} to world: {ex}')
+            raise Error("Unable to transform between frames")
+        
+        return convert_transform_to_pose(t)
 
 
 class ConveyorClass(Node):
