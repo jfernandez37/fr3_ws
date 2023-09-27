@@ -230,6 +230,8 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}});
   std::unique_ptr<CartesianMotionGenerator> cartesian_motion_generator;
   double angle = get_main_rotation();
+  std::cout << "X before: " << x << "\tY before: "<<y<<std::endl;
+  std::cout << "X after: " << x_val << "\tY after: "<<y_val<<std::endl;
   double y_val = x * cos(angle) - y * sin(angle);
   double x_val = x * sin(angle) + y * cos(angle);
   try
