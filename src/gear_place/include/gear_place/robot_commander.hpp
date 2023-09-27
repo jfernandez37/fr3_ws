@@ -134,6 +134,7 @@ private:
   void grasp_object(double);
   void set_default_behavior();
   geometry_msgs::msg::Pose solve_fk();
+  double get_main_rotation();
 
   // Constants
   std::map<std::string, std::array<double, 7>> named_joint_positions_ = {
