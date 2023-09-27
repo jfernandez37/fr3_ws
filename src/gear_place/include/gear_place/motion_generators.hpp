@@ -395,7 +395,7 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
   if ((counter_==75)){
     std::cout<<current_position[2]-initial_position_[2]<<std::endl;
   }
-  if ((abs(current_position[2]-initial_position_[2])<=0.000015 || (current_position[2]-initial_position_[2]>0.0 && current_position[2]-initial_position_[2]<0.0001)) && counter_>=75){
+  if ((abs(current_position[2]-initial_position_[2])<=0.000015 || (current_position[2]-initial_position_[2]>0.0)) && counter_>=75){
     std::cout <<"75"<<std::endl;
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
