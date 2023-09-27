@@ -259,12 +259,14 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
   Uses the force generator to put down the gear until it makes contact with the surface
   */
   double time = 1.0;
+  double distance_up = 0.0;
   try{
     sleep(1.0);
     put_down_force(request->force);
     sleep(1.0);
     while(time>=0.12){
-      move_robot_cartesian(0.0,0.0,-0.01,default_velocity_,0.5);
+      move_robot_cartesian(0.0,0.0005,-0.01,default_velocity_,0.5);
+      distance_up+=0.01;
       sleep(1);
       auto start = std::chrono::high_resolution_clock::now();
       put_down_force(request->force);
@@ -275,6 +277,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
       time = duration.count();
     }
     open_gripper();
+    move_robot_cartesian(0.0,0.0, distance_up, default_velocity_, 0.5);
   }
   catch (CommanderError &e)
   {
