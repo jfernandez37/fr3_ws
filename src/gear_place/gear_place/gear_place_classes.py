@@ -65,19 +65,7 @@ def distance_between_two_points(x_vals : list, y_vals : list):
 class GearPlace(Node):
   def __init__(self):
       super().__init__('gear_place')
-
-    #   self.declare_parameter('transforms_config', "")
-    #   transforms_path = self.get_parameter('transforms_config').get_parameter_value().string_value
-
-    #   if transforms_path == "":
-    #     raise Error("Transforms config parameter not set")
-    
-    #   with open(transforms_path, "r") as stream:
-    #     try:
-    #         self.transforms = yaml.safe_load(stream)
-    #     except yaml.YAMLError as exc:
-    #         raise Error("unable to open transforms config")
-    
+      
     #   # TF
     #   self.tf_buffer = Buffer()
     #   self.tf_listener = TransformListener(self.tf_buffer, self)

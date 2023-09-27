@@ -84,7 +84,7 @@ def launch_setup(context, *args, **kwargs):
     supervisor = Node(
         package="gear_place",
         executable="gear_place_node.py",
-        output="screen",
+        output="screen"
     )
 
     nodes_to_start = [
