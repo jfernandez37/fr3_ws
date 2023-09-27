@@ -332,7 +332,6 @@ private:
   const double filter_gain = 0.001;
   double force_;
   double max_travel_ = 0.005;
-  bool *on_surface_;
   int counter_ = 0;
 
   double desired_mass = 0.0;
@@ -398,7 +397,6 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
   }
   if ((abs(current_position[2]-initial_position_[2])<=0.000015 || (current_position[2]-initial_position_[2]>0.0 && current_position[2]-initial_position_[2]<0.0001)) && counter_>=75){
     std::cout <<"75"<<std::endl;
-    *on_surface_ = true;
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
   if (counter_>=150){
