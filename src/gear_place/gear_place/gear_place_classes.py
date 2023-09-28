@@ -20,6 +20,7 @@ from gear_place_interfaces.srv import (
   PickUpMovingGear,
   OpenGripper,
   PutDownForce,
+  GetCameraAngle,
 )
 
 from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
@@ -73,6 +74,9 @@ class GearPlace(Node):
       self.tf_broadcaster = StaticTransformBroadcaster(self)
       self.static_transforms = []
 
+      # Current angle
+      self.current_camera_angle = 0.0
+
     # TODO
       # Camera to end effector transform
     #   cam_to_ee_tranform = self.tf_buffer.lookup_transform("fr3_hand","camera_mount", rclpy.time.Time())
@@ -89,6 +93,7 @@ class GearPlace(Node):
       self.pick_up_moving_gear_client = self.create_client(PickUpMovingGear, "pick_up_moving_gear")
       self.open_gripper_client = self.create_client(OpenGripper, "open_gripper")
       self.put_down_force_client = self.create_client(PutDownForce, "put_down_force")
+      self.get_camera_angle = self.create_client(GetCameraAngle, "get_camera_angle")
 
   def wait(self, duration: float):
       start = self.get_clock().now()
@@ -698,6 +703,28 @@ class GearPlace(Node):
 
       if not result.success:
           raise Error("Unable to put down gear using force motion generator")
+    
+  def _call_get_camera_angle(self):
+      """
+      Calls the get_camera_angle callback
+      """
+      self.get_logger().info("Getting camera angle")
+
+      request = GetCameraAngle.Request()
+
+      future = self.get_camera_angle_client.call_async(request)
+
+      rclpy.spin_until_future_complete(self,future,timeout_sec=2)
+
+      if not future.done():
+          raise Error("Timeout reached when getting camera angle")
+
+      result: GetCameraAngle.Response
+      result = future.result()
+
+      self.current_camera_angle = result.angle
+
+
     
   def _calculate_world_pose(self, frame_id: str) -> Pose:
         # Lookup transform from world to frame_id

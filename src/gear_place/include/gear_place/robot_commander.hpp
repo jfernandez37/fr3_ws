@@ -13,6 +13,7 @@
 #include <gear_place_interfaces/srv/pick_up_moving_gear.hpp>
 #include <gear_place_interfaces/srv/open_gripper.hpp>
 #include <gear_place_interfaces/srv/put_down_force.hpp>
+#include <gear_place_interfaces/srv/get_camera_angle.hpp>
 
 #include <std_msgs/msg/string.hpp>
 
@@ -75,6 +76,7 @@ private:
   rclcpp::Service<gear_place_interfaces::srv::PickUpMovingGear>::SharedPtr pick_up_moving_gear_srv_;
   rclcpp::Service<gear_place_interfaces::srv::OpenGripper>::SharedPtr open_gripper_srv_;
   rclcpp::Service<gear_place_interfaces::srv::PutDownForce>::SharedPtr put_down_force_srv_;
+  rclcpp::Service<gear_place_interfaces::srv::GetCameraAngle>::SharedPtr get_camera_angle_srv_;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
@@ -126,6 +128,8 @@ private:
                         std::shared_ptr<gear_place_interfaces::srv::OpenGripper::Response> response);
   void put_down_force_cb_(const std::shared_ptr<gear_place_interfaces::srv::PutDownForce::Request> request,
                         std::shared_ptr<gear_place_interfaces::srv::PutDownForce::Response> response);
+  void get_camera_angle_cb_(const std::shared_ptr<gear_place_interfaces::srv::GetCameraAngle::Request>request,
+                          std::shared_ptr<gear_place_interfaces::srv::GetCameraAngle::Response> response);
 
   // Methods
   void move_robot_to_frame(KDL::Frame);
@@ -136,7 +140,7 @@ private:
   void grasp_object(double);
   void set_default_behavior();
   geometry_msgs::msg::Pose solve_fk();
-  double get_main_rotation();
+  double get_camera_angle();
 
   // Constants
   std::map<std::string, std::array<double, 7>> named_joint_positions_ = {

@@ -23,6 +23,7 @@ set(srv_files
   "srv/PickUpMovingGear.srv"
   "srv/OpenGripper.srv"
   "srv/PutDownForce.srv"
+  "srv/GetCameraAngle.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
