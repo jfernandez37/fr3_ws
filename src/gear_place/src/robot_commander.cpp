@@ -324,6 +324,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
   /*
   Uses the force generator to put down the gear until it makes contact with the surface
   */
+  double angle = get_camera_angle();
   double time = 1.0;
   double initial_pose[7];
   for(int i = 0; i < 7; i++){
@@ -334,7 +335,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
     put_down_force(request->force);
     sleep(1.0);
     while(time>=0.15){
-      move_robot_cartesian(0.0013,0.0,-0.01,default_velocity_,0.5);
+      move_robot_cartesian_angle(0.0013,0.0,-0.01,default_velocity_,0.5, angle);
       sleep(1);
       auto start = std::chrono::high_resolution_clock::now();
       put_down_force(request->force);
