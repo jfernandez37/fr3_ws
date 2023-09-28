@@ -339,7 +339,6 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
       sleep(1);
       auto start = std::chrono::high_resolution_clock::now();
       put_down_force(request->force);
-      std::cout << "After put_down_force" << std::endl;
       auto end = std::chrono::high_resolution_clock::now();
       std::chrono::duration<double> duration = end - start;
       std::cout <<"Duration: "<<duration.count() << std::endl;
