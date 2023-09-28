@@ -14,6 +14,7 @@
 #include <gear_place_interfaces/srv/open_gripper.hpp>
 #include <gear_place_interfaces/srv/put_down_force.hpp>
 #include <gear_place_interfaces/srv/get_camera_angle.hpp>
+#include <gear_place_interfaces/srv/move_cartesian_angle.hpp>
 
 #include <std_msgs/msg/string.hpp>
 
@@ -77,6 +78,7 @@ private:
   rclcpp::Service<gear_place_interfaces::srv::OpenGripper>::SharedPtr open_gripper_srv_;
   rclcpp::Service<gear_place_interfaces::srv::PutDownForce>::SharedPtr put_down_force_srv_;
   rclcpp::Service<gear_place_interfaces::srv::GetCameraAngle>::SharedPtr get_camera_angle_srv_;
+  rclcpp::Service<gear_place_interfaces::srv::MoveCartesianAngle>::SharedPtr move_cartesian_angle_srv_;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
@@ -130,6 +132,8 @@ private:
                         std::shared_ptr<gear_place_interfaces::srv::PutDownForce::Response> response);
   void get_camera_angle_cb_(const std::shared_ptr<gear_place_interfaces::srv::GetCameraAngle::Request>request,
                           std::shared_ptr<gear_place_interfaces::srv::GetCameraAngle::Response> response);
+  void move_cartesian_angle_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveCartesianAngle::Request>request,
+                          std::shared_ptr<gear_place_interfaces::srv::MoveCartesianAngle::Response> response);
 
   // Methods
   void move_robot_to_frame(KDL::Frame);

@@ -21,6 +21,7 @@ from gear_place_interfaces.srv import (
   OpenGripper,
   PutDownForce,
   GetCameraAngle,
+  MoveCartesianAngle
 )
 
 from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
@@ -94,6 +95,7 @@ class GearPlace(Node):
       self.open_gripper_client = self.create_client(OpenGripper, "open_gripper")
       self.put_down_force_client = self.create_client(PutDownForce, "put_down_force")
       self.get_camera_angle = self.create_client(GetCameraAngle, "get_camera_angle")
+      self.move_cartesian_angle_client = self.create_client(MoveCartesianAngle, "move_cartesian_angle")
 
   def wait(self, duration: float):
       start = self.get_clock().now()
@@ -152,6 +154,35 @@ class GearPlace(Node):
           raise Error("Timeout reached when calling move_cartesian service")
 
       result: MoveCartesian.Response
+      result = future.result()
+
+      if not result.success:
+          self.get_logger().error(f"Unable to move {x},{y},{z}")
+          raise Error("Unable to move to location")
+    
+  def _call_move_cartesian_angle_service(self, x : float, y : float, z : float, v_max : float, acc : float, angle : float):
+      """
+      Calls the move_cartesian_angle callback
+      """
+      self.get_logger().info(f"Moving {x},{y},{z} at angle {angle}")
+
+      request = MoveCartesianAngle.Request()
+
+      request.x = x
+      request.y = y
+      request.z = z
+      request.max_velocity = v_max
+      request.acceleration = acc
+      request.angle = angle
+
+      future = self.move_cartesian_angle_client.call_async(request)
+
+      rclpy.spin_until_future_complete(self, future, timeout_sec=10)
+
+      if not future.done():
+          raise Error("Timeout reached when calling move_cartesian_angle service")
+
+      result: MoveCartesianAngle.Response
       result = future.result()
 
       if not result.success:
@@ -242,6 +273,7 @@ class GearPlace(Node):
       """
       Moves the robot above the gear
       """
+      self._call_get_camera_angle()
       moving_gear = MovingGear()
       while not moving_gear.found_gear or len(moving_gear.x_vals) == 0:
           moving_gear.run()
@@ -342,20 +374,9 @@ class GearPlace(Node):
             self.get_logger().info("Gear not moving")
             request.x = moving_gear.y_vals[0] * -1 + X_OFFSET
             request.y = moving_gear.x_vals[0] * -1 + Y_OFFSET
-      else:
-          if (
-            abs(moving_gear.x_pix[1] - moving_gear.x_pix[0]) > 5
-            or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 5
-        ):  # runs if the gear is moving
-            x_value, y_value = moving_gear.point_from_time(intersection_time)
-            request.x = (x_value * -1 + Y_OFFSET) * -1
-            request.y = y_value * -1 + X_OFFSET
-          else:  # runs if the gear is stationary
-            self.get_logger().info("Gear not moving")
-            request.x = (moving_gear.x_vals[0] * -1 + Y_OFFSET) * -1 
-            request.y = moving_gear.y_vals[0] * -1 + X_OFFSET
       request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1 + Z_CAMERA_OFFSET
       request.object_width = object_width
+      request.angle = self.current_camera_angle
 
       future = self.pick_up_moving_gear_client.call_async(
           request

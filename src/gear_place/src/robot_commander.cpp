@@ -93,6 +93,16 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       "put_down_force",
       std::bind(&RobotCommander::put_down_force_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
+  
+  get_camera_angle_srv_ = this->create_service<gear_place_interfaces::srv::GetCameraAngle>(
+      "get_camera_angle",
+      std::bind(&RobotCommander::get_camera_angle_cb_, this,
+                std::placeholders::_1, std::placeholders::_2));
+  
+  move_cartesian_angle_srv_ = this->create_service<gear_place_interfaces::srv::MoveCartesianAngle>(
+      "move_cartesian_angle",
+      std::bind(&RobotCommander::move_cartesian_angle_cb_, this,
+                std::placeholders::_1, std::placeholders::_2));
 
   std::srand(std::time(0)); // use current time as seed for random generator
 }
@@ -249,6 +259,27 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
     std::string ex = e.what();
     throw CommanderError("Franka Exception in cartesian motion: " + ex);
   }
+}
+
+void RobotCommander::move_cartesian_angle_cb_(
+    const std::shared_ptr<gear_place_interfaces::srv::MoveCartesianAngle::Request> request,
+    std::shared_ptr<gear_place_interfaces::srv::MoveCartesianAngle::Response> response)
+{
+  /*
+  Callback for the move_robot_cartesian_angle function
+  */
+  try
+  {
+    move_robot_cartesian_angle(request->x, request->y, request->z, request->max_velocity, request->acceleration,request->angle);
+  }
+  catch (CommanderError &e)
+  {
+    std::string err = e.what();
+    RCLCPP_ERROR(get_logger(), err.c_str());
+    response->success = false;
+    return;
+  }
+  response->success = true;
 }
 
 void RobotCommander::move_robot_cartesian_angle(double x, double y, double z, double maximum_velocity, double acceleration, double angle)
@@ -454,7 +485,7 @@ void RobotCommander::pick_up_moving_gear_cb_(
   try
   {
     move_robot_cartesian(0, 0, request->z*3/4, default_velocity_, default_acceleration_);
-    move_robot_cartesian(request->x, request->y, 0, default_velocity_, default_acceleration_);
+    move_robot_cartesian_angle(request->x, request->y, 0, default_velocity_, default_acceleration_, request->angle);
     move_robot_cartesian(0, 0, request->z/4+0.001, default_velocity_, default_acceleration_);
     grasp_object(request->object_width);
     move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);

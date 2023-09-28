@@ -24,6 +24,7 @@ set(srv_files
   "srv/OpenGripper.srv"
   "srv/PutDownForce.srv"
   "srv/GetCameraAngle.srv"
+  "srv/MoveCartesianAngle.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
