@@ -470,7 +470,7 @@ class GearPlace(Node):
       updated_radius_vals = {}
       while gears_found == 0:
           for ind in range(len(robot_moves)+1):  # loops through the scanning positions
-              for _ in range(3):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
+              for _ in range(2):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
                   multiple_gears = MultipleGears(connected)
                   rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
                   connected = multiple_gears.connected
