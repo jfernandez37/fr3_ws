@@ -35,7 +35,7 @@ from gear_place.moving_gear import MovingGear
 from gear_place.multiple_gears import MultipleGears
 from math import sqrt
 
-X_OFFSET = 0.037  # offset from the camera to the gripper
+X_OFFSET = 0.038  # offset from the camera to the gripper
 Y_OFFSET = 0.03
 Z_TO_TABLE = -0.247
 Z_CAMERA_OFFSET = 0.0435
