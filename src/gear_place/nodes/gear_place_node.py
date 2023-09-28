@@ -15,7 +15,7 @@ def main(args=None):
         supervisor._call_move_to_named_pose_service("home_2")
         supervisor._call_pick_up_multiple_gears(0.0095)
 
-        # supervisor._call_move_to_named_pose_service("above_conveyor")
+        supervisor._call_move_to_named_pose_service("above_conveyor")
         # supervisor.wait(2) 
         # while True:
         #     supervisor._call_pick_up_moving_gear_service(gear_width, True)  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
