@@ -11,3 +11,5 @@ ROS2 package containing all of the services and messages necessary for the ROS2 
 * `pick_up_moving_gear` - Takes the xyz value and picks up the gear. The values need to calculated before hand using the camera.
 * `open_gripper` - Opens the gripper.
 * `put_down_force` - Puts the gear down until the gear makes contact with a surface. Then the gripper opens.
+* `get_camera_angle` - Uses the joint rotation positions to find what angle the camera is currenty in relation to the base of the robot.
+* `move_cartesian_angle` - Similar to move cartesian, but it does so in relation to the camera instead of in relation to the base of the robot. This has to be used when the camera is above the conveyor belt.
