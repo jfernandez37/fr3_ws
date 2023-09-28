@@ -269,7 +269,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to put gear down")
           raise Error("Unable to put gear down")
 
-  def _call_move_above_gear(self, rotated : bool):
+  def _call_move_above_gear(self):
       """
       Moves the robot above the gear
       """
@@ -316,15 +316,11 @@ class GearPlace(Node):
 
       distance_lost_to_acc = gear_speed * second_t1 / 2
       
-      if rotated:
-        self._call_move_cartesian_service((x_value * -1 + Y_OFFSET + ratio_x*distance_lost_to_acc)*-1,y_value * -1 + X_OFFSET + ratio_y*distance_lost_to_acc,0.0,velocity, acceleration)
-        self._call_move_cartesian_service((final_x * -1 + Y_OFFSET)*-1, final_y * -1 + X_OFFSET, 0.0, gear_speed, second_acceleration)
-      else:
-        self._call_move_cartesian_service(y_value * -1 + X_OFFSET + ratio_y * distance_lost_to_acc,x_value * -1 + Y_OFFSET + ratio_x * distance_lost_to_acc,0.0,velocity, acceleration)
-        self._call_move_cartesian_service(final_y * -1 + X_OFFSET,final_x * -1 + Y_OFFSET, 0.0, gear_speed, second_acceleration)
+      self._call_move_cartesian_service(y_value * -1 + X_OFFSET + ratio_y * distance_lost_to_acc,x_value * -1 + Y_OFFSET + ratio_x * distance_lost_to_acc,0.0,velocity, acceleration, self.current_camera_angle)
+      self._call_move_cartesian_service(final_y * -1 + X_OFFSET,final_x * -1 + Y_OFFSET, 0.0, gear_speed, second_acceleration,self.current_camera_angle)
 
   
-  def _call_pick_up_moving_gear_service(self, object_width : float, rotated : bool):
+  def _call_pick_up_moving_gear_service(self, object_width : float):
       """
       Calls the pick_up_moving_gear callback
       """
@@ -362,18 +358,17 @@ class GearPlace(Node):
               slope - velocity
           )  # calculates the new intersection time
       request = PickUpMovingGear.Request()
-      if not rotated:
-        if (
-            abs(moving_gear.x_pix[1] - moving_gear.x_pix[0]) > 2
-            or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 2
-        ):  # runs if the gear is moving
-            x_value, y_value = moving_gear.point_from_time(intersection_time)
-            request.x = y_value * -1 + X_OFFSET
-            request.y = x_value * -1 + Y_OFFSET
-        else:  # runs if the gear is stationary
-            self.get_logger().info("Gear not moving")
-            request.x = moving_gear.y_vals[0] * -1 + X_OFFSET
-            request.y = moving_gear.x_vals[0] * -1 + Y_OFFSET
+      if (
+          abs(moving_gear.x_pix[1] - moving_gear.x_pix[0]) > 2
+          or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 2
+      ):  # runs if the gear is moving
+          x_value, y_value = moving_gear.point_from_time(intersection_time)
+          request.x = y_value * -1 + X_OFFSET
+          request.y = x_value * -1 + Y_OFFSET
+      else:  # runs if the gear is stationary
+          self.get_logger().info("Gear not moving")
+          request.x = moving_gear.y_vals[0] * -1 + X_OFFSET
+          request.y = moving_gear.x_vals[0] * -1 + Y_OFFSET
       request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1 + Z_CAMERA_OFFSET
       request.object_width = object_width
       request.angle = self.current_camera_angle
