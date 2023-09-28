@@ -283,7 +283,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
       time = duration.count();
     }
     open_gripper();
-    move_robot_cartesian(0.0,0.0, 0.01, default_velocity_, 0.5);
+    move_robot_cartesian(0.0,0.0, 0.01, default_velocity_, default_acceleration_);
     try
     {
       MotionGenerator motion_generator(0.2,
