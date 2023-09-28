@@ -316,8 +316,8 @@ class GearPlace(Node):
 
       distance_lost_to_acc = gear_speed * second_t1 / 2
       
-      self._call_move_cartesian_service(y_value * -1 + X_OFFSET + ratio_y * distance_lost_to_acc,x_value * -1 + Y_OFFSET + ratio_x * distance_lost_to_acc,0.0,velocity, acceleration, self.current_camera_angle)
-      self._call_move_cartesian_service(final_y * -1 + X_OFFSET,final_x * -1 + Y_OFFSET, 0.0, gear_speed, second_acceleration,self.current_camera_angle)
+      self._call_move_cartesian_angle_service(y_value * -1 + X_OFFSET + ratio_y * distance_lost_to_acc,x_value * -1 + Y_OFFSET + ratio_x * distance_lost_to_acc,0.0,velocity, acceleration, self.current_camera_angle)
+      self._call_move_cartesian_angle_service(final_y * -1 + X_OFFSET,final_x * -1 + Y_OFFSET, 0.0, gear_speed, second_acceleration,self.current_camera_angle)
 
   
   def _call_pick_up_moving_gear_service(self, object_width : float):
