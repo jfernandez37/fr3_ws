@@ -12,7 +12,7 @@ def main(args=None):
         conveyor_supervisor = ConveyorClass("aprs_ros_conveyor")
         supervisor.wait(5)
         supervisor._call_open_gripper_service()
-        # supervisor._call_move_to_named_pose_service("home")
+        supervisor._call_move_to_named_pose_service("home")
         # supervisor._call_pick_up_multiple_gears(0.0095)
 
         supervisor._call_move_to_named_pose_service("above_conveyor")
