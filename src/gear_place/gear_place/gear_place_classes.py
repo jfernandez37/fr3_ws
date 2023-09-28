@@ -94,7 +94,7 @@ class GearPlace(Node):
       self.pick_up_moving_gear_client = self.create_client(PickUpMovingGear, "pick_up_moving_gear")
       self.open_gripper_client = self.create_client(OpenGripper, "open_gripper")
       self.put_down_force_client = self.create_client(PutDownForce, "put_down_force")
-      self.get_camera_angle = self.create_client(GetCameraAngle, "get_camera_angle")
+      self.get_camera_angle_client = self.create_client(GetCameraAngle, "get_camera_angle")
       self.move_cartesian_angle_client = self.create_client(MoveCartesianAngle, "move_cartesian_angle")
 
   def wait(self, duration: float):
