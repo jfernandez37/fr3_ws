@@ -16,8 +16,6 @@ def main(args=None):
         # supervisor._call_pick_up_multiple_gears(0.0095)
 
         supervisor._call_move_to_named_pose_service("above_conveyor")
-        supervisor._call_get_camera_angle()
-        supervisor._call_move_cartesian_angle_service(-0.05,0.0,0.05,0.15,0.2,supervisor.current_camera_angle)
         # supervisor.wait(2) 
         # while True:
         #     supervisor._call_pick_up_moving_gear_service(gear_width, True)  # Moves to above the gear, opens the gripper to the maximum, then down to the gear, grabs the gear, then picks it up
