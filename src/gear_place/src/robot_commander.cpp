@@ -229,14 +229,45 @@ void RobotCommander::move_robot_cartesian(double x, double y, double z, double m
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
                             {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}});
   std::unique_ptr<CartesianMotionGenerator> cartesian_motion_generator;
-  double angle = get_main_rotation();
+  try
+  {
+    cartesian_motion_generator = std::make_unique<CartesianMotionGenerator>(x, y, z, maximum_velocity, acceleration, current_state_);
+  }
+  catch (InvalidParameters &ip)
+  {
+    throw CommanderError(ip.what());
+  }
+
+  try
+  {
+    read_state_.lock();
+    robot_->control(*cartesian_motion_generator);
+    read_state_.unlock();
+  }
+  catch (const franka::Exception &e)
+  {
+    std::string ex = e.what();
+    throw CommanderError("Franka Exception in cartesian motion: " + ex);
+  }
+}
+
+void RobotCommander::move_robot_cartesian_angle(double x, double y, double z, double maximum_velocity, double acceleration, double angle)
+{
+  /*
+  Makes an CartesianMotionGenerator object with the paramaters and starts a control loop with it
+  */
+  robot_->setCollisionBehavior({{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}});
+  std::unique_ptr<CartesianMotionGenerator> cartesian_motion_generator;
   double x_val = x * cos(angle) - y * sin(angle);
   double y_val = x * sin(angle) + y * cos(angle);
   std::cout << "X before: " << x << "\tY before: "<<y<<std::endl;
   std::cout << "X after: " << x_val << "\tY after: "<<y_val<<std::endl;
   try
   {
-    cartesian_motion_generator = std::make_unique<CartesianMotionGenerator>(x, y, z, maximum_velocity, acceleration, current_state_);
+    cartesian_motion_generator = std::make_unique<CartesianMotionGenerator>(x_val, y_val, z, maximum_velocity, acceleration, current_state_);
   }
   catch (InvalidParameters &ip)
   {
