@@ -14,6 +14,14 @@ This file has the classes which is used for the node to call the services. Both 
 
     This function calls the move_cartesian service. It takes in xyz coorinates, a maximum velocity value, and an acceleration value. The robot will then move until the xyz position is achieved.
 
+* _call_move_cartesian_angle_service
+
+    Similar to move_cartesian. Move_cartesian moves in relation to the base of the robot and move_cartesian_angle moves in relation to an angle off of the base. So, in combination of get_camera_angle, the pick_up_gear functions can be used without having to calculate what the movement is in relation to the base.
+
+* _call_get_camera_angle
+
+    Uses the base of the robot to calculate the angle of the camera from the base. Using this in combination with move_cartesian_angle means that the robot can be moved using xyz coordinates in relation to the camera instead of the base.
+
 * _call_pick_up_gear_service
 
     This function starts by creating an instance of the FindObject class. It runs until a gear is found. If it does not find a gear within the first 5 scans, it will move to a new position and start scanning again. 
