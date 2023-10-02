@@ -46,6 +46,7 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
 
   joint_state_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
   ee_pose_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("ee_pose", 10);
+  camera_angle_pub_ = this->create_publisher<std_msgs::msg::Float64>("camera_angle",10);
 
   // ROS Timers
   joint_state_publish_timer_ = this->create_wall_timer(
@@ -56,6 +57,11 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
   ee_pose_publish_timer_ = this->create_wall_timer(
       std::chrono::milliseconds(1000),
       std::bind(&RobotCommander::ee_pose_publish_timer_cb_, this),
+      publisher_cb_group_);
+
+  camera_angle_timer_ = this->create_wall_timer(
+      std::chrono::milliseconds(500),
+      std::bind(&RobotCommander::camera_angle_timer_cb_, this),
       publisher_cb_group_);
 
   // ROS Services
@@ -189,6 +195,15 @@ void RobotCommander::ee_pose_publish_timer_cb_()
   ee_pose_.pose = solve_fk();
 
   ee_pose_pub_->publish(ee_pose_);
+}
+
+void RobotCommander::camera_angle_timer_cb_()
+{
+  /*
+  Publishes the current angle of the camera in relation to the base
+  */
+  camera_angle_.data = get_camera_angle();
+  camera_angle_pub_->publish(camera_angle_)
 }
 
 geometry_msgs::msg::Pose RobotCommander::solve_fk()

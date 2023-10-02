@@ -69,6 +69,7 @@ private:
   // RCLCPP
   rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_pub_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr ee_pose_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr camera_angle_pub_;
 
   rclcpp::Service<gear_place_interfaces::srv::MoveToNamedPose>::SharedPtr move_to_named_pose_srv_;
   rclcpp::Service<gear_place_interfaces::srv::MoveCartesian>::SharedPtr move_cartesian_srv_;
@@ -112,9 +113,13 @@ private:
   // EE Pose
   geometry_msgs::msg::PoseStamped ee_pose_;
 
+  // Camera Angle
+  std_msgs::msg::Float64 camera_angle_;
+
   // Callbacks
   void joint_state_publish_timer_cb_();
   void ee_pose_publish_timer_cb_();
+  void camera_angle_timer_cb_();
 
   void move_to_named_pose_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Request> request,
                               std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Response> response);
