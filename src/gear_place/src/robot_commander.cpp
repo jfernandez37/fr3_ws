@@ -639,5 +639,5 @@ void RobotCommander::get_camera_angle_cb_(const std::shared_ptr<gear_place_inter
     Responds with the camera angle
     */
   (void) request;
-  response->angle = get_camera_angle();
+  response->angle = camera_angle_.data;
 }
