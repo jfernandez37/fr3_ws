@@ -467,8 +467,7 @@ void RobotCommander::put_gear_down_cb_(
     std::shared_ptr<gear_place_interfaces::srv::PutGearDown::Response> response)
 {
   /*
-  Moves to above the object, opens the gripper, moves down to the object, grasps it, and picks it up.
-  Returns false if the object is not grasped or if there is an issue moving to it.
+  Moves down using the given height with an offset up, opens the gripper, and moves back up.
   */
   try
   {
@@ -503,7 +502,7 @@ void RobotCommander::pick_up_moving_gear_cb_(
     move_robot_cartesian_angle(request->x, request->y, 0, default_velocity_, default_acceleration_, request->angle);
     move_robot_cartesian(0, 0, request->z/4+0.001, default_velocity_, default_acceleration_);
     grasp_object(request->object_width);
-    move_robot_cartesian(0, 0, -1 * request->z, default_velocity_, default_acceleration_);
+    move_robot_cartesian(0, 0, -1 * request->z-0.001, default_velocity_, default_acceleration_);
   }
   catch (CommanderError &e)
   {
