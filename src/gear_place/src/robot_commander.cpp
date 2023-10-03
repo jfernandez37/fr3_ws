@@ -30,7 +30,7 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
   if (!kdl_parser::treeFromString(robot_description_, kdl_tree_))
     RCLCPP_ERROR(get_logger(), "Unable to create KDL tree from URDF");
 
-  if (!kdl_tree_.getChain("world", "panda_hand_tcp", chain_))
+  if (!kdl_tree_.getChain("world", "franka_hand_tcp", chain_))
     RCLCPP_ERROR(get_logger(), "Unable to create KDL chain from URDF");
 
   num_joints_ = chain_.getNrOfJoints();
