@@ -59,9 +59,9 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       std::bind(&RobotCommander::ee_pose_publish_timer_cb_, this),
       publisher_cb_group_);
 
-  camera_angle_timer_ = this->create_wall_timer(
+  camera_angle_publish_timer_ = this->create_wall_timer(
       std::chrono::milliseconds(500),
-      std::bind(&RobotCommander::camera_angle_timer_cb_, this),
+      std::bind(&RobotCommander::camera_angle_publish_timer_cb_, this),
       publisher_cb_group_);
 
   // ROS Services
@@ -197,7 +197,7 @@ void RobotCommander::ee_pose_publish_timer_cb_()
   ee_pose_pub_->publish(ee_pose_);
 }
 
-void RobotCommander::camera_angle_timer_cb_()
+void RobotCommander::camera_angle_publish_timer_cb_()
 {
   /*
   Publishes the current angle of the camera in relation to the base

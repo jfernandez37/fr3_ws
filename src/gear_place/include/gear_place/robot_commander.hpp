@@ -85,7 +85,7 @@ private:
 
   rclcpp::TimerBase::SharedPtr joint_state_publish_timer_;
   rclcpp::TimerBase::SharedPtr ee_pose_publish_timer_;
-
+  rclcpp::TimerBase::SharedPtr camera_angle_publish_timer_;
   // Franka
   std::unique_ptr<franka::Robot> robot_;
   std::unique_ptr<franka::Gripper> gripper_;
@@ -119,7 +119,7 @@ private:
   // Callbacks
   void joint_state_publish_timer_cb_();
   void ee_pose_publish_timer_cb_();
-  void camera_angle_timer_cb_();
+  void camera_angle_publish_timer_cb_();
 
   void move_to_named_pose_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Request> request,
                               std::shared_ptr<gear_place_interfaces::srv::MoveToNamedPose::Response> response);
