@@ -98,7 +98,6 @@ private:
   std::string robot_description_;
   KDL::Tree kdl_tree_;
   KDL::Chain chain_;
-  int num_joints_;
   std::unique_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
   std::unique_ptr<KDL::ChainIkSolverVel_pinv> ik_vel_solver_;
   std::unique_ptr<KDL::ChainIkSolverPos_NR> ik_pos_solver_;
@@ -107,6 +106,7 @@ private:
   std::mutex read_state_;
 
   // Joint State
+  int num_joints_;
   sensor_msgs::msg::JointState joint_state_msg_;
   std::vector<std::string> joint_names_{"fr3_joint1", "fr3_joint2", "fr3_joint3", "fr3_joint4", "fr3_joint5",
                                         "fr3_joint6", "fr3_joint7", "fr3_finger_joint1", "fr3_finger_joint2"};
