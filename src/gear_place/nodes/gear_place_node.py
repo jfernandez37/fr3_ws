@@ -6,14 +6,14 @@ from gear_place.gear_place_classes import GearPlace, Error, ConveyorClass
 
 def main(args=None):
     rclpy.init(args=args)
-    gear_width = 0.0085
+    gear_width = 0.0095
     try:
         supervisor = GearPlace()
         conveyor_supervisor = ConveyorClass("aprs_ros_conveyor")
         supervisor.wait(5)
         supervisor._call_open_gripper_service()
         supervisor._call_move_to_named_pose_service("home")
-        supervisor._call_pick_up_multiple_gears(0.0095)
+        supervisor._call_pick_up_multiple_gears(gear_width)
 
         # supervisor._call_move_to_named_pose_service("above_conveyor")
         # supervisor.wait(2) 
