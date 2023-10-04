@@ -203,7 +203,7 @@ void RobotCommander::camera_angle_publish_timer_cb_()
   Publishes the current angle of the camera in relation to the base
   */
   camera_angle_.data = get_camera_angle();
-  camera_angle_pub_->publish(camera_angle_)
+  camera_angle_pub_->publish(camera_angle_);
 }
 
 geometry_msgs::msg::Pose RobotCommander::solve_fk()

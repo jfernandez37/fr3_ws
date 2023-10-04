@@ -17,6 +17,7 @@
 #include <gear_place_interfaces/srv/move_cartesian_angle.hpp>
 
 #include <std_msgs/msg/string.hpp>
+#include <std_msgs/msg/float64.hpp>
 
 #include <sensor_msgs/msg/joint_state.hpp>
 
