@@ -547,19 +547,22 @@ class GearPlace(Node):
           multiple_gears = MultipleGears(connected)
           rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
           connected = multiple_gears.connected
-          while (
-              sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
-              or not multiple_gears.ran
-          ):  # loops until it has run and until there are no None values
-              multiple_gears.destroy_node()
-              multiple_gears = MultipleGears(connected)
-              rclpy.spin_once(multiple_gears)
-              connected = multiple_gears.connected
-          object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
-          rclpy.spin_once(object_depth)  # Gets the distance from the camera
-          object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-          closest_gears =  object_depth.coordinates
-          correct_gear = closest_gears[self.closest_to_center(closest_gears)]
+          correct_coordinates = [0.0,0.0,0.0]
+          while correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]]:
+            while (
+                sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
+                or not multiple_gears.ran
+            ):  # loops until it has run and until there are no None values
+                multiple_gears.destroy_node()
+                multiple_gears = MultipleGears(connected)
+                rclpy.spin_once(multiple_gears)
+                connected = multiple_gears.connected
+            object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
+            rclpy.spin_once(object_depth)  # Gets the distance from the camera
+            object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+            closest_gears =  object_depth.coordinates
+            correct_gear = closest_gears[self.closest_to_center(closest_gears)]
+            correct_coordinates = correct_gear
           self.get_logger().info(", ".join([str(val) for val in correct_gear]))
           if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
               self._call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2], object_width)
