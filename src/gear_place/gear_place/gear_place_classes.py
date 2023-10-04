@@ -450,12 +450,9 @@ class GearPlace(Node):
           [0.0, -0.1],
           [-0.1, 0.0],
           [-0.1, 0.0],
-          [-0.1, 0.0],
           [0.0, 0.1],
           [0.1, 0.0],
-          [0.1, 0.0],
           [0.1, 0.1],
-          [-0.1, 0.0],
           [-0.1, 0.0],
           [-0.1, 0.0],
       ]  # cartesian movements starting at home position. Scans the area in front of the robot.
