@@ -548,7 +548,7 @@ class GearPlace(Node):
             )  # moves above the gear
           correct_coordinates = [0.0,0.0,0.0]
           counter = 0
-          while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <=10:
+          while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <=3:
             counter+=1
             multiple_gears = MultipleGears(connected)
             rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
