@@ -564,6 +564,7 @@ class GearPlace(Node):
                 connected = multiple_gears.connected
             object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
             rclpy.spin_once(object_depth)  # Gets the distance from the camera
+            multiple_gears.destroy_node()
             object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
             closest_gears =  object_depth.coordinates
             correct_gear = closest_gears[self.closest_to_center(closest_gears)]
