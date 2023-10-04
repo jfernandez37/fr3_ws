@@ -630,8 +630,8 @@ void RobotCommander::move_robot_to_frame(KDL::Frame target_frame)
 double RobotCommander::get_camera_angle(){
   // return joint_state_msg_.position[0]+joint_state_msg_.position[2]+joint_state_msg_.position[4]+joint_state_msg_.position[6];
   RCLCPP_INFO(get_logger(), "Current angle measurements:");
-  RCLCPP_INFO(get_logger(), "0: "<< std::to_string(joint_state_msg_.position[0]));
-  RCLCPP_INFO(get_logger(), "6: "<< std::to_string(joint_state_msg_.position[6]));
+  RCLCPP_INFO(get_logger(),std::to_string(joint_state_msg_.position[0]));
+  RCLCPP_INFO(get_logger(),std::to_string(joint_state_msg_.position[6]));
   return joint_state_msg_.position[0]+joint_state_msg_.position[6]-0.816665;
 }
 
