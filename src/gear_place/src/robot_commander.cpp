@@ -567,16 +567,16 @@ void RobotCommander::grasp_object(double object_width)
   {
     throw CommanderError("Object width is larger than gripper max width");
   }
-  for(int i = 0; i < 3; i++){
-    if (!gripper_->grasp(object_width, gripper_speed_, gripper_force_))
-    {
+  if (!gripper_->grasp(object_width, gripper_speed_, gripper_force_))
+  {
       open_gripper();
       RCLCPP_ERROR(get_logger(),"Unable to grasp object");
       move_robot_cartesian(0.0,0.0,-0.015, default_velocity_, default_acceleration_);
-    }
-    else{
-      break;
-    }
+      if (!gripper_->grasp(object_width, gripper_speed_, gripper_force_))
+      {
+          open_gripper();
+          RCLCPP_ERROR(get_logger(),"Unable to grasp object");
+      }
   }
 }
 
