@@ -549,8 +549,6 @@ class GearPlace(Node):
           correct_coordinates = [0.0,0.0,0.0]
           counter = 0
           while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <=15:
-            counter+=1
-            self.get_logger().info(f"Counter: {counter}")
             multiple_gears = MultipleGears(connected)
             rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
             connected = multiple_gears.connected
@@ -571,6 +569,7 @@ class GearPlace(Node):
             correct_coordinates = correct_gear
           self.get_logger().info(", ".join([str(val) for val in correct_gear]))
           if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
+              self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
               self._call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2], object_width)
           else:
             self._call_pick_up_gear_coord_service(
