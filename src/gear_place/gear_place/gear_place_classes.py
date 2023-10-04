@@ -551,7 +551,7 @@ class GearPlace(Node):
           connected = multiple_gears.connected
           correct_coordinates = [0.0,0.0,0.0]
           counter = 0
-          while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <=15:
+          while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <=1000:
             counter+=1
             self.get_logger().info(f"Counter: {counter}")
             while (
