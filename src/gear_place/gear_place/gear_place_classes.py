@@ -546,14 +546,14 @@ class GearPlace(Node):
             self._call_move_cartesian_service(
                 move[0], move[1], 0.0, 0.15,0.2
             )  # moves above the gear
-          multiple_gears = MultipleGears(connected)
-          rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
-          connected = multiple_gears.connected
           correct_coordinates = [0.0,0.0,0.0]
           counter = 0
           while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <=1000:
             counter+=1
             self.get_logger().info(f"Counter: {counter}")
+            multiple_gears = MultipleGears(connected)
+            rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
+            connected = multiple_gears.connected
             while (
                 sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
                 or not multiple_gears.ran
