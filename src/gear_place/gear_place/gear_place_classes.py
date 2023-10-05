@@ -643,7 +643,7 @@ class GearPlace(Node):
         ]  # removes points which are too far from the home position
         gears_found = len(distances_from_home)
         if gears_found==0:
-            self._call_move_to_named_pose_service("single_scan")
+            self._call_move_to_named_pose_service("home")
             self.get_logger().info("No gears found. Trying again")
     self.get_logger().info(
         f"{len(distances_from_home)} gears found. Picking up the gears"
