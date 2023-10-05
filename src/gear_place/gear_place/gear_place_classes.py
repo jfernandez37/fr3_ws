@@ -121,7 +121,7 @@ class GearPlace(Node):
           request
       )
 
-      rclpy.spin_until_future_complete(self, future, timeout_sec=5)
+      rclpy.spin_until_future_complete(self, future, timeout_sec=10)
 
       if not future.done():
           raise Error("Timeout reached when calling move_to_named_pose service")
