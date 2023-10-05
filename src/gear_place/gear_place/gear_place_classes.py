@@ -33,7 +33,7 @@ from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 from gear_place.moving_gear import MovingGear
 from gear_place.multiple_gears import MultipleGears
-from math import sqrt
+from math import sqrt, sin, cos
 
 X_OFFSET = 0.038  # offset from the camera to the gripper
 Y_OFFSET = 0.03
@@ -61,6 +61,10 @@ def dist_from_point(x_val : float, y_val : float)->float:
 def distance_between_two_points(x_vals : list, y_vals : list):
     return abs(dist_from_point(x_vals[1],y_vals[1])-dist_from_point(x_vals[0],y_vals[0]))
 
+def rotate_points_around_angle(x_val : float, y_val : float, angle : float):
+    x = x_val * cos(angle) - y_val * sin(angle)
+    y= x_val * sin(angle) + y_val * cos(angle)
+    return x,y
 class GearPlace(Node):
   def __init__(self):
       super().__init__('gear_place')
@@ -580,6 +584,130 @@ class GearPlace(Node):
         #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
           self._call_put_down_force(0.1)
           offset_needed = False
+    
+  def _call_multiple_gears_single_scan(self, object_width : float):
+    """
+    Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
+    """
+    self._call_move_to_named_pose_service("single_scan")
+    self._call_get_camera_angle()
+    distances_from_home = []
+    self.get_logger().info(f"Scanning for gears")
+    gears_found = 0
+    connected = False
+    updated_radius_vals = {}
+    while gears_found == 0:
+        self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
+        for _ in range(2):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
+            multiple_gears = MultipleGears(connected)
+            rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
+            connected = multiple_gears.connected
+            while (
+                sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
+                or not multiple_gears.ran
+            ):  # loops until it has run and until there are no None values
+                multiple_gears.destroy_node()
+                multiple_gears = MultipleGears(connected)
+                rclpy.spin_once(multiple_gears)
+                connected = multiple_gears.connected
+            object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
+            rclpy.spin_once(object_depth)  # Gets the distance from the camera
+            object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+            for coord in object_depth.coordinates:
+                if coord.count(0.0)==0:  # adds coordinates if not all 0. Duplicates are removed later
+                    x,y=rotate_points_around_angle(-1 * coord[1], -1 * coord[0], self.current_camera_angle)
+                    distances_from_home.append(
+                        (
+                            x,
+                            y,
+                            -1 * coord[2]
+                        )
+                    )
+                    updated_radius_vals[(
+                            x,
+                            y,
+                            -1 * coord[2])] = object_depth.radius_vals[coord]
+            multiple_gears.destroy_node()
+
+        distances_from_home = self.remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
+
+        distances_from_home = [
+            distances_from_home[i]
+            for i in range(len(distances_from_home))
+            if self.find_distance(distances_from_home[i]) <= 0.7
+        ]  # removes points which are too far from the home position
+        gears_found = len(distances_from_home)
+        if gears_found==0:
+            self._call_move_to_named_pose_service("single_scan")
+            self.get_logger().info("No gears found. Trying again")
+    self.get_logger().info(
+        f"{len(distances_from_home)} gears found. Picking up the gears"
+    )  # outputs the number of gears found
+    for movment in distances_from_home:
+        self.get_logger().info("Movement: " + str(movment))
+
+    self._call_move_to_named_pose_service("home")
+    last_point = [0, 0]
+    offset_needed = True
+    low_gear_threshold = 0.0275
+    high_gear_thershold = 0.041
+    for gear_point in distances_from_home:  # loops through the movements to the gears
+        move = [
+            gear_point[i] - last_point[i] for i in range(2)
+        ]  # finds the next movement to the next gear
+        last_point = gear_point
+        self.get_logger().info("Next_move:" + str(move))
+        if updated_radius_vals[gear_point] ==0:
+            gear_color == "not found"
+            self.get_logger().info("Could not find gear color")
+        else:
+            thresholds = sorted([low_gear_threshold, high_gear_thershold,updated_radius_vals[gear_point]])
+            gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
+            self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
+        self._call_open_gripper_service()  # opens the gripper
+        
+        if offset_needed:
+          self._call_move_cartesian_service(
+              move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
+          )  # moves above the gear
+        else:
+          self._call_move_cartesian_service(
+              move[0], move[1], 0.0, 0.15,0.2
+          )  # moves above the gear
+        correct_coordinates = [0.0,0.0,0.0]
+        counter = 0
+        while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <3:
+          counter+=1
+          multiple_gears = MultipleGears(connected)
+          rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
+          connected = multiple_gears.connected
+          while (
+              sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
+              or not multiple_gears.ran
+          ):  # loops until it has run and until there are no None values
+              multiple_gears.destroy_node()
+              multiple_gears = MultipleGears(connected)
+              rclpy.spin_once(multiple_gears)
+              connected = multiple_gears.connected
+          object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
+          rclpy.spin_once(object_depth)  # Gets the distance from the camera
+          multiple_gears.destroy_node()
+          object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+          closest_gears =  object_depth.coordinates
+          correct_gear = closest_gears[self.closest_to_center(closest_gears)]
+          correct_coordinates = correct_gear
+        self.get_logger().info(", ".join([str(val) for val in correct_gear]))
+        if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
+            self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
+            self._call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2], object_width)
+        else:
+          self._call_pick_up_gear_coord_service(
+              True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width
+          )
+          last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
+      #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
+        self._call_put_down_force(0.1)
+        offset_needed = False
 
   def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
       """
