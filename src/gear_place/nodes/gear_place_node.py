@@ -12,8 +12,8 @@ def main(args=None):
         conveyor_supervisor = ConveyorClass("aprs_ros_conveyor")
         supervisor.wait(5)
         supervisor._call_open_gripper_service()
-        supervisor._call_move_to_named_pose_service("single_scan_1")
-        supervisor._call_move_cartesian_service(0.0,-0.05,0.0,0.15,0.2)
+        supervisor._call_move_to_named_pose_service("single_scan_2")
+        supervisor._call_move_cartesian_service(0.0,0.05,0.0,0.15,0.2)
         # supervisor._call_multiple_gears_single_scan(gear_width)
         # supervisor._call_pick_up_multiple_gears(gear_width)
 
