@@ -701,6 +701,7 @@ class GearPlace(Node):
           closest_gears =  object_depth.coordinates
           correct_gear = closest_gears[self.closest_to_center(closest_gears)]
           correct_coordinates = correct_gear
+          self._call_move_cartesian_service(0.001,0.001,0.0,0.15,0.2)
         self.get_logger().info(", ".join([str(val) for val in correct_gear]))
         if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
             self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
