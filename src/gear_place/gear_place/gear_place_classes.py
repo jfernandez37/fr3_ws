@@ -603,7 +603,7 @@ class GearPlace(Node):
             self._call_get_camera_angle()
             self._call_move_to_named_pose_service(pose_names[i])
             self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
-            for _ in range(3):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
+            for _ in range(10):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
                 multiple_gears = MultipleGears(connected)
                 rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
                 connected = multiple_gears.connected
