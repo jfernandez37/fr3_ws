@@ -653,7 +653,7 @@ class GearPlace(Node):
 
     self._call_move_to_named_pose_service("home")
     last_point = [0, 0]
-    offset_needed = True
+    offset_needed = False
     low_gear_threshold = 0.0275
     high_gear_thershold = 0.041
     for gear_point in distances_from_home:  # loops through the movements to the gears
