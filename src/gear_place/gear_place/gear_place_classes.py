@@ -620,7 +620,7 @@ class GearPlace(Node):
                 object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
                 for coord in object_depth.coordinates:
                     if coord.count(0.0)==0:  # adds coordinates if not all 0. Duplicates are removed later
-                        x,y=rotate_points_around_angle(-1 * coord[1], -1 * coord[0], self.current_camera_angle)
+                        x,y=rotate_points_around_angle(-1 * coord[1]+X_OFFSET, -1 * coord[0]+Y_OFFSET, self.current_camera_angle)
                         distances_from_home.append(
                             (
                                 x,
