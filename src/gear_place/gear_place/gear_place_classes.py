@@ -589,7 +589,9 @@ class GearPlace(Node):
     """
     Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
     """
-    self._call_move_to_named_pose_service("single_scan")
+    y_dist_from_home = [0.1,-0.1]
+    pose_names = ["single_scan_1","single_scan_2"]
+    self._call_move_to_named_pose_service("home")
     self._call_get_camera_angle()
     distances_from_home = []
     self.get_logger().info(f"Scanning for gears")
@@ -597,37 +599,40 @@ class GearPlace(Node):
     connected = False
     updated_radius_vals = {}
     while gears_found == 0:
-        self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
-        for _ in range(2):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
-            multiple_gears = MultipleGears(connected)
-            rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
-            connected = multiple_gears.connected
-            while (
-                sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
-                or not multiple_gears.ran
-            ):  # loops until it has run and until there are no None values
-                multiple_gears.destroy_node()
+        for i in range(2):
+            self._call_get_camera_angle()
+            self._call_move_to_named_pose_service(pose_names[i])
+            self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
+            for _ in range(2):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
                 multiple_gears = MultipleGears(connected)
-                rclpy.spin_once(multiple_gears)
+                rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
                 connected = multiple_gears.connected
-            object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
-            rclpy.spin_once(object_depth)  # Gets the distance from the camera
-            object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-            for coord in object_depth.coordinates:
-                if coord.count(0.0)==0:  # adds coordinates if not all 0. Duplicates are removed later
-                    x,y=rotate_points_around_angle(-1 * coord[1], -1 * coord[0], self.current_camera_angle)
-                    distances_from_home.append(
-                        (
-                            x,
-                            y,
-                            -1 * coord[2]
+                while (
+                    sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
+                    or not multiple_gears.ran
+                ):  # loops until it has run and until there are no None values
+                    multiple_gears.destroy_node()
+                    multiple_gears = MultipleGears(connected)
+                    rclpy.spin_once(multiple_gears)
+                    connected = multiple_gears.connected
+                object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
+                rclpy.spin_once(object_depth)  # Gets the distance from the camera
+                object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+                for coord in object_depth.coordinates:
+                    if coord.count(0.0)==0:  # adds coordinates if not all 0. Duplicates are removed later
+                        x,y=rotate_points_around_angle(-1 * coord[1], -1 * coord[0], self.current_camera_angle)
+                        distances_from_home.append(
+                            (
+                                x,
+                                y+y_dist_from_home[i],
+                                -1 * coord[2]
+                            )
                         )
-                    )
-                    updated_radius_vals[(
-                            x,
-                            y,
-                            -1 * coord[2])] = object_depth.radius_vals[coord]
-            multiple_gears.destroy_node()
+                        updated_radius_vals[(
+                                x,
+                                y+y_dist_from_home[i],
+                                -1 * coord[2])] = object_depth.radius_vals[coord]
+                multiple_gears.destroy_node()
 
         distances_from_home = self.remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
 
