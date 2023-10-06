@@ -62,9 +62,7 @@ def distance_between_two_points(x_vals : list, y_vals : list):
     return abs(dist_from_point(x_vals[1],y_vals[1])-dist_from_point(x_vals[0],y_vals[0]))
 
 def rotate_points_around_angle(x_val : float, y_val : float, angle : float):
-    x = x_val * cos(angle) - y_val * sin(angle)
-    y= x_val * sin(angle) + y_val * cos(angle)
-    return x,y
+    return x_val * cos(angle) - y_val * sin(angle),x_val * sin(angle) + y_val * cos(angle)
 class GearPlace(Node):
   def __init__(self):
       super().__init__('gear_place')
