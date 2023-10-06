@@ -25,7 +25,7 @@ from gear_place_interfaces.srv import (
 )
 
 from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
-from gear_place.transform_utils import multiply_pose, convert_transform_to_pose
+from gear_place.transform_utils import convert_transform_to_pose
 
 from geometry_msgs.msg import Pose, Point
 
