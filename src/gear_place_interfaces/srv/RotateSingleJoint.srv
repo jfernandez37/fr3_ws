@@ -1,0 +1,5 @@
+float64 angle
+uint8 joint
+bool radians
+---
+bool success
