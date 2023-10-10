@@ -897,7 +897,7 @@ class GearPlace(Node):
             angle = angle +360
 
       request.joint = joint
-      request.angle = angle
+      request.angle = float(angle)
       request.radian = radian
       
       future = self.rotate_single_joint_client.call_async(request)

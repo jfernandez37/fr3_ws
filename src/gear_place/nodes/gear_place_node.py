@@ -14,7 +14,7 @@ def main(args=None):
         supervisor.wait(5)
         supervisor._call_open_gripper_service()
         supervisor._call_move_to_named_pose_service("home")
-        supervisor._call_rotate_single_joint(6,90,False)
+        supervisor._call_rotate_single_joint(6,90.0,False)
         sleep(3.0)
         supervisor._call_rotate_single_joint(6,-pi/2,True)
         # supervisor._call_move_cartesian_service(0.0,0.05,0.0,0.15,0.2)
