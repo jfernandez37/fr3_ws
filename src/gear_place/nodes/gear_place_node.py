@@ -14,6 +14,7 @@ def main(args=None):
         supervisor.wait(5)
         supervisor._call_open_gripper_service()
         supervisor._call_move_to_named_pose_service("home")
+        supervisor._call_multiple_gears_single_scan(gear_width)
         # supervisor._call_rotate_single_joint(6,90.0,False)
         # sleep(1.0)
         # supervisor._call_rotate_single_joint(6,-pi/2,True)
