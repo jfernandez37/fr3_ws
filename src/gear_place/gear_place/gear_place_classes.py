@@ -638,7 +638,7 @@ class GearPlace(Node):
         ]  # removes points which are too far from the home position
         gears_found = len(distances_from_home)
         if gears_found==0:
-            self._call_move_to_named_pose_service("home")
+            self._call_move_to_named_pose_service("high_scan")
             self.get_logger().info("No gears found. Trying again")
     self.get_logger().info(
         f"{len(distances_from_home)} gears found. Picking up the gears"
@@ -651,7 +651,7 @@ class GearPlace(Node):
     offset_needed = True
     low_gear_threshold = 0.0275
     high_gear_thershold = 0.041
-    self._call_move_cartesian_service(0.0,0.0,0.16,0.15,0.2)
+    self._call_move_cartesian_service(0.0,0.0,-0.16,0.15,0.2)
     for gear_point in distances_from_home:  # loops through the movements to the gears
         move = [
             gear_point[i] - last_point[i] for i in range(2)
