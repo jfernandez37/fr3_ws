@@ -21,7 +21,8 @@ from gear_place_interfaces.srv import (
   OpenGripper,
   PutDownForce,
   GetCameraAngle,
-  MoveCartesianAngle
+  MoveCartesianAngle,
+  RotateSingleJoint
 )
 
 from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
@@ -95,6 +96,7 @@ class GearPlace(Node):
       self.put_down_force_client = self.create_client(PutDownForce, "put_down_force")
       self.get_camera_angle_client = self.create_client(GetCameraAngle, "get_camera_angle")
       self.move_cartesian_angle_client = self.create_client(MoveCartesianAngle, "move_cartesian_angle")
+      self.rotate_single_joint_client = self.create_client(RotateSingleJoint, "rotate_single_joint")
 
   def wait(self, duration: float):
       start = self.get_clock().now()
@@ -875,6 +877,31 @@ class GearPlace(Node):
       result = future.result()
 
       self.current_camera_angle = result.angle
+    
+  def _call_rotate_single_joint(self,joint : int, angle : float, radian : bool):
+      """
+      Calls the rotate_single_joint callback
+      """
+      self.get_logger().info(f"Rotating joint {joint} by {angle} "+("pi" if radian else "degrees"))
+
+      request = RotateSingleJoint.Request()
+
+      request.joint = joint
+      request.angle = angle
+      request.radian = radian
+
+      future = self.rotate_single_joint_client.call_async(request)
+      
+      rclpy.spin_until_future_complete(self,future,timeout_sec=10)
+
+      if not future.done():
+          raise Error("Timeout reached when calling put_down_force service")
+
+      result: RotateSingleJoint.Response
+      result = future.result()
+
+      if not result.success:
+          raise Error("Unable to rotate joint to given angle")
 
 
     
