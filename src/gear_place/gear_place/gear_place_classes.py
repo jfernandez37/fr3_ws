@@ -887,12 +887,14 @@ class GearPlace(Node):
       request = RotateSingleJoint.Request()
       if radian:
         if angle>pi:
-            angle-=pi
-            angle*=-1
+            angle=angle - 2*pi
+        elif angle < -1 * pi:
+            angle = angle + 2*pi
       else:
         if angle>180:
-            angle-=180
-            angle*=-1
+            angle=angle-360
+        elif angle < -180:
+            angle = angle +360
 
       request.joint = joint
       request.angle = angle
