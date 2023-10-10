@@ -2,7 +2,8 @@
 
 import rclpy
 from gear_place.gear_place_classes import GearPlace, Error, ConveyorClass
-
+from time import sleep
+from math import pi
 
 def main(args=None):
     rclpy.init(args=args)
@@ -13,8 +14,11 @@ def main(args=None):
         supervisor.wait(5)
         supervisor._call_open_gripper_service()
         supervisor._call_move_to_named_pose_service("home")
+        supervisor._call_rotate_single_joint(6,90,False)
+        sleep(3.0)
+        supervisor._call_rotate_single_joint(6,-pi/2,True)
         # supervisor._call_move_cartesian_service(0.0,0.05,0.0,0.15,0.2)
-        supervisor._call_multiple_gears_single_scan(gear_width)
+        # supervisor._call_multiple_gears_single_scan(gear_width)
         # supervisor._call_pick_up_multiple_gears(gear_width)
 
         # supervisor._call_move_to_named_pose_service("above_conveyor")
