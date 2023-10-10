@@ -109,6 +109,11 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
       "move_cartesian_angle",
       std::bind(&RobotCommander::move_cartesian_angle_cb_, this,
                 std::placeholders::_1, std::placeholders::_2));
+  
+  rotate_single_joint_srv_ = this->create_service<gear_place_interfaces::srv::RotateSingleJoint>(
+    "rotate_single_joint",
+    std::bind(&RobotCommander::rotate_single_joint_cb_, this,
+              std::placeholders::_1, std::placeholders::_2));
 
   std::srand(std::time(0)); // use current time as seed for random generator
 }
