@@ -129,7 +129,7 @@ void RobotCommander::move_to_named_pose_cb_(
   {
     try
     {
-      MotionGenerator motion_generator(0.4, named_joint_positions_[request->pose], current_state_);
+      MotionGenerator motion_generator(0.3, named_joint_positions_[request->pose], current_state_);
 
       read_state_.lock();
       robot_->control(motion_generator);
