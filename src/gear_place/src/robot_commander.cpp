@@ -655,7 +655,7 @@ void RobotCommander::rotate_single_joint_cb_(const std::shared_ptr<gear_place_in
       initial_pose[request->joint]+=request->angle;
     }
     else{
-      initial_pose[request->joint]+=request->angle*M_PI/360.0;
+      initial_pose[request->joint]+=request->angle*M_PI/180.0;
     }
     if(initial_pose[request->joint]>M_PI){
       initial_pose[request->joint] = (initial_pose[request->joint]-M_PI)*-1;
