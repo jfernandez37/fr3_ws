@@ -585,12 +585,12 @@ class GearPlace(Node):
           self._call_put_down_force(0.1)
           offset_needed = False
     
-  def _call_multiple_gears_single_scan(self, object_width : float):
+  def _call_multiple_gears_rotated_scan(self, object_width : float):
     """
     Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
     """
     y_dist_from_home = [0.1,-0.1]
-    pose_names = ["single_scan_1","single_scan_2"]
+    pose_names = ["rotate_scan_1","rotate_scan_2"]
     self._call_move_to_named_pose_service("home")
     self._call_get_camera_angle()
     distances_from_home = []
