@@ -33,7 +33,7 @@ from geometry_msgs.msg import Pose, Point
 from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 from gear_place.moving_gear import MovingGear
-from gear_place.multiple_gears import MultipleGears
+from gear_place.multiple_gears import MultipleGears, MultipleGearsHigh
 from math import sqrt, sin, cos, pi
 
 X_OFFSET = 0.038  # offset from the camera to the gripper
@@ -600,18 +600,18 @@ class GearPlace(Node):
         self._call_get_camera_angle()
         self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
         for _ in range(10):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
-            multiple_gears = MultipleGears(connected)
-            rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
-            connected = multiple_gears.connected
+            multiple_gears_high = MultipleGearsHigh(connected)
+            rclpy.spin_once(multiple_gears_high)  # finds multiple gears if there are multiple
+            connected = multiple_gears_high.connected
             while (
-                sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
-                or not multiple_gears.ran
+                sum([cent.count(None) for cent in multiple_gears_high.g_centers]) != 0
+                or not multiple_gears_high.ran
             ):  # loops until it has run and until there are no None values
-                multiple_gears.destroy_node()
-                multiple_gears = MultipleGears(connected)
-                rclpy.spin_once(multiple_gears)
-                connected = multiple_gears.connected
-            object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
+                multiple_gears_high.destroy_node()
+                multiple_gears_high = MultipleGearsHigh(connected)
+                rclpy.spin_once(multiple_gears_high)
+                connected = multiple_gears_high.connected
+            object_depth = ObjectDepth(multiple_gears_high.g_centers, multiple_gears_high.dist_points)
             rclpy.spin_once(object_depth)  # Gets the distance from the camera
             object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
             for coord in object_depth.coordinates:
@@ -627,7 +627,7 @@ class GearPlace(Node):
                             -1 * coord[1]+X_OFFSET,
                             -1 * coord[0]+Y_OFFSET,
                             -1 * coord[2])] = object_depth.radius_vals[coord]
-            multiple_gears.destroy_node()
+            multiple_gears_high.destroy_node()
 
         distances_from_home = self.remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
 
