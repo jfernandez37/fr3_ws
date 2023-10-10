@@ -639,3 +639,40 @@ void RobotCommander::get_camera_angle_cb_(const std::shared_ptr<gear_place_inter
   (void) request;
   response->angle = camera_angle_.data;
 }
+
+void RobotCommander::rotate_single_joint_cb_(const std::shared_ptr<gear_place_interfaces::srv::RotateSingleJoint::Request> request,
+                          std::shared_ptr<gear_place_interfaces::srv::RotateSingleJoint::Response> response){
+    double initial_pose[7];
+    for(int i = 0; i < 7; i++){
+        initial_pose[i]=joint_state_msg_.position[i];
+    }
+    if(request->radians){
+      initial_pose[request->joint]+=request->angle;
+    }
+    else{
+      initial_pose[request->joint]+=request->angle*M_PI/360.0;
+    }
+    if(initial_pose[request->joint]>M_PI){
+      initial_pose[request->joint] = (initial_pose[request->joint]-M_PI)*-1;
+    }
+    try
+    {
+      MotionGenerator motion_generator(0.2,
+      {{initial_pose[0],initial_pose[1],initial_pose[2],
+      initial_pose[3],initial_pose[4],initial_pose[5], initial_pose[6]}}
+      , current_state_);
+
+      read_state_.lock();
+      robot_->control(motion_generator);
+      read_state_.unlock();
+    }
+    catch (const franka::Exception &e)
+    {
+      response->success = false;
+      RCLCPP_WARN_STREAM(get_logger(), "Franka Exception: " << e.what());
+      response->success = false;
+      return;
+    }
+    response->success = true;
+
+}
