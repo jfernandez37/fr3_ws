@@ -448,7 +448,12 @@ void RobotCommander::pick_up_gear_cb_(
     }
     move_robot_cartesian(0, 0, request->z, default_velocity_, default_acceleration_);
     grasp_object(request->object_width);
-    move_robot_cartesian(0, 0, -1 * request->z + 0.0022, default_velocity_, default_acceleration_);
+    if(request->default_up){
+      move_robot_cartesian(0, 0, 0.247, default_velocity_, default_acceleration_);
+    }
+    else{
+      move_robot_cartesian(0, 0, -1 * request->z + 0.0022, default_velocity_, default_acceleration_);
+    }
   }
   catch (CommanderError &e)
   {
