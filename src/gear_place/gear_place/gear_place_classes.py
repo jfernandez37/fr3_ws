@@ -878,14 +878,14 @@ class GearPlace(Node):
 
       self.current_camera_angle = result.angle
     
-  def _call_rotate_single_joint(self,joint : int, angle : float, radian : bool):
+  def _call_rotate_single_joint(self,joint : int, angle : float, radians : bool):
       """
       Calls the rotate_single_joint callback
       """
-      self.get_logger().info(f"Rotating joint {joint} by {angle} "+("pi" if radian else "degrees"))
+      self.get_logger().info(f"Rotating joint {joint} by {angle} "+("pi" if radians else "degrees"))
 
       request = RotateSingleJoint.Request()
-      if radian:
+      if radians:
         if angle>pi:
             angle=angle - 2*pi
         elif angle < -1 * pi:
@@ -898,7 +898,7 @@ class GearPlace(Node):
 
       request.joint = joint
       request.angle = float(angle)
-      request.radian = radian
+      request.radians = radians
       
       future = self.rotate_single_joint_client.call_async(request)
 
