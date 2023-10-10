@@ -25,6 +25,7 @@ set(srv_files
   "srv/PutDownForce.srv"
   "srv/GetCameraAngle.srv"
   "srv/MoveCartesianAngle.srv"
+  "srv/RotateSingleJoint.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
