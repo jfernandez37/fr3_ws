@@ -34,7 +34,7 @@ from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 from gear_place.moving_gear import MovingGear
 from gear_place.multiple_gears import MultipleGears
-from math import sqrt, sin, cos
+from math import sqrt, sin, cos, pi
 
 X_OFFSET = 0.038  # offset from the camera to the gripper
 Y_OFFSET = 0.03
@@ -885,13 +885,21 @@ class GearPlace(Node):
       self.get_logger().info(f"Rotating joint {joint} by {angle} "+("pi" if radian else "degrees"))
 
       request = RotateSingleJoint.Request()
+      if radian:
+        if angle>pi:
+            angle-=pi
+            angle*=-1
+      else:
+        if angle>180:
+            angle-=180
+            angle*=-1
 
       request.joint = joint
       request.angle = angle
       request.radian = radian
-
-      future = self.rotate_single_joint_client.call_async(request)
       
+      future = self.rotate_single_joint_client.call_async(request)
+
       rclpy.spin_until_future_complete(self,future,timeout_sec=10)
 
       if not future.done():
