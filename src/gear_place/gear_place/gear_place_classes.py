@@ -882,7 +882,7 @@ class GearPlace(Node):
       """
       Calls the rotate_single_joint callback
       """
-      self.get_logger().info(f"Rotating joint {joint} by {angle} "+("pi" if radians else "degrees"))
+      self.get_logger().info(f"Rotating joint {joint} by {angle} "+("pi" if radians else "degrees")+" clockwise")
 
       request = RotateSingleJoint.Request()
       if radians:
