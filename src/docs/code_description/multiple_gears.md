@@ -23,3 +23,7 @@ This file has the code for detecting multiple gears.
     This is the function with all of the main contour detection code. It is a callback which runs when a depth image is recieved. First, it converts the ROS2 image message to a cv image. Then, the contrast of the image is scaled to make the gear easier to detect. For pixels which are white, they are converted to black, which allows the gear to be detected at different heights.
 
     A gaussian blur is then applied multiple times. Then, the thresholds are looped through so gears at different heights are detected. The contours are found for each threshold and they are filtered through. The center of the gears are found and saved. Also, points on the edge of the gear are saved so the radius measurements can be found to detect which gear is being picked up.
+
+### Important notes
+
+In this file, there are two classes, MultipleGears and MultipleGearsHigh. MultipleGearsHigh will use the color image to detect the gears from a higher position, but it is not finished yet, so it is very similar to MultipleGears.

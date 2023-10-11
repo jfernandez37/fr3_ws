@@ -13,3 +13,4 @@ ROS2 package containing all of the services and messages necessary for the ROS2 
 * `put_down_force` - Puts the gear down until the gear makes contact with a surface. Then the gripper opens.
 * `get_camera_angle` - Uses the joint rotation positions to find what angle the camera is currenty in relation to the base of the robot.
 * `move_cartesian_angle` - Similar to move cartesian, but it does so in relation to the camera instead of in relation to the base of the robot. This has to be used when the camera is above the conveyor belt.
+* `rotate_single_joint` - Rotates a single joint to clockwise to the given degree. The move is the shortest possible path. Mainly used to rotate the base or the end effector.

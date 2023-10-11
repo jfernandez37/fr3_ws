@@ -66,6 +66,10 @@ This file has the classes which is used for the node to call the services. Both 
 
     The code for this function is similar to pick up moving gear. However, instead of trying to pick up the gear, the end effector tracks the gear from above. This is to test the coordinates for a moving gear.
 
+* _call_rotate_single_joint
+
+    This function takes in the index of the joint (0-6), the angle in which you want it to be moved by, and whether the measurement is in radians (True) or degrees (False). Then calculates the correct path so that the camera cord does not stretch. It then calls the rotate single joint call service using the inputted values and updated angle.
+
 ## Important notes
 
  - When the robot moves to the "above_conveyor" position, the camera is rotated 90 degrees. Since the camera outputs xyz coordinates, the coordinates coming out of the camera are not able to be directly passed into any service using move_cartesian. For all functions used when the camera is rotated (_call_move_above_gear and _call_pick_up_moving_gear), the coordinates rotation is accounted for using the rotated boolean variable. When set to true, the rotation is taken into account.

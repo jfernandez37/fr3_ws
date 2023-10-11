@@ -83,3 +83,9 @@ This file contains the code for moving the robots. It contains all of the ROS2 c
 * get_camera_angle_cb_
 
     The request for this service is empty. The response is set to the value of get_camera_angle().
+
+* rotate_single_joint_cb_
+
+    This function first gets the current joint positions. Then, replaces the chosen joint measurement with the updated one. If it is in radians, it is directly passed. If it is in degrees, the measurement is converted to radians and passed. Then, the angle is corrected to only move so that the camera cord is not stretched.
+
+    A new motion generator is then made with the new joint positions and the motion generator is passed into a control loop. This will move the robot to the new position.
