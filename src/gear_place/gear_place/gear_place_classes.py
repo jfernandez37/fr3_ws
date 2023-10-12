@@ -65,6 +65,10 @@ def distance_between_two_points(x_vals : list, y_vals : list):
 
 def rotate_points_around_angle(x_val : float, y_val : float, angle : float):
     return x_val * cos(angle) - y_val * sin(angle),x_val * sin(angle) + y_val * cos(angle)
+
+def convert_color_to_depth(point : tuple):
+    return (round(point[0]*42/65+5671/65),round(point[1]*27/43+3615/43))
+
 class GearPlace(Node):
   def __init__(self):
       super().__init__('gear_place')
@@ -218,7 +222,7 @@ class GearPlace(Node):
                   find_object_color.destroy_node()
                   find_object_color = FindObjectColor()
                   rclpy.spin_once(find_object_color)
-          object_depth = ObjectDepth([find_object_color.ret_cent_gear()])
+          object_depth = ObjectDepth([convert_color_to_depth(find_object_color.ret_cent_gear())],{})
           rclpy.spin_once(object_depth)  # Gets the distance from the camera
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
           find_object_color.destroy_node()
