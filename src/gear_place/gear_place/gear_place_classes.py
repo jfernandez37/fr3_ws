@@ -31,6 +31,7 @@ from gear_place.transform_utils import convert_transform_to_pose
 from geometry_msgs.msg import Pose, Point
 
 from gear_place.find_object import FindObject
+from gear_place.find_object_color import FindObjectColor
 from gear_place.object_depth import ObjectDepth
 from gear_place.moving_gear import MovingGear
 from gear_place.multiple_gears import MultipleGears, MultipleGearsHigh
@@ -200,11 +201,11 @@ class GearPlace(Node):
       while (
           gear_center_target.count(0) == 3 or None in gear_center_target
       ):  # runs until valid coordinates are found
-          find_object = FindObject()
-          rclpy.spin_once(find_object) # Finds the gear
+          find_object_color = FindObjectColor()
+          rclpy.spin_once(find_object_color) # Finds the gear
           c = 0
           while (
-              find_object.ret_cent_gear().count(None) != 0
+              find_object_color.ret_cent_gear().count(None) != 0
           ):  # Runs and guarantees that none of the coordinates are none type
               c += 1
 
@@ -214,13 +215,13 @@ class GearPlace(Node):
                   )  # Moves to the center of the cart
                   sleep(1)
               else:
-                  find_object.destroy_node()
-                  find_object = FindObject()
-                  rclpy.spin_once(find_object)
-          object_depth = ObjectDepth([find_object.ret_cent_gear()])
+                  find_object_color.destroy_node()
+                  find_object_color = FindObjectColor()
+                  rclpy.spin_once(find_object_color)
+          object_depth = ObjectDepth([find_object_color.ret_cent_gear()])
           rclpy.spin_once(object_depth)  # Gets the distance from the camera
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-          find_object.destroy_node()
+          find_object_color.destroy_node()
           gear_center_target = object_depth.coordinates[0]
       self.get_logger().info("gear_center_target: "+str(gear_center_target))
 
@@ -228,7 +229,7 @@ class GearPlace(Node):
 
       request.x = -1 * gear_center_target[1] + X_OFFSET
       request.y = -1 * gear_center_target[2] + Y_OFFSET
-      request.z = z_movement
+      request.z = -1 * gear_center_target[3] + Z_CAMERA_OFFSET
       request.object_width = object_width
 
       future = self.pick_up_gear_client.call_async(request)
