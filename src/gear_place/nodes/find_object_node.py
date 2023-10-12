@@ -30,7 +30,7 @@ def main(args=None):
     print("Estimated depth coordinates from color coordinates: ("
           +", ".join([str(val) for val in convert_color_to_depth(find_object_color.ret_cent_gear())])
           +")")
-    # cv2.imshow("Depth image", find_object.thresh_image)
+    cv2.imshow("Depth image", find_object.thresh_image)
     cv2.imshow("Color image", find_object_color.thresh_image)
     cv2.waitKey(0)
     # gear_center_values = [[0 for i in range(3)],[0 for i in range(3)]]
