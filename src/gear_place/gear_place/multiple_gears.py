@@ -119,7 +119,7 @@ class MultipleGears(Node):
         if len(valid_contours) == 0:
             return
 
-class MultipleGearsHigh(Node):
+class MultipleGearsColor(Node):
     def __init__(self, connected):
         super().__init__("multiple_gears_high")
         self.bridge = CvBridge()
