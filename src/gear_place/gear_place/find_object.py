@@ -108,7 +108,7 @@ class FindObject(Node):
             (h, w) = self.cv_image.shape[:2]
             self.cx = w // 2
             self.cy = h // 2
-            cv2.circle(self.thresh_image, (w//2, h//2), 7, (255, 255, 255), -1)
+            cv2.circle(self.thresh_image, (self.gx//2, self.gy//2), 7, (0,0,0), -1)
         except:
             self.get_logger.error("Error: Contour does not form a single shape")
         self.get_logger().info(
