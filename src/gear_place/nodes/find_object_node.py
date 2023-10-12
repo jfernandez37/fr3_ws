@@ -23,6 +23,9 @@ def main(args=None):
         find_object_color = FindObjectColor()
         rclpy.spin_once(find_object_color)
     print("Color pixel coordinates: ("+", ".join(find_object_color.ret_cent_gear())+")")
+    cv2.imshow("Depth image", find_object.thresh_image)
+    cv2.imshow("Color image", find_object_color.thresh_image)
+    cv2.waitKey(0)
     # gear_center_values = [[0 for i in range(3)],[0 for i in range(3)]]
     # c=1
     # while sum([1 for i in range(6) if gear_center_values[i//3][i%3] not in [0.0, None]])!=6:
