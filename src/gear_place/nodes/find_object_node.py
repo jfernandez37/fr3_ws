@@ -12,13 +12,13 @@ def convert_color_to_depth(point : tuple):
 
 def main(args=None):
     rclpy.init(args=args)
-    # find_object = FindObject()
-    # rclpy.spin_once(find_object)
-    # while find_object.ret_cent_gear().count(None) != 0:
-    #     find_object.destroy_node()
-    #     find_object = FindObject()
-    #     rclpy.spin_once(find_object)
-    # print("Depth pixel coordinates: ("+", ".join([str(val) for val in find_object.ret_cent_gear()])+")")
+    find_object = FindObject()
+    rclpy.spin_once(find_object)
+    while find_object.ret_cent_gear().count(None) != 0:
+        find_object.destroy_node()
+        find_object = FindObject()
+        rclpy.spin_once(find_object)
+    print("Depth pixel coordinates: ("+", ".join([str(val) for val in find_object.ret_cent_gear()])+")")
     find_object_color = FindObjectColor()
     rclpy.spin_once(find_object_color)
     while find_object_color.ret_cent_gear().count(None) != 0:
