@@ -4,11 +4,12 @@ import rclpy
 from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 from gear_place.find_object_color import FindObjectColor
+from math import ceil
 def dist_between_points(points : list):
     return __import__("math").sqrt(sum([(points[0][i]-points[1][i])**2 for i in range(2)]))
 
 def convert_color_to_depth(point : tuple):
-    return (round(point[0]*42/65+5671/65),round(point[1]*27/43+3615/43))
+    return (ceil(point[0]*42/65+5671/65),ceil(point[1]*27/43+3615/43))
 
 def main(args=None):
     rclpy.init(args=args)
