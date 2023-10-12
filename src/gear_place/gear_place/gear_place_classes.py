@@ -35,7 +35,7 @@ from gear_place.find_object_color import FindObjectColor
 from gear_place.object_depth import ObjectDepth
 from gear_place.moving_gear import MovingGear
 from gear_place.multiple_gears import MultipleGears, MultipleGearsHigh
-from math import sqrt, sin, cos, pi
+from math import sqrt, sin, cos, pi, ceil
 
 X_OFFSET = 0.038  # offset from the camera to the gripper
 Y_OFFSET = 0.03
@@ -67,7 +67,7 @@ def rotate_points_around_angle(x_val : float, y_val : float, angle : float):
     return x_val * cos(angle) - y_val * sin(angle),x_val * sin(angle) + y_val * cos(angle)
 
 def convert_color_to_depth(point : tuple):
-    return (round(point[0]*42/65+5671/65),round(point[1]*27/43+3615/43))
+    return (ceil(point[0]*42/65+5671/65),ceil(point[1]*27/43+3615/43))
 
 class GearPlace(Node):
   def __init__(self):
