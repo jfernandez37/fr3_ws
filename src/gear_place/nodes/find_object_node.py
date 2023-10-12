@@ -7,6 +7,9 @@ from gear_place.find_object_color import FindObjectColor
 def dist_between_points(points : list):
     return __import__("math").sqrt(sum([(points[0][i]-points[1][i])**2 for i in range(2)]))
 
+def convert_color_to_depth(point : tuple):
+    return (round(point[0]*42/65+5671/65),round(point[1]*27/43+3615/43))
+
 def main(args=None):
     rclpy.init(args=args)
     find_object = FindObject()
@@ -23,6 +26,9 @@ def main(args=None):
         find_object_color = FindObjectColor()
         rclpy.spin_once(find_object_color)
     print("Color pixel coordinates: ("+", ".join([str(val) for val in find_object_color.ret_cent_gear()])+")")
+    print("Estimated depth coordinates from color coordinates: ("
+          +", ".join([str(val) for val in convert_color_to_depth(find_object_color.ret_cent_gear())])
+          +")")
     cv2.imshow("Depth image", find_object.thresh_image)
     cv2.imshow("Color image", find_object_color.thresh_image)
     cv2.waitKey(0)
