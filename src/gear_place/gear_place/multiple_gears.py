@@ -135,8 +135,10 @@ class MultipleGearsColor(Node):
         )
         self.camera_sub
         self.subscription = self.create_subscription(
-            Image, "/camera/depth/image_rect_raw", self.listener_callback, 10
-        )
+        Image,
+        '/camera/color/image_raw',
+        self.listener_callback,
+        10)
         self.subscription  # prevent unused variable warning
 
     def camera_cb(self, msg: Image):
@@ -179,12 +181,13 @@ class MultipleGearsColor(Node):
         thresh_value = (
             self.get_parameter("thresh_value").get_parameter_value().integer_value
         )
-        cv_image = self.bridge.imgmsg_to_cv2(msg, "32FC1")
+        cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
         cv_image_array = np.array(cv_image, dtype=np.dtype("u1"))
         self.cv_image = cv_image_array
+        gray_img = cv2.cvtColor(self.cv_image,cv2.COLOR_BGR2GRAY)
         alpha = 2.5  # Contrast control (1.0-3.0)
         beta = -65  # Brightness control (-100-100)
-        self.cv_image = cv2.convertScaleAbs(self.cv_image, alpha=alpha, beta=beta)
+        self.cv_image = cv2.convertScaleAbs(gray_img, alpha=alpha, beta=beta)
         for i in range(len(self.cv_image)):
             for j in range(len(self.cv_image[i])):
                 if self.cv_image[i][j] == 255:
