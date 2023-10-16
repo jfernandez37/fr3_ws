@@ -690,7 +690,7 @@ void RobotCommander::rotate_single_joint_cb_(const std::shared_ptr<gear_place_in
 
 }
 
-void RobotCommander::move_to_joint_position(const std::shared_ptr<gear_place_interfaces::srv::MoveToJointPosition::Request> request,
+void RobotCommander::move_to_joint_position_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveToJointPosition::Request> request,
                           std::shared_ptr<gear_place_interfaces::srv::MoveToJointPosition::Response> response){
     double target_pose[7];
     for(int i = 0; i < 7; i++){
