@@ -26,6 +26,7 @@ set(srv_files
   "srv/GetCameraAngle.srv"
   "srv/MoveCartesianAngle.srv"
   "srv/RotateSingleJoint.srv"
+  "srv/MoveToJointPosition.srv"
 )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
