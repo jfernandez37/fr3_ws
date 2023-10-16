@@ -82,3 +82,7 @@ There are four main nodes. Three of them are for testing and the final one is fo
 * `gear_place` - Includes all code for moving the robot, identifying the gear with the realsense_camera, and the supervisors to control the robot
 * `gear_place_description` - Includes all meshes, robot visuals, and urdf files for generating the robot description and visualizing the robot in rviz
 * `gear_place_interfaces` - Includes all msg and srv for the ROS2 callbacks
+
+## Important notes
+
+* For the gear detection, there are two types of images available. There is the color image and the depth image. The depth image is more accurate at small distances, as the pixel coordinates line up one to one with the point cloud. The downside to the depth image is that at further distances, it is not able to detect the gear due to the small distance between the gear height and the surface below. For larger distances, the color image needs to be used. The pixel coordinates do not line up one-to-one with the pointcloud, but using the function to convert color to depth, the point can be converted within 1 or 2 pixels of the desired point.
