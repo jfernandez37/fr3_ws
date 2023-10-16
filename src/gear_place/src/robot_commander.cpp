@@ -689,3 +689,31 @@ void RobotCommander::rotate_single_joint_cb_(const std::shared_ptr<gear_place_in
     response->success = true;
 
 }
+
+void RobotCommander::move_to_joint_position(const std::shared_ptr<gear_place_interfaces::srv::MoveToJointPosition::Request> request,
+                          std::shared_ptr<gear_place_interfaces::srv::MoveToJointPosition::Response> response){
+    double target_pose[7];
+    for(int i = 0; i < 7; i++){
+        initial_pose[i]=request->joint_positions[i];
+    }
+    try
+    {
+      MotionGenerator motion_generator(0.2,
+      {{initial_pose[0],initial_pose[1],initial_pose[2],
+      initial_pose[3],initial_pose[4],initial_pose[5], initial_pose[6]}}
+      , current_state_);
+
+      read_state_.lock();
+      robot_->control(motion_generator);
+      read_state_.unlock();
+    }
+    catch (const franka::Exception &e)
+    {
+      response->success = false;
+      RCLCPP_WARN_STREAM(get_logger(), "Franka Exception: " << e.what());
+      response->success = false;
+      return;
+    }
+    response->success = true;
+
+}
