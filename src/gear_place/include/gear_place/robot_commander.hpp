@@ -16,6 +16,7 @@
 #include <gear_place_interfaces/srv/get_camera_angle.hpp>
 #include <gear_place_interfaces/srv/move_cartesian_angle.hpp>
 #include <gear_place_interfaces/srv/rotate_single_joint.hpp>
+#include <gear_place_interfaces/srv/move_to_joint_position.hpp>
 
 #include <std_msgs/msg/string.hpp>
 #include <std_msgs/msg/float64.hpp>
@@ -83,6 +84,7 @@ private:
   rclcpp::Service<gear_place_interfaces::srv::GetCameraAngle>::SharedPtr get_camera_angle_srv_;
   rclcpp::Service<gear_place_interfaces::srv::MoveCartesianAngle>::SharedPtr move_cartesian_angle_srv_;
   rclcpp::Service<gear_place_interfaces::srv::RotateSingleJoint>::SharedPtr rotate_single_joint_srv_;
+  rclcpp::Service<gear_place_interfaces::srv::MoveToJointPosition>::SharedPtr move_to_joint_position_srv_;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
@@ -144,6 +146,8 @@ private:
                           std::shared_ptr<gear_place_interfaces::srv::MoveCartesianAngle::Response> response);
   void rotate_single_joint_cb_(const std::shared_ptr<gear_place_interfaces::srv::RotateSingleJoint::Request> request,
                           std::shared_ptr<gear_place_interfaces::srv::RotateSingleJoint::Response> response);
+  void move_to_joint_position_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveToJointPosition::Request> request,
+                          std::shared_ptr<gear_place_interfaces::srv::MoveToJointPosition::Response> response);
 
   // Methods
   void move_robot_to_frame(KDL::Frame);
