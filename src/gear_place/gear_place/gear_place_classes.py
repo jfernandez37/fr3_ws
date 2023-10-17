@@ -107,7 +107,7 @@ class GearPlace(Node):
       self.get_camera_angle_client = self.create_client(GetCameraAngle, "get_camera_angle")
       self.move_cartesian_angle_client = self.create_client(MoveCartesianAngle, "move_cartesian_angle")
       self.rotate_single_joint_client = self.create_client(RotateSingleJoint, "rotate_single_joint")
-      self.move_to_joint_position_client = self.create_client(MoveToJointPosiiton, "move_to_joint_position")
+      self.move_to_joint_position_client = self.create_client(MoveToJointPosition, "move_to_joint_position")
       self.get_joint_positions_client = self.create_client(GetJointPositions, "get_joint_positions")
 
   def wait(self, duration: float):
@@ -1030,7 +1030,7 @@ class GearPlace(Node):
     """
     self.get_logger().info("moving to joint position: "+", ".joint([str(val) for val in target_position]))
 
-    request = MoveToJointPosiiton.Request()
+    request = MoveToJointPosition.Request()
     request.joint_positions = target_position
 
     future = self.move_to_joint_position_client.call_async(request)
@@ -1040,7 +1040,7 @@ class GearPlace(Node):
     if not future.done():
         raise Error("Timeout reached when moving to joint position")
 
-    result: MoveToJointPosiiton.Response
+    result: MoveToJointPosition.Response
     result = future.result()
 
     self.current_camera_angle = result.angle
