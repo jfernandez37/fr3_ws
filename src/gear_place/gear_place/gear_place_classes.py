@@ -43,7 +43,8 @@ X_OFFSET = 0.038  # offset from the camera to the gripper
 Y_OFFSET = 0.03
 Z_TO_TABLE = -0.247
 Z_CAMERA_OFFSET = 0.0435
-
+X_DEPTH_TO_COLOR = [(389,467),(347,402),(331,376),(349,405),(360,422)]
+Y_DEPTH_TO_COLOR = [(177,148),(204,191),(146,103),(275,300),(238,241)]
 
 class Error(Exception):
   def __init__(self, value: str):
@@ -69,7 +70,28 @@ def rotate_points_around_angle(x_val : float, y_val : float, angle : float):
     return x_val * cos(angle) - y_val * sin(angle),x_val * sin(angle) + y_val * cos(angle)
 
 def convert_color_to_depth(point : tuple):
-    return (ceil(point[0]*42/65+5671/65),ceil(point[1]*27/43+3615/43))
+    estimated_x_vals, estimated_y_vals = [], []
+    for i in range(len(X_DEPTH_TO_COLOR)-1):
+        for j in range(i+1,len(X_DEPTH_TO_COLOR)):
+            if i!=j:
+                estimated_x_vals.append((X_DEPTH_TO_COLOR[j][1]-X_DEPTH_TO_COLOR[i][1])
+                                        /(X_DEPTH_TO_COLOR[j][0]-X_DEPTH_TO_COLOR[i][0])
+                                        *(point[0]-X_DEPTH_TO_COLOR[i][0])+X_DEPTH_TO_COLOR[i][1])
+                estimated_x_vals.append((X_DEPTH_TO_COLOR[i][1]-X_DEPTH_TO_COLOR[j][1])
+                                        /(X_DEPTH_TO_COLOR[i][0]-X_DEPTH_TO_COLOR[j][0])
+                                        *(point[0]-X_DEPTH_TO_COLOR[j][0])+X_DEPTH_TO_COLOR[j][1])
+    
+    for i in range(len(Y_DEPTH_TO_COLOR)-1):
+        for j in range(i+1,len(Y_DEPTH_TO_COLOR)):
+            if i!=j:
+                estimated_y_vals.append((Y_DEPTH_TO_COLOR[j][1]-Y_DEPTH_TO_COLOR[i][1])
+                                        /(Y_DEPTH_TO_COLOR[j][0]-Y_DEPTH_TO_COLOR[i][0])
+                                        *(point[0]-Y_DEPTH_TO_COLOR[i][0])+Y_DEPTH_TO_COLOR[i][1])
+                estimated_y_vals.append((Y_DEPTH_TO_COLOR[i][1]-Y_DEPTH_TO_COLOR[j][1])
+                                        /(Y_DEPTH_TO_COLOR[i][0]-Y_DEPTH_TO_COLOR[j][0])
+                                        *(point[0]-Y_DEPTH_TO_COLOR[j][0])+Y_DEPTH_TO_COLOR[j][1])
+
+    return (sum(estimated_x_vals)//len(estimated_x_vals),sum(estimated_y_vals)//len(estimated_y_vals))
 
 class GearPlace(Node):
   def __init__(self):
