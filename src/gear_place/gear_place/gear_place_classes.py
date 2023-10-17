@@ -1034,7 +1034,6 @@ class GearPlace(Node):
     
     for i in range(7):
         request.joint_positions[i] = target_position[i]
-        self.get_logger().info(f"request.joint_positions[{i}] = {request.joint_positions[i]}")
 
     future = self.move_to_joint_position_client.call_async(request)
 
