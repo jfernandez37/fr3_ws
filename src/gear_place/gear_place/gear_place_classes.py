@@ -85,7 +85,7 @@ def convert_color_to_depth(point : tuple):
                         for i in range(len(Y_DEPTH_TO_COLOR)) for j in range(len(Y_DEPTH_TO_COLOR))
                         if i != j]
 
-    return (sum(estimated_x_vals)//len(estimated_x_vals),sum(estimated_y_vals)//len(estimated_y_vals))
+    return (int(round(sum(estimated_x_vals)/len(estimated_x_vals),0)),int(round(sum(estimated_y_vals)/len(estimated_y_vals),0)))
 
 class GearPlace(Node):
   def __init__(self):
