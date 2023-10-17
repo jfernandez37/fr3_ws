@@ -86,10 +86,10 @@ def convert_color_to_depth(point : tuple):
             if i!=j:
                 estimated_y_vals.append((Y_DEPTH_TO_COLOR[j][1]-Y_DEPTH_TO_COLOR[i][1])
                                         /(Y_DEPTH_TO_COLOR[j][0]-Y_DEPTH_TO_COLOR[i][0])
-                                        *(point[0]-Y_DEPTH_TO_COLOR[i][0])+Y_DEPTH_TO_COLOR[i][1])
+                                        *(point[1]-Y_DEPTH_TO_COLOR[i][0])+Y_DEPTH_TO_COLOR[i][1])
                 estimated_y_vals.append((Y_DEPTH_TO_COLOR[i][1]-Y_DEPTH_TO_COLOR[j][1])
                                         /(Y_DEPTH_TO_COLOR[i][0]-Y_DEPTH_TO_COLOR[j][0])
-                                        *(point[0]-Y_DEPTH_TO_COLOR[j][0])+Y_DEPTH_TO_COLOR[j][1])
+                                        *(point[1]-Y_DEPTH_TO_COLOR[j][0])+Y_DEPTH_TO_COLOR[j][1])
 
     return (sum(estimated_x_vals)//len(estimated_x_vals),sum(estimated_y_vals)//len(estimated_y_vals))
 
