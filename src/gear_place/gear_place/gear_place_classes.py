@@ -1046,7 +1046,8 @@ class GearPlace(Node):
     result: MoveToJointPosition.Response
     result = future.result()
 
-    self.current_camera_angle = result.angle
+    if not result.success:
+        raise Error("Unable to move to the given joint positions")
     
   def _call_rotate_single_joint(self,joint : int, angle : float, radians : bool):
       """
