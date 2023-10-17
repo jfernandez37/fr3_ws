@@ -356,10 +356,6 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
   */
   double angle = get_camera_angle();
   double time = 1.0;
-  double initial_pose[7];
-  for(int i = 0; i < 7; i++){
-      initial_pose[i]=joint_state_msg_.position[i];
-  }
   try{
     sleep(1.0);
     put_down_force(request->force);
@@ -376,23 +372,6 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
     }
     open_gripper();
     move_robot_cartesian(0.0,0.0, 0.01, default_velocity_, default_acceleration_);
-    try
-    {
-      MotionGenerator motion_generator(0.2,
-      {{initial_pose[0],initial_pose[1],initial_pose[2],
-      initial_pose[3],initial_pose[4],initial_pose[5], initial_pose[6]}}
-      , current_state_);
-
-      read_state_.lock();
-      robot_->control(motion_generator);
-      read_state_.unlock();
-    }
-    catch (const franka::Exception &e)
-    {
-      response->success = false;
-      RCLCPP_WARN_STREAM(get_logger(), "Franka Exception: " << e.what());
-      return;
-    }
   }
   catch (CommanderError &e)
   {
