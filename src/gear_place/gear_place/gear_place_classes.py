@@ -662,12 +662,11 @@ class GearPlace(Node):
     for movment in distances_from_home:
         self.get_logger().info("Movement: " + str(movment))
 
-    self._call_move_to_named_pose_service("home")
     last_point = [0, 0]
     offset_needed = True
     low_gear_threshold = 0.0275
     high_gear_thershold = 0.041
-    self._call_move_cartesian_service(0.0,0.0,-0.1,0.15,0.2)
+    self._call_move_cartesian_service(0.0,0.0,-0.08,0.15,0.2)
     for gear_point in distances_from_home:  # loops through the movements to the gears
         move = [
             gear_point[i] - last_point[i] for i in range(2)
