@@ -667,7 +667,7 @@ class GearPlace(Node):
     offset_needed = True
     low_gear_threshold = 0.0275
     high_gear_thershold = 0.041
-    self._call_move_cartesian_service(0.0,0.0,-0.16,0.15,0.2)
+    self._call_move_cartesian_service(0.0,0.0,-0.1,0.15,0.2)
     for gear_point in distances_from_home:  # loops through the movements to the gears
         move = [
             gear_point[i] - last_point[i] for i in range(2)
