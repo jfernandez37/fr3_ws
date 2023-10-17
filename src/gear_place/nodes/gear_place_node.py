@@ -20,7 +20,7 @@ def main(args=None):
         # sleep(1.0)
         # supervisor._call_rotate_single_joint(6,-pi/2,True)
         # supervisor._call_move_cartesian_service(0.0,0.05,0.0,0.15,0.2)
-        supervisor._call_multiple_gears_single_scan(gear_width)
+        # supervisor._call_multiple_gears_single_scan(gear_width)
         # supervisor._call_pick_up_multiple_gears(gear_width)
 
         # supervisor._call_move_to_named_pose_service("above_conveyor")
