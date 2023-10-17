@@ -70,24 +70,16 @@ def rotate_points_around_angle(x_val : float, y_val : float, angle : float):
     return x_val * cos(angle) - y_val * sin(angle),x_val * sin(angle) + y_val * cos(angle)
 
 def convert_color_to_depth(point : tuple):
-    estimated_x_vals, estimated_y_vals = [], []
-    for i in range(len(X_DEPTH_TO_COLOR)-1):
-        for j in range(i+1,len(X_DEPTH_TO_COLOR)):
-            estimated_x_vals.append((X_DEPTH_TO_COLOR[j][1]-X_DEPTH_TO_COLOR[i][1])
-                                    /(X_DEPTH_TO_COLOR[j][0]-X_DEPTH_TO_COLOR[i][0])
-                                    *(point[0]-X_DEPTH_TO_COLOR[i][0])+X_DEPTH_TO_COLOR[i][1])
-            estimated_x_vals.append((X_DEPTH_TO_COLOR[i][1]-X_DEPTH_TO_COLOR[j][1])
-                                    /(X_DEPTH_TO_COLOR[i][0]-X_DEPTH_TO_COLOR[j][0])
-                                    *(point[0]-X_DEPTH_TO_COLOR[j][0])+X_DEPTH_TO_COLOR[j][1])
-    
-    for i in range(len(Y_DEPTH_TO_COLOR)-1):
-        for j in range(i+1,len(Y_DEPTH_TO_COLOR)):
-            estimated_y_vals.append((Y_DEPTH_TO_COLOR[j][1]-Y_DEPTH_TO_COLOR[i][1])
-                                    /(Y_DEPTH_TO_COLOR[j][0]-Y_DEPTH_TO_COLOR[i][0])
-                                    *(point[1]-Y_DEPTH_TO_COLOR[i][0])+Y_DEPTH_TO_COLOR[i][1])
-            estimated_y_vals.append((Y_DEPTH_TO_COLOR[i][1]-Y_DEPTH_TO_COLOR[j][1])
-                                    /(Y_DEPTH_TO_COLOR[i][0]-Y_DEPTH_TO_COLOR[j][0])
-                                    *(point[1]-Y_DEPTH_TO_COLOR[j][0])+Y_DEPTH_TO_COLOR[j][1])
+    estimated_x_vals = [(X_DEPTH_TO_COLOR[j][1]-X_DEPTH_TO_COLOR[i][1])
+                        /(X_DEPTH_TO_COLOR[j][0]-X_DEPTH_TO_COLOR[i][0])
+                        *(point[0]-X_DEPTH_TO_COLOR[i][0])+X_DEPTH_TO_COLOR[i][1]
+                        for i in range(len(X_DEPTH_TO_COLOR)) for j in range(len(X_DEPTH_TO_COLOR))
+                        if i != j]
+    estimated_y_vals = [(Y_DEPTH_TO_COLOR[j][1]-Y_DEPTH_TO_COLOR[i][1])
+                        /(Y_DEPTH_TO_COLOR[j][0]-Y_DEPTH_TO_COLOR[i][0])
+                        *(point[1]-Y_DEPTH_TO_COLOR[i][0])+Y_DEPTH_TO_COLOR[i][1]
+                        for i in range(len(Y_DEPTH_TO_COLOR)) for j in range(len(Y_DEPTH_TO_COLOR))
+                        if i != j]
 
     return (sum(estimated_x_vals)//len(estimated_x_vals),sum(estimated_y_vals)//len(estimated_y_vals))
 
