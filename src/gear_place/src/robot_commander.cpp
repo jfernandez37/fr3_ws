@@ -121,7 +121,7 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
               std::placeholders::_1, std::placeholders::_2));
   
   get_joint_positions_srv_ = this->create_service<gear_place_interfaces::srv::GetJointPositions>(
-    "get_joint_posiitons",
+    "get_joint_positions",
     std::bind(&RobotCommander::get_joint_positions_cb_, this,
               std::placeholders::_1, std::placeholders::_2));
 
