@@ -23,7 +23,8 @@ from gear_place_interfaces.srv import (
   GetCameraAngle,
   MoveCartesianAngle,
   RotateSingleJoint,
-  MoveToJointPosiiton
+  MoveToJointPosiiton,
+  GetJointPositions
 )
 
 from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
@@ -84,6 +85,9 @@ class GearPlace(Node):
       # Current angle
       self.current_camera_angle = 0.0
 
+      # Current joint positions
+      self.current_joint_positions = []
+
     # TODO
       # Camera to end effector transform
     #   cam_to_ee_tranform = self.tf_buffer.lookup_transform("fr3_hand","camera_mount", rclpy.time.Time())
@@ -104,6 +108,7 @@ class GearPlace(Node):
       self.move_cartesian_angle_client = self.create_client(MoveCartesianAngle, "move_cartesian_angle")
       self.rotate_single_joint_client = self.create_client(RotateSingleJoint, "rotate_single_joint")
       self.move_to_joint_position_client = self.create_client(MoveToJointPosiiton, "move_to_joint_position")
+      self.get_joint_positions_client = self.create_client(GetJointPositions, "get_joint_positions")
 
   def wait(self, duration: float):
       start = self.get_clock().now()
@@ -475,6 +480,8 @@ class GearPlace(Node):
       updated_radius_vals = {}
       while gears_found == 0:
           for ind in range(len(robot_moves)+1):  # loops through the scanning positions
+              self._call_get_joint_positions()
+              print("Current joint positions: " + ", ".join([str(val) for val in self.current_joint_positions]))
               self._call_get_camera_angle()
               self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
               for _ in range(2):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
@@ -589,7 +596,9 @@ class GearPlace(Node):
             )
             last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
         #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
+          self._call_get_joint_positions()
           self._call_put_down_force(0.1)
+          self._call_move_to_joint_position(self.current_joint_positions)
           offset_needed = False
 
   def _call_multiple_gears_single_scan(self, object_width : float):
@@ -716,7 +725,9 @@ class GearPlace(Node):
           )
           last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
       #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
+        self._call_get_joint_positions()
         self._call_put_down_force(0.1)
+        self._call_move_to_joint_position(self.current_joint_positions)
         offset_needed = False
   
   def _call_multiple_gears_rotated_scan(self, object_width : float):
@@ -1068,9 +1079,27 @@ class GearPlace(Node):
 
       if not result.success:
           raise Error("Unable to rotate joint to given angle")
+      
+  def _call_get_joint_positions(self):
+      """
+      Calls the get_camera_angle callback
+      """
+      self.get_logger().info("Getting joint positions")
 
+      request = GetJointPositions.Request()
 
-    
+      future = self.get_joint_positions_client.call_async(request)
+
+      rclpy.spin_until_future_complete(self,future,timeout_sec=2)
+
+      if not future.done():
+          raise Error("Timeout reached when getting joint positions")
+
+      result: GetJointPositions.Response
+      result = future.result()
+
+      self.current_joint_positions = result.joint_positions
+
   def _calculate_world_pose(self, frame_id: str) -> Pose:
         # Lookup transform from world to frame_id
         try:
@@ -1080,6 +1109,7 @@ class GearPlace(Node):
             raise Error("Unable to transform between frames")
         
         return convert_transform_to_pose(t)
+
 
 
 class ConveyorClass(Node):
