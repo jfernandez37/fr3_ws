@@ -115,7 +115,7 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
     std::bind(&RobotCommander::rotate_single_joint_cb_, this,
               std::placeholders::_1, std::placeholders::_2));
   
-  move_to_joint_posiiton_srv_ = this->create_service<gear_place_interfaces::srv::MoveToJointPosition>(
+  move_to_joint_position_srv_ = this->create_service<gear_place_interfaces::srv::MoveToJointPosition>(
     "move_to_joint_position",
     std::bind(&RobotCommander::move_to_joint_position_cb_, this,
               std::placeholders::_1, std::placeholders::_2));
@@ -699,13 +699,13 @@ void RobotCommander::move_to_joint_position_cb_(const std::shared_ptr<gear_place
                           std::shared_ptr<gear_place_interfaces::srv::MoveToJointPosition::Response> response){
     double target_pose[7];
     for(int i = 0; i < 7; i++){
-        initial_pose[i]=request->joint_positions[i];
+        target_pose[i]=request->joint_positions[i];
     }
     try
     {
       MotionGenerator motion_generator(0.2,
-      {{initial_pose[0],initial_pose[1],initial_pose[2],
-      initial_pose[3],initial_pose[4],initial_pose[5], initial_pose[6]}}
+      {{target_pose[0],target_pose[1],target_pose[2],
+      target_pose[3],target_pose[4],target_pose[5], target_pose[6]}}
       , current_state_);
 
       read_state_.lock();
