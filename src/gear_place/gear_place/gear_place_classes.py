@@ -799,7 +799,7 @@ class GearPlace(Node):
     last_point = [0, 0]
     offset_needed = False
     low_gear_threshold = 0.0275
-    high_gear_thershold = 0.041
+    high_gear_thershold = 0.045
     for gear_point in distances_from_home:  # loops through the movements to the gears
         move = [
             gear_point[i] - last_point[i] for i in range(2)
