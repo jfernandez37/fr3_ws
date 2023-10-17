@@ -481,7 +481,7 @@ class GearPlace(Node):
       while gears_found == 0:
           for ind in range(len(robot_moves)+1):  # loops through the scanning positions
               self._call_get_joint_positions()
-              print("Current joint positions: " + ", ".join([str(val) for val in self.current_joint_positions]))
+              self.get_logger().info("Current joint positions: " + ", ".join([str(val) for val in self.current_joint_positions]))
               self._call_get_camera_angle()
               self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
               for _ in range(2):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
@@ -1031,7 +1031,9 @@ class GearPlace(Node):
     self.get_logger().info("Moving to joint position: "+", ".join([str(val) for val in target_position]))
 
     request = MoveToJointPosition.Request()
-    request.joint_positions = target_position
+    
+    for i in range(7):
+        request.joint_positions[i] = target_position[i]
 
     future = self.move_to_joint_position_client.call_async(request)
 
