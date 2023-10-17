@@ -70,6 +70,10 @@ def rotate_points_around_angle(x_val : float, y_val : float, angle : float):
     return x_val * cos(angle) - y_val * sin(angle),x_val * sin(angle) + y_val * cos(angle)
 
 def convert_color_to_depth(point : tuple):
+    """
+    predicts the corresponding depth point from a given color point using multiple linear functions
+    built from already found points
+    """
     estimated_x_vals = [(X_DEPTH_TO_COLOR[j][1]-X_DEPTH_TO_COLOR[i][1])
                         /(X_DEPTH_TO_COLOR[j][0]-X_DEPTH_TO_COLOR[i][0])
                         *(point[0]-X_DEPTH_TO_COLOR[i][0])+X_DEPTH_TO_COLOR[i][1]
