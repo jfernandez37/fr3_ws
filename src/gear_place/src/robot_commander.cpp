@@ -119,6 +119,11 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
     "move_to_joint_position",
     std::bind(&RobotCommander::move_to_joint_position_cb_, this,
               std::placeholders::_1, std::placeholders::_2));
+  
+  get_joint_positions_srv_ = this->create_service<gear_place_interfaces::srv::GetJointPositions>(
+    "get_joint_posiitons",
+    std::bind(&RobotCommander::get_joint_positions_cb_, this,
+              std::placeholders::_1, std::placeholders::_2));
 
   std::srand(std::time(0)); // use current time as seed for random generator
 }
@@ -721,4 +726,15 @@ void RobotCommander::move_to_joint_position_cb_(const std::shared_ptr<gear_place
     }
     response->success = true;
 
+}
+
+void RobotCommander::get_joint_positions_cb_(const std::shared_ptr<gear_place_interfaces::srv::GetJointPositions::Request>request,
+                          std::shared_ptr<gear_place_interfaces::srv::GetJointPositions::Response> response){
+  /*
+  Responds with the joint positions
+  */
+  (void) request;
+  for(int i = 0; i < 7; i++){
+      response->joint_positions[i]=joint_state_msg_.position[i];
+  }
 }
