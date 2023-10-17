@@ -23,7 +23,7 @@ from gear_place_interfaces.srv import (
   GetCameraAngle,
   MoveCartesianAngle,
   RotateSingleJoint,
-  MoveToJointPosiiton,
+  MoveToJointPosition,
   GetJointPositions
 )
 
