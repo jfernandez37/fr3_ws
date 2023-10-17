@@ -1028,7 +1028,7 @@ class GearPlace(Node):
     """
     Calls the move_to_joint_position callback
     """
-    self.get_logger().info("moving to joint position: "+", ".joint([str(val) for val in target_position]))
+    self.get_logger().info("Moving to joint position: "+", ".join([str(val) for val in target_position]))
 
     request = MoveToJointPosition.Request()
     request.joint_positions = target_position
