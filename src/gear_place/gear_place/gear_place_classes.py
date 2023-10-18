@@ -708,7 +708,7 @@ class GearPlace(Node):
         correct_coordinates = [0.0,0.0,0.0]
         counter = 0
         last = -0.001
-        while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <3:
+        while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <5:
           counter+=1
           multiple_gears = MultipleGears(connected)
           rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
@@ -730,7 +730,7 @@ class GearPlace(Node):
           correct_coordinates = correct_gear
           self._call_move_cartesian_service(last*-1,0.0,0.0,0.15,0.2)
           last*=-1
-          last_point=(last_point[0]+0.001,last_point[1]+0.001)
+          last_point=(last_point[0]+last*-1,last_point[1])
         self.get_logger().info(", ".join([str(val) for val in correct_gear]))
         if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
             self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
