@@ -19,6 +19,7 @@ class FindObjectColor(Node):
         self.gy = None
         self.ex = None
         self.ey = None
+        self.radius = 0.0
         self.thresh_image = None
         self.declare_parameter("thresh_value", 50)
         self.subscription = self.create_subscription(

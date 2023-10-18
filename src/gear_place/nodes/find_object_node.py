@@ -30,6 +30,8 @@ def main(args=None):
     print("Estimated depth coordinates from color coordinates: ("
           +", ".join([str(val) for val in convert_color_to_depth(find_object_color.ret_cent_gear())])
           +")")
+    print("Depth radius: "+str(find_object.radius))
+    print("Color radius: "+str(find_object_color.radius))
     cv2.imshow("Depth image", find_object.thresh_image)
     cv2.imshow("Color image", find_object_color.thresh_image)
     cv2.waitKey(0)
