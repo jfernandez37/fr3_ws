@@ -230,9 +230,6 @@ class MultipleGearsColor(Node):
                 for ind in self.closest_to_circle(contours):
                     valid_contours.append(ind)
                     (x, y), radius = cv2.minEnclosingCircle(contours[ind])
-                    print("vals before conversion: "+str(x)+", "+str(y))
-                    # x,y = convert_color_to_depth((int(x),int(y)))
-                    print("vals after conversion: "+str(x)+", "+str(y))
                     radius = int(radius)
                     if (int(x), int(y)) not in self.g_centers:
                         self.g_centers.append((int(x), int(y)))
