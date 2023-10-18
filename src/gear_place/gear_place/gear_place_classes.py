@@ -32,12 +32,11 @@ from gear_place.transform_utils import convert_transform_to_pose
 
 from geometry_msgs.msg import Pose, Point
 
-from gear_place.find_object import FindObject
 from gear_place.find_object_color import FindObjectColor
 from gear_place.object_depth import ObjectDepth
 from gear_place.moving_gear import MovingGear
 from gear_place.multiple_gears import MultipleGears, MultipleGearsColor
-from math import sqrt, sin, cos, pi, ceil
+from math import sqrt, sin, cos, pi
 
 X_OFFSET = 0.038  # offset from the camera to the gripper
 Y_OFFSET = 0.03
