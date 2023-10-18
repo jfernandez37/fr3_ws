@@ -650,14 +650,14 @@ class GearPlace(Node):
                 if coord.count(0.0)==0:  # adds coordinates if not all 0. Duplicates are removed later
                     distances_from_home.append(
                         (
-                            -1 * coord[1]+X_OFFSET,
-                            -1 * coord[0]+Y_OFFSET,
+                            -1 * coord[1],
+                            -1 * coord[0],
                             -1 * coord[2]
                         )
                     )
                     updated_radius_vals[(
-                            -1 * coord[1]+X_OFFSET,
-                            -1 * coord[0]+Y_OFFSET,
+                            -1 * coord[1],
+                            -1 * coord[0],
                             -1 * coord[2])] = object_depth.radius_vals[coord]
             multiple_gears_color.destroy_node()
 
