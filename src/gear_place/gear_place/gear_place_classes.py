@@ -577,7 +577,7 @@ class GearPlace(Node):
             )  # moves above the gear
           else:
             self._call_move_cartesian_service(
-                move[0], move[1], 0.0, 0.15,0.2
+                move[0]-X_OFFSET, move[1]-Y_OFFSET, 0.0, 0.15,0.2
             )  # moves above the gear
           correct_coordinates = [0.0,0.0,0.0]
           counter = 0
