@@ -42,8 +42,8 @@ X_OFFSET = 0.038  # offset from the camera to the gripper
 Y_OFFSET = 0.03
 Z_TO_TABLE = -0.247
 Z_CAMERA_OFFSET = 0.0435
-X_DEPTH_TO_COLOR = [(389,467),(347,402),(331,376),(349,405),(360,422)] # points made using depth values and color values
-Y_DEPTH_TO_COLOR = [(177,148),(204,191),(146,103),(275,300),(238,241)]
+X_DEPTH_TO_COLOR = [(467,389),(402,347),(376,331),(405,349),(422,360)] # points made using depth values and color values
+Y_DEPTH_TO_COLOR = [(148,177),(191,204),(103,146),(300,275),(241,238)]
 
 class Error(Exception):
   def __init__(self, value: str):
