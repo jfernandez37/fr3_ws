@@ -726,7 +726,7 @@ class GearPlace(Node):
               rclpy.spin_once(multiple_gears)
               connected = multiple_gears.connected
           print([convert_color_to_depth(point) for point in multiple_gears.g_centers])
-          print({convert_color_to_depth(point):[convert_color_to_depth(p) for p in multiple_gears_color.dist_points[point]] for point in multiple_gears_color.g_centers})
+          print({convert_color_to_depth(point):[convert_color_to_depth(p) for p in multiple_gears_color.dist_points[point]] for point in multiple_gears_color.g_centers}.keys())
           object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears.g_centers],
                                      {convert_color_to_depth(point):[convert_color_to_depth(p) for p in multiple_gears_color.dist_points[point]] for point in multiple_gears_color.g_centers})
           rclpy.spin_once(object_depth)  # Gets the distance from the camera
