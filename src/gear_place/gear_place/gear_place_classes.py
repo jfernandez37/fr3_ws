@@ -577,7 +577,7 @@ class GearPlace(Node):
             )  # moves above the gear
           else:
             self._call_move_cartesian_service(
-                move[0] move[1], 0.0, 0.15,0.2
+                move[0], move[1], 0.0, 0.15,0.2
             )  # moves above the gear
           correct_coordinates = [0.0,0.0,0.0]
           counter = 0
@@ -642,7 +642,7 @@ class GearPlace(Node):
                 multiple_gears_color = MultipleGearsColor(connected)
                 rclpy.spin_once(multiple_gears_color)
                 connected = multiple_gears_color.connected
-            object_depth = ObjectDepth(multiple_gears_color.g_centers, multiple_gears_color.dist_points)
+            object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears.g_centers], {})
             rclpy.spin_once(object_depth)  # Gets the distance from the camera
             object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
             for coord in object_depth.coordinates:
@@ -721,7 +721,7 @@ class GearPlace(Node):
               multiple_gears = MultipleGearsColor(connected)
               rclpy.spin_once(multiple_gears)
               connected = multiple_gears.connected
-          object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
+          object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears.g_centers], {})
           rclpy.spin_once(object_depth)  # Gets the distance from the camera
           multiple_gears.destroy_node()
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
