@@ -709,10 +709,10 @@ class GearPlace(Node):
           self._call_move_cartesian_service(
               move[0], move[1], 0.0, 0.15,0.2
           )  # moves above the gear
-        correct_coordinates = [0.0,0.0,0.0]
+        correct_gear = [0.0,0.0,0.0]
         counter = 0
         last = -0.001
-        while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <5:
+        while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <5:
           counter+=1
           multiple_gears = MultipleGearsColor(connected)
           rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
@@ -734,7 +734,6 @@ class GearPlace(Node):
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
           closest_gears =  object_depth.coordinates
           correct_gear = closest_gears[self.closest_to_center(closest_gears)]
-          correct_coordinates = correct_gear
           if correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]]:
             self._call_move_cartesian_service(last*-1,0.0,0.0,0.15,0.2)
             last*=-1
