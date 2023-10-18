@@ -396,7 +396,7 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
     std::cout<<current_position[2]-initial_position_[2]<<std::endl;
   }
   double z_distance = current_position[2]-initial_position_[2];
-  if ((abs(z_distance)<=0.00006 || (z_distance>0.0)) && counter_>=100){
+  if ((abs(z_distance)<=0.00003 || (z_distance>0.0)) && counter_>=100){
     std::cout <<"100"<<std::endl;
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
