@@ -710,7 +710,7 @@ class GearPlace(Node):
         last = -0.001
         while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <5:
           counter+=1
-          multiple_gears = MultipleGears(connected)
+          multiple_gears = MultipleGearsColor(connected)
           rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
           connected = multiple_gears.connected
           while (
@@ -718,7 +718,7 @@ class GearPlace(Node):
               or not multiple_gears.ran
           ):  # loops until it has run and until there are no None values
               multiple_gears.destroy_node()
-              multiple_gears = MultipleGears(connected)
+              multiple_gears = MultipleGearsColor(connected)
               rclpy.spin_once(multiple_gears)
               connected = multiple_gears.connected
           object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
