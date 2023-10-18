@@ -41,7 +41,6 @@ from math import sqrt, sin, cos, pi, ceil
 
 X_OFFSET = 0.038  # offset from the camera to the gripper
 Y_OFFSET = 0.03
-OFFSETS = [0.38,0.03]
 Z_TO_TABLE = -0.247
 Z_CAMERA_OFFSET = 0.0435
 X_DEPTH_TO_COLOR = [(389,467),(347,402),(331,376),(349,405),(360,422)] # points made using depth values and color values
@@ -434,7 +433,7 @@ class GearPlace(Node):
       """
       Returns the coordinates of the gear which is closest to the center of the camera
       """
-      vals = [sqrt(sum([(arr[i][j]+OFFSETS[j])**2 for j in range(2)])) for i in range(len(arr))]
+      vals = [sqrt(sum([(arr[i][j]+[X_OFFSET,Y_OFFSET][j])**2 for j in range(2)])) for i in range(len(arr))]
       return vals.index(min(vals))
 
   def remove_identical_points(self, arr : list, radius_vals : list) -> list:
