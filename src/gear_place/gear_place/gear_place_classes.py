@@ -649,14 +649,14 @@ class GearPlace(Node):
                 if coord.count(0.0)==0:  # adds coordinates if not all 0. Duplicates are removed later
                     distances_from_home.append(
                         (
-                            -1 * coord[1]+X_OFFSET,
-                            -1 * coord[0]+Y_OFFSET,
+                            -1 * coord[1],
+                            -1 * coord[0],
                             -1 * coord[2]
                         )
                     )
                     updated_radius_vals[(
-                            -1 * coord[1]+X_OFFSET,
-                            -1 * coord[0]+Y_OFFSET,
+                            -1 * coord[1],
+                            -1 * coord[0],
                             -1 * coord[2])] = object_depth.radius_vals[coord]
             multiple_gears_color.destroy_node()
 
@@ -703,7 +703,7 @@ class GearPlace(Node):
           )  # moves above the gear
         else:
           self._call_move_cartesian_service(
-              move[0]-X_OFFSET, move[1]-Y_OFFSET, 0.0, 0.15,0.2
+              move[0], move[1], 0.0, 0.15,0.2
           )  # moves above the gear
         correct_coordinates = [0.0,0.0,0.0]
         counter = 0
