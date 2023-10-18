@@ -728,18 +728,19 @@ class GearPlace(Node):
           closest_gears =  object_depth.coordinates
           correct_gear = closest_gears[self.closest_to_center(closest_gears)]
           correct_coordinates = correct_gear
-          self._call_move_cartesian_service(last*-1,0.0,0.0,0.15,0.2)
-          last*=-1
-          last_point=(last_point[0]+last*-1,last_point[1])
+          if correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]]:
+            self._call_move_cartesian_service(last*-1,0.0,0.0,0.15,0.2)
+            last*=-1
+            last_point=(last_point[0]+last*-1,last_point[1])
         self.get_logger().info(", ".join([str(val) for val in correct_gear]))
         if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
             self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
             self._call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2], object_width,True)
         else:
           self._call_pick_up_gear_coord_service(
-              True, -1*correct_gear[1] + X_OFFSET, -1*correct_gear[0]+Y_OFFSET,-1*correct_gear[2], object_width, True
+              True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width, True
           )
-          last_point=(last_point[0]+-1*correct_gear[1]+X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
+          last_point=(last_point[0]+-1*correct_gear[1],last_point[1]+-1*correct_gear[0])
       #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
         self._call_get_joint_positions()
         self._call_put_down_force(0.1)
