@@ -86,6 +86,9 @@ def convert_color_to_depth(point : tuple):
 
     return (int(round(sum(estimated_x_vals)/len(estimated_x_vals),0)),int(round(sum(estimated_y_vals)/len(estimated_y_vals),0)))
 
+def convert_color_to_depth_radius(radius : float):
+    return 0.735831781 * radius
+
 class GearPlace(Node):
   def __init__(self):
       super().__init__('gear_place')
@@ -643,7 +646,7 @@ class GearPlace(Node):
                 rclpy.spin_once(multiple_gears_color)
                 connected = multiple_gears_color.connected
             object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears_color.g_centers], 
-                                       {convert_color_to_depth(point):multiple_gears.dist_points[point] for point in multiple_gears_color.g_centers})
+                                       {convert_color_to_depth(point):convert_color_to_depth_radius(multiple_gears.dist_points[point]) for point in multiple_gears_color.g_centers})
             rclpy.spin_once(object_depth)  # Gets the distance from the camera
             object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
             for coord in object_depth.coordinates:
@@ -723,7 +726,7 @@ class GearPlace(Node):
               rclpy.spin_once(multiple_gears)
               connected = multiple_gears.connected
           object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears.g_centers],
-                                     {convert_color_to_depth(point):multiple_gears.dist_points[point] for point in multiple_gears_color.g_centers})
+                                     {convert_color_to_depth(point):convert_color_to_depth_radius(multiple_gears.dist_points[point]) for point in multiple_gears_color.g_centers})
           rclpy.spin_once(object_depth)  # Gets the distance from the camera
           multiple_gears.destroy_node()
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
