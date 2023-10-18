@@ -8,8 +8,26 @@ from math import ceil
 def dist_between_points(points : list):
     return __import__("math").sqrt(sum([(points[0][i]-points[1][i])**2 for i in range(2)]))
 
+X_DEPTH_TO_COLOR = [(389,467),(347,402),(331,376),(349,405),(360,422)] # points made using depth values and color values
+Y_DEPTH_TO_COLOR = [(177,148),(204,191),(146,103),(275,300),(238,241)]
+
 def convert_color_to_depth(point : tuple):
-    return (ceil(point[0]*42/65+5671/65),ceil(point[1]*27/43+3615/43))
+    """
+    predicts the corresponding depth point from a given color point using multiple linear functions
+    built from already found points
+    """
+    estimated_x_vals = [(X_DEPTH_TO_COLOR[j][1]-X_DEPTH_TO_COLOR[i][1])
+                        /(X_DEPTH_TO_COLOR[j][0]-X_DEPTH_TO_COLOR[i][0])
+                        *(point[0]-X_DEPTH_TO_COLOR[i][0])+X_DEPTH_TO_COLOR[i][1]
+                        for i in range(len(X_DEPTH_TO_COLOR)) for j in range(len(X_DEPTH_TO_COLOR))
+                        if i != j]
+    estimated_y_vals = [(Y_DEPTH_TO_COLOR[j][1]-Y_DEPTH_TO_COLOR[i][1])
+                        /(Y_DEPTH_TO_COLOR[j][0]-Y_DEPTH_TO_COLOR[i][0])
+                        *(point[1]-Y_DEPTH_TO_COLOR[i][0])+Y_DEPTH_TO_COLOR[i][1]
+                        for i in range(len(Y_DEPTH_TO_COLOR)) for j in range(len(Y_DEPTH_TO_COLOR))
+                        if i != j]
+
+    return (int(round(sum(estimated_x_vals)/len(estimated_x_vals),0)),int(round(sum(estimated_y_vals)/len(estimated_y_vals),0)))
 
 def main(args=None):
     rclpy.init(args=args)
