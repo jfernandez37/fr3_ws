@@ -432,7 +432,7 @@ class GearPlace(Node):
       """
       Returns the coordinates of the gear which is closest to the center of the camera
       """
-      vals = [sqrt(sum([(arr[i][j]+[X_OFFSET,Y_OFFSET][j])**2 for j in range(2)])) for i in range(len(arr))]
+      vals = [sqrt(sum([(arr[i][j]-[X_OFFSET,Y_OFFSET][j])**2 for j in range(2)])) for i in range(len(arr))]
       return vals.index(min(vals))
 
   def remove_identical_points(self, arr : list, radius_vals : list) -> list:
