@@ -18,7 +18,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include <cmath>
 #include <Eigen/Core>
 #include <mutex>
 
@@ -405,4 +404,56 @@ franka::Torques ForceMotionGenerator::operator()(const franka::RobotState &robot
     return franka::MotionFinished(franka::Torques(tau_d_array));
   }
   return tau_d_array;
+}
+
+//----------------------------------------------------------------------
+//                  Smooth Cartesian Motion Generator
+//----------------------------------------------------------------------
+
+class SmoothCartesianMotionGenerator
+{
+public:
+  SmoothCartesianMotionGenerator(double x, double y, double z, double maximum_velocity, double acceleration, franka::RobotState &state);
+  franka::CartesianPose operator()(const franka::RobotState &robot_state, franka::Duration period);
+
+private:
+  double time_ = 0.0;
+  double v_max_;
+  double a_;
+  geometry_msgs::msg::Vector3 d_;
+  double t1_, t2_, t3_, t4_, t5_;
+  double d_norm_;
+  std::array<double, 16> initial_pose_;
+
+  geometry_msgs::msg::Vector3 calculate_displacement(double time);
+  double norm(geometry_msgs::msg::Vector3);
+  bool is_finished() { return time_ >= t5_; };
+
+  franka::RobotState &state_;
+};
+
+SmoothCartesianMotionGenerator::SmoothCartesianMotionGenerator(double x, double y, double z, double maximum_velocity, double acceleration, franka::RobotState &state)
+    : v_max_(maximum_velocity), a_(acceleration), state_(state)
+{
+  d_.x = x;
+  d_.y = y;
+  d_.z = z;
+  d_norm_ = norm(d_);
+  t1_ = sqrt(v_max_/2 * 1/a_);
+  t2_ = 2*sqrt(v_max_/2 * 1/a_);
+  t3_ = d_norm_ / v_max_;
+  t4_ = t3_+t1_;
+  t5_ = t4_+t1_;
+  if ((t1_+t2_) * v_max_ > d_norm_)
+  {
+    if(abs(x)+abs(y)+abs(z)!=0.1){
+      RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Entered values not possible. Lowering v_max_");
+    }
+    v_max_ = d_norm_ / (t1_+t2_) * 0.9;
+    t1_ = sqrt(v_max_/2 * 1/a_);
+    t2_ = 2*sqrt(v_max_/2 * 1/a_);
+    t3_ = d_norm_ / v_max_;
+    t4_ = t3_+t1_;
+    t5_ = t4_+t1_;
+  }
 }
