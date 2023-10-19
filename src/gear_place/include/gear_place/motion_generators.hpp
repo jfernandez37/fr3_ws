@@ -499,7 +499,7 @@ geometry_msgs::msg::Vector3 SmoothCartesianMotionGenerator::calculate_displaceme
     + (t3_-t2_)*v_max_
     + ((-1*a_/3*pow(time-t3_,3)+v_max_*time)-(v_max_*t3_));
   }
-  else if (time <= t5_)
+  else if (time < t5_)
   {
     std::cout << "t5_"<< std::endl;
     delta = a_/3 * pow(t1_,3) 
