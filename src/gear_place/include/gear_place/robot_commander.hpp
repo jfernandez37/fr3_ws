@@ -18,6 +18,7 @@
 #include <gear_place_interfaces/srv/rotate_single_joint.hpp>
 #include <gear_place_interfaces/srv/move_to_joint_position.hpp>
 #include <gear_place_interfaces/srv/get_joint_positions.hpp>
+#include <gear_place_interfaces/srv/move_cartesian_smooth.hpp>
 
 #include <std_msgs/msg/string.hpp>
 #include <std_msgs/msg/float64.hpp>
@@ -87,6 +88,7 @@ private:
   rclcpp::Service<gear_place_interfaces::srv::RotateSingleJoint>::SharedPtr rotate_single_joint_srv_;
   rclcpp::Service<gear_place_interfaces::srv::MoveToJointPosition>::SharedPtr move_to_joint_position_srv_;
   rclcpp::Service<gear_place_interfaces::srv::GetJointPositions>::SharedPtr get_joint_positions_srv_;
+  rclcpp::Service<gear_place_interfaces::srv::MoveCartesianSmooth>::SharedPtr move_cartesian_smooth_srv_;
 
   rclcpp::CallbackGroup::SharedPtr publisher_cb_group_;
 
@@ -152,6 +154,8 @@ private:
                           std::shared_ptr<gear_place_interfaces::srv::MoveToJointPosition::Response> response);
   void get_joint_positions_cb_(const std::shared_ptr<gear_place_interfaces::srv::GetJointPositions::Request> request,
                           std::shared_ptr<gear_place_interfaces::srv::GetJointPositions::Response> response);
+  void move_cartesian_smooth_cb_(const std::shared_ptr<gear_place_interfaces::srv::MoveCartesianSmooth::Request> request,
+                          std::shared_ptr<gear_place_interfaces::srv::MoveCartesianSmooth::Response> response);
 
   // Methods
   void move_robot_to_frame(KDL::Frame);
