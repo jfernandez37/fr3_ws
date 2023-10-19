@@ -457,7 +457,7 @@ SmoothCartesianMotionGenerator::SmoothCartesianMotionGenerator(double x, double 
     t5_ = t4_+t1_;
   }
   std::cout << "Real distance: " << d_norm_ << std::endl;
-  std::cout << "Distance after math: " << a_/3 * pow(t1_,3) 
+  std::cout << "calculated distance using times: " << a_/3 * pow(t1_,3) 
     + ((v_max_*t2_)-(-1*a_/3*pow(t1_-t2_,3)+v_max_*t1_)) 
     + (t3_-t2_)*v_max_
     + ((-1*a_/3*pow(t4_-t3_,3)+v_max_*t4_)-(v_max_*t3_))
