@@ -585,7 +585,7 @@ void RobotCommander::grasp_object(double object_width)
   else{
     return;
   }
-  throw(std::exception("Unable to grasp object"));
+  throw(std::out_of_range("Unable to grasp object"));
 }
 
 void RobotCommander::set_default_behavior()
