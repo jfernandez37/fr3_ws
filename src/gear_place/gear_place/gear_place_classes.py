@@ -436,7 +436,10 @@ class GearPlace(Node):
       Returns the coordinates of the gear which is closest to the center of the camera
       """
       vals = [sqrt(sum([(arr[i][j]-[X_OFFSET,Y_OFFSET][j])**2 for j in range(2)])) for i in range(len(arr))]
-      return vals.index(min(vals))
+      try:
+        return vals.index(min(vals))
+      except:
+          return -1
 
   def remove_identical_points(self, arr : list, radius_vals : list) -> list:
       """
@@ -582,9 +585,9 @@ class GearPlace(Node):
             self._call_move_cartesian_service(
                 move[0], move[1], 0.0, 0.15,0.2
             )  # moves above the gear
-          correct_coordinates = [0.0,0.0,0.0]
+          correct_gear = [0.0,0.0,0.0]
           counter = 0
-          while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <3:
+          while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <3:
             counter+=1
             multiple_gears = MultipleGears(connected)
             rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
@@ -602,8 +605,10 @@ class GearPlace(Node):
             multiple_gears.destroy_node()
             object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
             closest_gears =  object_depth.coordinates
-            correct_gear = closest_gears[self.closest_to_center(closest_gears)]
-            correct_coordinates = correct_gear
+            try:
+                correct_gear = closest_gears[self.closest_to_center(closest_gears)]
+            except:
+                correct_gear = [0 for _ in range(3)]
           self.get_logger().info(", ".join([str(val) for val in correct_gear]))
           if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
               self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
