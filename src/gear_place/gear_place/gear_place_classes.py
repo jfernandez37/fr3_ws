@@ -106,6 +106,9 @@ class GearPlace(Node):
       # Current joint positions
       self.current_joint_positions = []
 
+      # Camera connected
+      self.connected = False
+
     # TODO
       # Camera to end effector transform
     #   cam_to_ee_tranform = self.tf_buffer.lookup_transform("fr3_hand","camera_mount", rclpy.time.Time())
@@ -497,7 +500,6 @@ class GearPlace(Node):
       y_movements = [a[1] for a in robot_moves]  # just the y direction movements
       self.get_logger().info(f"Scanning for gears")
       gears_found = 0
-      connected = False
       updated_radius_vals = {}
       while gears_found == 0:
           for ind in range(len(robot_moves)+1):  # loops through the scanning positions
@@ -506,17 +508,17 @@ class GearPlace(Node):
               self._call_get_camera_angle()
               self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
               for _ in range(2):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
-                  multiple_gears = MultipleGears(connected)
+                  multiple_gears = MultipleGears(self.connected)
                   rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
-                  connected = multiple_gears.connected
+                  self.connected = multiple_gears.connected
                   while (
                       sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
                       or not multiple_gears.ran
                   ):  # loops until it has run and until there are no None values
                       multiple_gears.destroy_node()
-                      multiple_gears = MultipleGears(connected)
+                      multiple_gears = MultipleGears(self.connected)
                       rclpy.spin_once(multiple_gears)
-                      connected = multiple_gears.connected
+                      self.connected = multiple_gears.connected
                   object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
                   rclpy.spin_once(object_depth)  # Gets the distance from the camera
                   object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
@@ -589,17 +591,17 @@ class GearPlace(Node):
           counter = 0
           while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <3:
             counter+=1
-            multiple_gears = MultipleGears(connected)
+            multiple_gears = MultipleGears(self.connected)
             rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
-            connected = multiple_gears.connected
+            self.connected = multiple_gears.connected
             while (
                 sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
                 or not multiple_gears.ran
             ):  # loops until it has run and until there are no None values
                 multiple_gears.destroy_node()
-                multiple_gears = MultipleGears(connected)
+                multiple_gears = MultipleGears(self.connected)
                 rclpy.spin_once(multiple_gears)
-                connected = multiple_gears.connected
+                self.connected = multiple_gears.connected
             object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
             rclpy.spin_once(object_depth)  # Gets the distance from the camera
             multiple_gears.destroy_node()
@@ -631,23 +633,22 @@ class GearPlace(Node):
     distances_from_home = []
     self.get_logger().info(f"Scanning for gears")
     gears_found = 0
-    connected = False
     updated_radius_vals = {}
     while gears_found == 0:
         self._call_get_camera_angle()
         self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
         for _ in range(3):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
-            multiple_gears_color = MultipleGearsColor(connected)
+            multiple_gears_color = MultipleGearsColor(self.connected)
             rclpy.spin_once(multiple_gears_color)  # finds multiple gears if there are multiple
-            connected = multiple_gears_color.connected
+            self.connected = multiple_gears_color.connected
             while (
                 sum([cent.count(None) for cent in multiple_gears_color.g_centers]) != 0
                 or not multiple_gears_color.ran
             ):  # loops until it has run and until there are no None values
                 multiple_gears_color.destroy_node()
-                multiple_gears_color = MultipleGearsColor(connected)
+                multiple_gears_color = MultipleGearsColor(self.connected)
                 rclpy.spin_once(multiple_gears_color)
-                connected = multiple_gears_color.connected
+                self.connected = multiple_gears_color.connected
             object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears_color.g_centers], 
                                        {convert_color_to_depth(point):[convert_color_to_depth(p) for p in multiple_gears_color.dist_points[point]] for point in multiple_gears_color.g_centers})
             rclpy.spin_once(object_depth)  # Gets the distance from the camera
@@ -714,17 +715,17 @@ class GearPlace(Node):
           )  # moves above the gear
         correct_gear = [0.0,0.0,0.0]
         counter = 0
-        multiple_gears = MultipleGearsColor(connected)
+        multiple_gears = MultipleGearsColor(self.connected)
         rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
-        connected = multiple_gears.connected
+        self.connected = multiple_gears.connected
         while (
             sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
             or not multiple_gears.ran
         ):  # loops until it has run and until there are no None values
             multiple_gears.destroy_node()
-            multiple_gears = MultipleGearsColor(connected)
+            multiple_gears = MultipleGearsColor(self.connected)
             rclpy.spin_once(multiple_gears)
-            connected = multiple_gears.connected
+            self.connected = multiple_gears.connected
         while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <15:
           counter+=1
           object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears.g_centers],
@@ -762,7 +763,6 @@ class GearPlace(Node):
     distances_from_home = []
     self.get_logger().info(f"Scanning for gears")
     gears_found = 0
-    connected = False
     updated_radius_vals = {}
     while gears_found == 0:
         for i in range(2):
@@ -770,17 +770,17 @@ class GearPlace(Node):
             self._call_move_to_named_pose_service(pose_names[i])
             self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
             for _ in range(10):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
-                multiple_gears = MultipleGears(connected)
+                multiple_gears = MultipleGears(self.connected)
                 rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
-                connected = multiple_gears.connected
+                self.connected = multiple_gears.connected
                 while (
                     sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
                     or not multiple_gears.ran
                 ):  # loops until it has run and until there are no None values
                     multiple_gears.destroy_node()
-                    multiple_gears = MultipleGears(connected)
+                    multiple_gears = MultipleGears(self.connected)
                     rclpy.spin_once(multiple_gears)
-                    connected = multiple_gears.connected
+                    self.connected = multiple_gears.connected
                 object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
                 rclpy.spin_once(object_depth)  # Gets the distance from the camera
                 object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
@@ -849,17 +849,17 @@ class GearPlace(Node):
         counter = 0
         while (correct_coordinates in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_coordinates)==0.0) and counter <3:
           counter+=1
-          multiple_gears = MultipleGears(connected)
+          multiple_gears = MultipleGears(self.connected)
           rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
-          connected = multiple_gears.connected
+          self.connected = multiple_gears.connected
           while (
               sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
               or not multiple_gears.ran
           ):  # loops until it has run and until there are no None values
               multiple_gears.destroy_node()
-              multiple_gears = MultipleGears(connected)
+              multiple_gears = MultipleGears(self.connected)
               rclpy.spin_once(multiple_gears)
-              connected = multiple_gears.connected
+              self.connected = multiple_gears.connected
           object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
           rclpy.spin_once(object_depth)  # Gets the distance from the camera
           multiple_gears.destroy_node()
