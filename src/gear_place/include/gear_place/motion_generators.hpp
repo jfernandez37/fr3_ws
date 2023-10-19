@@ -457,3 +457,11 @@ SmoothCartesianMotionGenerator::SmoothCartesianMotionGenerator(double x, double 
     t5_ = t4_+t1_;
   }
 }
+
+double SmoothCartesianMotionGenerator::norm(geometry_msgs::msg::Vector3 v)
+{
+  /*
+  For calculating the total distance
+  */
+  return sqrt(pow(v.x, 2) + pow(v.y, 2) + pow(v.z, 2));
+}
