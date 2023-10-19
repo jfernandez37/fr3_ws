@@ -734,7 +734,8 @@ class GearPlace(Node):
           multiple_gears.destroy_node()
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
           closest_gears =  object_depth.coordinates
-          correct_gear = closest_gears[self.closest_to_center(closest_gears)]
+          correct_gear_index = self.closest_to_center(closest_gears)
+          correct_gear = closest_gears[self.closest_to_center(closest_gears)] if correct_gear_index<0 else [0 for _ in range(3)]
           if correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]]:
             self._call_move_cartesian_service(last,0.0,0.0,0.15,0.2)
             last_point=(last_point[0]+last,last_point[1])
