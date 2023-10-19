@@ -124,6 +124,11 @@ RobotCommander::RobotCommander(const std::string &robot_ip)
     "get_joint_positions",
     std::bind(&RobotCommander::get_joint_positions_cb_, this,
               std::placeholders::_1, std::placeholders::_2));
+  
+  move_cartesian_smooth_srv_ = this->create_service<gear_place_interfaces::srv::MoveCartesianSmooth>(
+    "move_cartesian_smooth",
+    std::bind(&RobotCommander::move_cartesian_smooth_cb_, this,
+              std::placeholders::_1, std::placeholders::_2));
 
   std::srand(std::time(0)); // use current time as seed for random generator
 }
