@@ -510,6 +510,7 @@ geometry_msgs::msg::Vector3 SmoothCartesianMotionGenerator::calculate_displaceme
   }
   else
   {
+    std::cout << "finished"<< std::endl;
     return d_;
   }
   delta_vals.x = delta / d_norm_ * d_.x;
