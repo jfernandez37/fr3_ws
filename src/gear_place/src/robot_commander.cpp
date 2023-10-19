@@ -726,3 +726,56 @@ void RobotCommander::get_joint_positions_cb_(const std::shared_ptr<gear_place_in
       response->joint_positions[i]=joint_state_msg_.position[i];
   }
 }
+
+void RobotCommander::move_cartesian_smooth_cb_(
+    const std::shared_ptr<gear_place_interfaces::srv::MoveCartesianSmooth::Request> request,
+    std::shared_ptr<gear_place_interfaces::srv::MoveCartesianSmooth::Response> response)
+{
+  /*
+  Callback for the move_robot_cartesian_smooth function
+  */
+  try
+  {
+    move_robot_cartesian_smooth(request->x, request->y, request->z, request->max_velocity, request->acceleration);
+  }
+  catch (CommanderError &e)
+  {
+    std::string err = e.what();
+    RCLCPP_ERROR(get_logger(), err.c_str());
+    response->success = false;
+    return;
+  }
+  response->success = true;
+}
+
+void RobotCommander::move_robot_cartesian_smooth(double x, double y, double z, double maximum_velocity, double acceleration)
+{
+  /*
+  Makes an SmoothCartesianMotionGenerator object with the paramaters and starts a control loop with it
+  */
+  robot_->setCollisionBehavior({{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}},
+                            {{100.0, 100.0, 100.0, 100.0, 100.0, 100.0}});
+  std::unique_ptr<SmoothCartesianMotionGenerator> smooth_cartesian_motion_generator;
+  try
+  {
+    smooth_cartesian_motion_generator = std::make_unique<SmoothCartesianMotionGenerator>(x, y, z, maximum_velocity, acceleration, current_state_);
+  }
+  catch (InvalidParameters &ip)
+  {
+    throw CommanderError(ip.what());
+  }
+
+  try
+  {
+    read_state_.lock();
+    robot_->control(*smooth_cartesian_motion_generator);
+    read_state_.unlock();
+  }
+  catch (const franka::Exception &e)
+  {
+    std::string ex = e.what();
+    throw CommanderError("Franka Exception in smooth cartesian motion: " + ex);
+  }
+}
