@@ -725,7 +725,7 @@ class GearPlace(Node):
             multiple_gears = MultipleGearsColor(connected)
             rclpy.spin_once(multiple_gears)
             connected = multiple_gears.connected
-        while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <20:
+        while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <200:
           counter+=1
           object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears.g_centers],
                                      {convert_color_to_depth(point):[convert_color_to_depth(p) for p in multiple_gears.dist_points[point]] for point in multiple_gears.g_centers})
