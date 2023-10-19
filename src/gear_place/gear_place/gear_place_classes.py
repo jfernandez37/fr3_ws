@@ -691,7 +691,7 @@ class GearPlace(Node):
     offset_needed = True
     low_gear_threshold = 0.03
     high_gear_thershold = 0.045
-    self._call_move_cartesian_service(0.0,0.0,-0.16,0.15,0.2)
+    self._call_move_cartesian_smooth_service(0.0,0.0,-0.16,0.15,0.2)
     for gear_point in distances_from_home:  # loops through the movements to the gears
         move = [
             gear_point[i] - last_point[i] for i in range(2)
@@ -708,11 +708,11 @@ class GearPlace(Node):
         self._call_open_gripper_service()  # opens the gripper
         
         if offset_needed:
-          self._call_move_cartesian_service(
+          self._call_move_cartesian_smooth_service(
               move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
           )  # moves above the gear
         else:
-          self._call_move_cartesian_service(
+          self._call_move_cartesian_smooth_service(
               move[0], move[1], 0.0, 0.15,0.2
           )  # moves above the gear
         correct_gear = [0.0,0.0,0.0]
