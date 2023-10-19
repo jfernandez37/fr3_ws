@@ -456,12 +456,6 @@ SmoothCartesianMotionGenerator::SmoothCartesianMotionGenerator(double x, double 
     t4_ = t3_+t1_;
     t5_ = t4_+t1_;
   }
-  std::cout << "Real distance: " << d_norm_ << std::endl;
-  std::cout << "Distance after math: " << a_/3 * pow(t1_,3) 
-    + ((v_max_*t2_)-(-1*a_/3*pow(t1_-t2_,3)+v_max_*t1_)) 
-    + (t3_-t2_)*v_max_
-    + ((-1*a_/3*pow(t4_-t3_,3)+v_max_*t4_)-(v_max_*t3_))
-    + (a_/3*pow(t5_-t5_,3)-a_/3*pow(t4_-t5_,3)) << std:: endl;
 }
 
 double SmoothCartesianMotionGenerator::norm(geometry_msgs::msg::Vector3 v)
@@ -481,25 +475,21 @@ geometry_msgs::msg::Vector3 SmoothCartesianMotionGenerator::calculate_displaceme
   double delta;
   if (time <= t1_)
   {
-    std::cout << "t1_"<< std::endl;
     delta = a_/3 * pow(time,3);
   }
   else if (time <= t2_)
   {
-    std::cout << "t2_"<< std::endl;
     delta = a_/3 * pow(t1_,3) 
     + ((-1*a_/3*pow(time-t2_,3)+v_max_*time)-(-1*a_/3*pow(t1_-t2_,3)+v_max_*t1_));
   }
   else if (time <= t3_)
   {
-    std::cout << "t3_"<< std::endl;
     delta = a_/3 * pow(t1_,3) 
     + ((v_max_*t2_)-(-1*a_/3*pow(t1_-t2_,3)+v_max_*t1_)) 
     + (time-t2_)*v_max_;
   }
   else if (time <= t4_)
   {
-    std::cout << "t4_"<< std::endl;
     delta = a_/3 * pow(t1_,3) 
     + ((v_max_*t2_)-(-1*a_/3*pow(t1_-t2_,3)+v_max_*t1_)) 
     + (t3_-t2_)*v_max_
@@ -507,7 +497,6 @@ geometry_msgs::msg::Vector3 SmoothCartesianMotionGenerator::calculate_displaceme
   }
   else if (time < t5_)
   {
-    std::cout << "t5_"<< std::endl;
     delta = a_/3 * pow(t1_,3) 
     + ((v_max_*t2_)-(-1*a_/3*pow(t1_-t2_,3)+v_max_*t1_)) 
     + (t3_-t2_)*v_max_
@@ -516,11 +505,6 @@ geometry_msgs::msg::Vector3 SmoothCartesianMotionGenerator::calculate_displaceme
   }
   else
   {
-    std::cout << "finished"<< std::endl;
-    return d_;
-  }
-  if (delta>=d_norm_){
-    std::cout <<"Issue still present"<<std::endl;
     return d_;
   }
   std::cout << delta << "\t"<<d_norm_<< std::endl;
