@@ -465,3 +465,50 @@ double SmoothCartesianMotionGenerator::norm(geometry_msgs::msg::Vector3 v)
   */
   return sqrt(pow(v.x, 2) + pow(v.y, 2) + pow(v.z, 2));
 }
+
+geometry_msgs::msg::Vector3 SmoothCartesianMotionGenerator::calculate_displacement(double time)
+{
+  /*
+  Calculates the next coordinates for the movement
+  */
+  geometry_msgs::msg::Vector3 delta_vals;
+  double delta;
+  if (time <= t1_)
+  {
+    delta = a_/3 * pow(time,3);
+  }
+  else if (time <= t2_)
+  {
+    delta = a_/3 * pow(t1_,3) 
+    + ((-1*a_/3*pow(time-t2_,3)+v_max_*time)-(-1*a_/3*pow(t1_-t2_,3)+v_max_*t1_));
+  }
+  else if (time <= t3_)
+  {
+    delta = a_/3 * pow(t1_,3) 
+    + ((v_max_*t2_)-(-1*a_/3*pow(t1_-t2_,3)+v_max_*t1_)) 
+    + (time-t2_)*v_max_;
+  }
+  else if (time <= t4_)
+  {
+    delta = a_/3 * pow(t1_,3) 
+    + ((v_max_*t2_)-(-1*a_/3*pow(t1_-t2_,3)+v_max_*t1_)) 
+    + (t3_-t2_)*v_max_
+    + ((-1*a_/3*pow(time-t3_,3)+v_max_*time)-(v_max_*t3_));
+  }
+  else if (time <= t5_)
+  {
+    delta = a_/3 * pow(t1_,3) 
+    + ((v_max_*t2_)-(-1*a_/3*pow(t1_-t2_,3)+v_max_*t1_)) 
+    + (t3_-t2_)*v_max_
+    + ((-1*a_/3*pow(t4_-t3_,3)+v_max_*time)-(v_max_*t3_))
+    + (a_/3*pow(time-t5_,3)-a_/3*pow(t4_-t5_,3));
+  }
+  else
+  {
+    return d_;
+  }
+  delta_vals.x = delta / d_norm_ * d_.x;
+  delta_vals.y = delta / d_norm_ * d_.y;
+  delta_vals.z = delta / d_norm_ * d_.z;
+  return delta_vals;
+}
