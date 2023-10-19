@@ -512,3 +512,34 @@ geometry_msgs::msg::Vector3 SmoothCartesianMotionGenerator::calculate_displaceme
   delta_vals.z = delta / d_norm_ * d_.z;
   return delta_vals;
 }
+
+franka::CartesianPose SmoothCartesianMotionGenerator::operator()(const franka::RobotState &robot_state, franka::Duration period)
+{
+  /*
+  Function used for the control loop
+  Uses the calculate_displacement function above to calculate the next distance and move to it
+  */
+  time_ += period.toSec();
+
+  if (time_ == 0.0)
+  {
+    initial_pose_ = robot_state.O_T_EE_c;
+  }
+
+  state_ = robot_state;
+
+  std::array<double, 16> new_pose = initial_pose_;
+
+  geometry_msgs::msg::Vector3 delta_vals = calculate_displacement(time_);
+
+  new_pose[12] += delta_vals.x;
+  new_pose[13] += delta_vals.y;
+  new_pose[14] += delta_vals.z;
+
+  if (is_finished())
+  {
+    return franka::MotionFinished(new_pose);
+  }
+
+  return new_pose;
+}
