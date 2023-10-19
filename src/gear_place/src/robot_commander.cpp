@@ -437,13 +437,13 @@ void RobotCommander::pick_up_gear_cb_(
   try
   {
     if (request->x != 0 && request->y != 0){
-      move_robot_cartesian(request->x, request->y, 0, default_velocity_, default_acceleration_);
+      move_robot_cartesian_smooth(request->x, request->y, 0, default_velocity_, default_acceleration_);
       sleep(wait_time_);
     }
-    move_robot_cartesian(0, 0, request->z, default_velocity_, default_acceleration_);
+    move_robot_cartesian_smooth(0, 0, request->z, default_velocity_, default_acceleration_);
     grasp_object(request->object_width);
     if(request->default_up){
-      move_robot_cartesian(0, 0, 0.247, default_velocity_, default_acceleration_);
+      move_robot_cartesian_smooth(0, 0, 0.247, default_velocity_, default_acceleration_);
     }
     else{
       move_robot_cartesian(0, 0, -1 * request->z + 0.0022, default_velocity_, default_acceleration_);
