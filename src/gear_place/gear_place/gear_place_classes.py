@@ -725,7 +725,7 @@ class GearPlace(Node):
             multiple_gears = MultipleGearsColor(connected)
             rclpy.spin_once(multiple_gears)
             connected = multiple_gears.connected
-        while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <200:
+        while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <15:
           counter+=1
           object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears.g_centers],
                                      {convert_color_to_depth(point):[convert_color_to_depth(p) for p in multiple_gears.dist_points[point]] for point in multiple_gears.g_centers})
@@ -738,7 +738,8 @@ class GearPlace(Node):
         self.get_logger().info(", ".join([str(val) for val in correct_gear]))
         if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
             self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
-            self._call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2], object_width,True)
+            self._call_pick_up_gear_coord_service(False,0.005,0.0, gear_point[2], object_width,True)
+            last_point=(last_point[0]+0.005,last_point[1])
         else:
           self._call_pick_up_gear_coord_service(
               True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width, True
