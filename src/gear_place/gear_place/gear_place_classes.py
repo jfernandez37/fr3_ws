@@ -605,10 +605,8 @@ class GearPlace(Node):
             multiple_gears.destroy_node()
             object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
             closest_gears =  object_depth.coordinates
-            try:
-                correct_gear = closest_gears[self.closest_to_center(closest_gears)]
-            except:
-                correct_gear = [0 for _ in range(3)]
+            correct_gear_index = self.closest_to_center(closest_gears)
+            correct_gear = closest_gears[self.closest_to_center(closest_gears)] if correct_gear_index<0 else [0 for _ in range(3)]
           self.get_logger().info(", ".join([str(val) for val in correct_gear]))
           if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
               self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
