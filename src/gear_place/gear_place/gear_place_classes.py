@@ -1140,33 +1140,10 @@ class GearPlace(Node):
       """
       Calls the move_cartesian_smooth callback
       """
-      self.get_logger().info(f"Moving {x},{y},{z}")def _call_move_cartesian_service(self, x : float, y : float, z : float, v_max : float, acc : float):
-      """
-      Calls the move_cartesian callback
-      """
       self.get_logger().info(f"Moving {x},{y},{z}")
 
-      request = MoveCartesian.Request()
-
+      request = MoveCartesianSmooth.Request()
       request.x = x
-      request.y = y
-      request.z = z
-      request.max_velocity = v_max
-      request.acceleration = acc
-
-      future = self.move_cartesian_client.call_async(request)
-
-      rclpy.spin_until_future_complete(self, future, timeout_sec=10)
-
-      if not future.done():
-          raise Error("Timeout reached when calling move_cartesian service")
-
-      result: MoveCartesian.Response
-      result = future.result()
-
-      if not result.success:
-          self.get_logger().error(f"Unable to move {x},{y},{z}")
-          raise Error("Unable to move to location")
       request.y = y
       request.z = z
       request.max_velocity = v_max
