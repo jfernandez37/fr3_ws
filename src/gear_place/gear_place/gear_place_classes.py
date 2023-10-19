@@ -714,7 +714,7 @@ class GearPlace(Node):
           )  # moves above the gear
         correct_gear = [0.0,0.0,0.0]
         counter = 0
-        last = 0.001
+        last = 0.01
         while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <5:
           counter+=1
           multiple_gears = MultipleGearsColor(connected)
