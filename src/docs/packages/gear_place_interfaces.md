@@ -14,3 +14,5 @@ ROS2 package containing all of the services and messages necessary for the ROS2 
 * `get_camera_angle` - Uses the joint rotation positions to find what angle the camera is currenty in relation to the base of the robot.
 * `move_cartesian_angle` - Similar to move cartesian, but it does so in relation to the camera instead of in relation to the base of the robot. This has to be used when the camera is above the conveyor belt.
 * `rotate_single_joint` - Rotates a single joint to clockwise to the given degree. The move is the shortest possible path. Mainly used to rotate the base or the end effector.
+* `move_to_joint_position` - Given 7 joint rotation values, the robot moves to that new position. This means that at any point, the program can get the joint positions, move the robot to another position, and return to the exact beginning position.
+* `get_joint_positions` - This allows the current joint positions to be accessed in the python code so checkpoints can be saved for the move_to_joint_position
