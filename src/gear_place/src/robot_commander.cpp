@@ -376,7 +376,7 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
       time = duration.count();
     }
     open_gripper();
-    move_robot_cartesian(0.0,0.0, 0.01, default_velocity_, default_acceleration_);
+    move_robot_cartesian_smooth(0.0,0.0, 0.01, default_velocity_, default_acceleration_);
   }
   catch (CommanderError &e)
   {
@@ -475,11 +475,11 @@ void RobotCommander::put_gear_down_cb_(
   */
   try
   {
-    move_robot_cartesian(0, 0, request->z + 0.002, default_velocity_, default_acceleration_);
+    move_robot_cartesian_smooth(0, 0, request->z + 0.002, default_velocity_, default_acceleration_);
     sleep(wait_time_);
     open_gripper();
     sleep(wait_time_);
-    move_robot_cartesian(0, 0, -1 * request->z - 0.002, default_velocity_, default_acceleration_);
+    move_robot_cartesian_smooth(0, 0, -1 * request->z - 0.002, default_velocity_, default_acceleration_);
   }
   catch (CommanderError &e)
   {
@@ -502,11 +502,11 @@ void RobotCommander::pick_up_moving_gear_cb_(
   */
   try
   {
-    move_robot_cartesian(0, 0, request->z*3/4, default_velocity_, default_acceleration_);
+    move_robot_cartesian_smooth(0, 0, request->z*3/4, default_velocity_, default_acceleration_);
     move_robot_cartesian_angle(request->x, request->y, 0, default_velocity_, default_acceleration_, request->angle);
-    move_robot_cartesian(0, 0, request->z/4+0.001, default_velocity_, default_acceleration_);
+    move_robot_cartesian_smooth(0, 0, request->z/4+0.001, default_velocity_, default_acceleration_);
     grasp_object(request->object_width);
-    move_robot_cartesian(0, 0, -1 * request->z-0.001, default_velocity_, default_acceleration_);
+    move_robot_cartesian_smooth(0, 0, -1 * request->z-0.001, default_velocity_, default_acceleration_);
   }
   catch (CommanderError &e)
   {
@@ -576,7 +576,7 @@ void RobotCommander::grasp_object(double object_width)
     for(int i = 0; i < 2; i++){
       open_gripper();
       RCLCPP_ERROR(get_logger(),"Unable to grasp object");
-      move_robot_cartesian(0.0,0.0,-0.001, default_velocity_, default_acceleration_);
+      move_robot_cartesian_smooth(0.0,0.0,-0.001, default_velocity_, default_acceleration_);
       if (!gripper_->grasp(object_width, gripper_speed_, gripper_force_))
       {
           open_gripper();

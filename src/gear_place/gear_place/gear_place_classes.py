@@ -244,7 +244,7 @@ class GearPlace(Node):
               c += 1
 
               if c % 5 == 0:
-                  self._call_move_cartesian_service(
+                  self._call_move_cartesian_smooth_service(
                       0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
                   )  # Moves to the center of the cart
                   sleep(1)
@@ -540,7 +540,7 @@ class GearPlace(Node):
                               )] = object_depth.radius_vals[coord]
                   multiple_gears.destroy_node()
               if ind != len(robot_moves):
-                  self._call_move_cartesian_service(
+                  self._call_move_cartesian_smooth_service(
                       robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
                   )  # moves to the next position
 
@@ -582,11 +582,11 @@ class GearPlace(Node):
           self._call_open_gripper_service()  # opens the gripper
           
           if offset_needed:
-            self._call_move_cartesian_service(
+            self._call_move_cartesian_smooth_service(
                 move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
             )  # moves above the gear
           else:
-            self._call_move_cartesian_service(
+            self._call_move_cartesian_smooth_service(
                 move[0], move[1], 0.0, 0.15,0.2
             )  # moves above the gear
           correct_gear = [0.0,0.0,0.0]
@@ -840,11 +840,11 @@ class GearPlace(Node):
         self._call_open_gripper_service()  # opens the gripper
         
         if offset_needed:
-          self._call_move_cartesian_service(
+          self._call_move_cartesian_smooth_service(
               move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
           )  # moves above the gear
         else:
-          self._call_move_cartesian_service(
+          self._call_move_cartesian_smooth_service(
               move[0], move[1], 0.0, 0.15,0.2
           )  # moves above the gear
         correct_coordinates = [0.0,0.0,0.0]
@@ -869,7 +869,7 @@ class GearPlace(Node):
           closest_gears =  object_depth.coordinates
           correct_gear = closest_gears[self.closest_to_center(closest_gears)]
           correct_coordinates = correct_gear
-          self._call_move_cartesian_service(0.001,0.001,0.0,0.15,0.2)
+          self._call_move_cartesian_smooth_service(0.001,0.001,0.0,0.15,0.2)
           last_point=(last_point[0]+0.001,last_point[1]+0.001)
         self.get_logger().info(", ".join([str(val) for val in correct_gear]))
         if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
