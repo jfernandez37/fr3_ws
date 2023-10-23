@@ -63,13 +63,13 @@ def avg(arr : list) -> float:
 def dist_from_point(x_val : float, y_val : float)->float:
     return sqrt(x_val**2+y_val**2)
 
-def distance_between_two_points(x_vals : list, y_vals : list):
+def distance_between_two_points(x_vals : list, y_vals : list) -> float:
     return abs(dist_from_point(x_vals[1],y_vals[1])-dist_from_point(x_vals[0],y_vals[0]))
 
-def rotate_points_around_angle(x_val : float, y_val : float, angle : float):
+def rotate_points_around_angle(x_val : float, y_val : float, angle : float) -> tuple:
     return x_val * cos(angle) - y_val * sin(angle),x_val * sin(angle) + y_val * cos(angle)
 
-def convert_color_to_depth(point : tuple):
+def convert_color_to_depth(point : tuple) -> tuple:
     """
     predicts the corresponding depth point from a given color point using multiple linear functions
     built from already found points
@@ -87,7 +87,7 @@ def convert_color_to_depth(point : tuple):
 
     return (int(round(sum(estimated_x_vals)/len(estimated_x_vals),0)),int(round(sum(estimated_y_vals)/len(estimated_y_vals),0)))
 
-def convert_color_to_depth_radius(radius : float):
+def convert_color_to_depth_radius(radius : float) -> float:
     return 0.735831781 * radius
 
 class GearPlace(Node):
@@ -436,7 +436,7 @@ class GearPlace(Node):
           min([arr[i][2] for i in range(num_points)])
       )
 
-  def closest_to_center(self, arr : list):
+  def closest_to_center(self, arr : list) -> int:
       """
       Returns the coordinates of the gear which is closest to the center of the camera
       """
