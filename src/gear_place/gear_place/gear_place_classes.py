@@ -424,7 +424,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to pick up gear")
           raise Error("Unable to pick up gear")
 
-  def average_of_points(self, arr : list)-> list:
+  def average_of_points(self, arr : list)-> tuple:
       """
       Takes in a list of points and returns the average of them
       """
