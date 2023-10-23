@@ -229,7 +229,6 @@ class GearPlace(Node):
       """
       Calls the pick_up_gear callback
       """
-      z_movement = Z_TO_TABLE # z distance from the home position to where the gripper can grab the gear
       self.get_logger().info(f"Picking up gear")
       gear_center_target = [0 for _ in range(3)]
       while (
