@@ -445,7 +445,7 @@ class GearPlace(Node):
       except:
           return -1
 
-  def remove_identical_points(self, arr : list, radius_vals : list) -> list:
+  def remove_identical_points(self, arr : list, radius_vals : dict) -> list:
       """
       Removes duplicate coordinates from different positions
       """
