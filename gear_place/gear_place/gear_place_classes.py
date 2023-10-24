@@ -984,7 +984,7 @@ class GearPlace(Node):
 
       self.current_joint_positions = result.joint_positions
 
-  def _calculate_world_pose(self, frame_id: str) -> Pose:
+  def calculate_world_pose(self, frame_id: str) -> Pose:
         # Lookup transform from world to frame_id
         try:
             t = self.tf_buffer.lookup_transform('world', frame_id, rclpy.time.Time())
@@ -1021,7 +1021,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to move {x},{y},{z}")
           raise Error("Unable to move to location")
       
-  def _enable_conveyor_service(self, enable: bool):
+  def enable_conveyor_service(self, enable: bool):
       """
       Calls the enable_conveyor callback
       """
@@ -1047,7 +1047,7 @@ class GearPlace(Node):
       if not result.success:
           raise Error(f"Unable to enable the conveyor belt")
 
-  def _set_conveyor_state_service(self, speed: float, direction: float):
+  def set_conveyor_state_service(self, speed: float, direction: float):
       """
       Calls the set_conveyor_state callback
       """
