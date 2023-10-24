@@ -26,7 +26,7 @@ def main(args=None):
             gear_positions,radius_vals,
             gear_width, 
             "home",
-            ["yellow", "orange", "green"],
+            ["orange"],
             True
         )
         # supervisor.call_move_to_named_pose_service("above_conveyor")
