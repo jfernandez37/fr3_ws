@@ -70,7 +70,10 @@ def read_points(cloud, field_names=None, skip_nans=False, uvs=[]):
     else:
         if uvs:
             for u, v in uvs:
-                yield unpack_from(data, (row_step * v) + (point_step * u))
+                try:
+                    yield unpack_from(data, (row_step * v) + (point_step * u))
+                except:
+                    continue
         else:
             for v in range(height):
                 offset = row_step * v
