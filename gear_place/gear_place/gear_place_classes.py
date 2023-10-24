@@ -553,8 +553,6 @@ class GearPlace(Node):
                 self.call_put_down_force(0.1)
                 self.call_move_to_joint_position(self.current_joint_positions)
                 offset_needed = False
-              else:
-                self.get_logger().info(f"Not picking up {gear_color} gear. Moving on...")
       else:
           low_gear_threshold = 0.03
           high_gear_thershold = 0.045
