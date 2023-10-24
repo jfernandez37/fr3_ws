@@ -514,3 +514,32 @@ for coord in object_depth.coordinates:
                 -1 * coord[2])] = object_depth.radius_vals[coord]
 ```
 Other than these small differences, everything else in the function is the same as `_call_pick_up_multiple_gears` except that the color scan is used instead of the depth scan.
+#_call_multiple_gears_rotated_scan
+This function is not working yet, but two positions are scanned at different angles and then the roobot records their positon in relation to the home position.
+#_call_open_gripper_service
+This funciton calls the service to open the gripper. There are no variables in the request.
+#_call_pick_up_gear_coord_service
+This function picks up a gear given coordinates. Also, using the `offset_bool` parameter, the offset can either be applied or not. Also, using the `default_up` parameter, the robot can move up the default amount or the amount set using the coordinates. This is the request for this service:
+```python
+z_movement = max(
+    Z_TO_TABLE, z + Z_CAMERA_OFFSET
+)  # z distance from the home position to where the gripper can grab the gear
+self.get_logger().info(f"Picking up gear")
+request = PickUpGear.Request()
+
+request.x = x + (X_OFFSET if offset_bool else 0)
+request.y = y + (Y_OFFSET if offset_bool else 0)
+
+request.z = z_movement
+request.object_width = object_width
+request.default_up = default_up
+```
+#_call_put_gear_down_camera
+This function uses the camera to put the gear down. A z value is still asked for as a fail safe so the robot does not move into an object. First, 4 variables are declared, the depth values which record the recorded z values from the camera, the x_center and y_center, which are used to declare the pixels for detection, and a counter so the robot does not scan infinitely if it can not detect the surface below.
+```python
+depth_vals = []
+x_center = 100
+y_center = 100
+c=0
+```
+Then, inside of a loop the `ObjectDepth` class is used 
