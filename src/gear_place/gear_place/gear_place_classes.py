@@ -1179,7 +1179,7 @@ class GearPlace(Node):
       request = EnableConveyor.Request()
       request.enable = enable
 
-      future = self.create_client(EnableConveyor, "enable_conveyor").call_async(
+      future = self.enable_conveyor_client.call_async(
           request
       )
 
@@ -1207,7 +1207,7 @@ class GearPlace(Node):
       request.speed = speed
       request.direction = direction
 
-      future = self.create_client(SetConveyorState, "set_conveyor_state").call_async(
+      future = self.set_conveyor_state_client.call_async(
           request
       )
 
