@@ -537,7 +537,10 @@ class GearPlace(Node):
                   rclpy.spin_once(object_depth)  # Gets the distance from the camera
                   multiple_gears.destroy_node()
                   object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-                  closest_gears =  object_depth.coordinates
+                  closest_gears = [coord 
+                                   for coord in object_depth.coordinates 
+                                   if gear_color == 
+                                   ["yellow", "orange", "green"][sorted([low_gear_threshold, high_gear_thershold,object_depth.radius_vals[coord]]).index(object_depth.radius_vals[coord])]] #ensures that the gear color mateches
                   correct_gear_index = closest_to_center(closest_gears)
                   correct_gear = closest_gears[closest_to_center(closest_gears)] if correct_gear_index>0 else [0 for _ in range(3)]
                 self.get_logger().info(", ".join([str(val) for val in correct_gear]))
