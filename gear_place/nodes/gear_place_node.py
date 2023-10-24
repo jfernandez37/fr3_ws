@@ -11,7 +11,7 @@ def main(args=None):
     try:
         supervisor = GearPlace()
         supervisor.wait(5)
-        # supervisor.call_open_gripper_service()
+        supervisor.call_open_gripper_service()
         # supervisor.call_move_to_named_pose_service("home")
         # supervisor.call_move_to_named_pose_service("high_scan")
         # supervisor.call_pick_up_gear_service(gear_width)
