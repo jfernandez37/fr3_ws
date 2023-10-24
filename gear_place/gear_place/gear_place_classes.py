@@ -488,7 +488,7 @@ class GearPlace(Node):
   def find_distance(self, arr : list) -> float:
       return sqrt(arr[0] ** 2 + arr[1] ** 2)
 
-  def scan_multiple_gears_grid(self,object_width:float)->(list,list):
+  def scan_multiple_gears_grid(self)->(list,dict):
       """
       Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
       """
