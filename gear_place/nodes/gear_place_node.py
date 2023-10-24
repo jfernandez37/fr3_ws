@@ -32,10 +32,10 @@ def main(args=None):
         #     supervisor.call_move_to_named_pose_service("above_conveyor")
 
 
-        supervisor._enable_conveyor_service(True)
-        supervisor._set_conveyor_state_service(speed=10, direction=0)
+        supervisor.enable_conveyor_service(True)
+        supervisor.set_conveyor_state_service(speed=10, direction=0)
         sleep(10)
-        supervisor._enable_conveyor_service(False)
+        supervisor.enable_conveyor_service(False)
 
     except Error as e:
         print(e)
