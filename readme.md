@@ -11,13 +11,18 @@ Work space for Franka Emika FR3 robot ROS2 integration
 
 * Install ROS2 Realsense `sudo apt install ros-$ROS_DISTRO-librealsense2*`
 
-* Clone the workspace
+* Create the workspace
 
-    `git clone https://github.com/jfernandez37/fr3_ws.git`
+    `mkdir -p ~/fr3_ws/src`
 
-* Go into the workspace
+* Navigate into the workspace
 
-    `cd fr3_ws`
+    `cd ~/fr3_ws`
+
+* Clone the package
+
+    `git clone https://github.com/jfernandez37/fr3_ws.git src/gear_place`
+
 
 * Clone the conveyor belt package
 
