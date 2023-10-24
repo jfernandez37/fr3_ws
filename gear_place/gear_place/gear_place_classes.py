@@ -488,7 +488,7 @@ class GearPlace(Node):
   def find_distance(self, arr : list) -> float:
       return sqrt(arr[0] ** 2 + arr[1] ** 2)
 
-  def _call_pick_up_multiple_gears(self, object_width : float):
+  def scan_multiple_gears_grid(self,object_width:float)->(list,list):
       """
       Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
       """
@@ -561,8 +561,11 @@ class GearPlace(Node):
               self._call_move_to_named_pose_service("home")
               self.get_logger().info("No gears found. Trying again")
       self.get_logger().info(
-          f"{len(distances_from_home)} gears found. Picking up the gears"
+          f"{len(distances_from_home)} gears found."
       )  # outputs the number of gears found
+      return distances_from_home,updated_radius_vals
+  
+  def pick_up_multiple_gears_depth(self, distances_from_home: list, updated_radius_vals: list, object_width : float):
       for movment in distances_from_home:
           self.get_logger().info("Movement: " + str(movment))
 
