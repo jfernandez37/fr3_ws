@@ -740,7 +740,7 @@ class GearPlace(Node):
         self.get_logger().info(", ".join([str(val) for val in correct_gear]))
         if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
             self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
-            self._call_pick_up_gear_coord_service(False,0.005,0.0, gear_point[2], object_width,True)
+            self._call_pick_up_gear_coord_service(False,0.005,0.0, gear_point[2]+0.16, object_width,True)
             last_point=(last_point[0]+0.005,last_point[1])
         else:
           self._call_pick_up_gear_coord_service(
