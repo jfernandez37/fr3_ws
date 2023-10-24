@@ -30,6 +30,22 @@ from gear_place_interfaces.srv import (
 
 from conveyor_interfaces.srv import EnableConveyor, SetConveyorState
 from gear_place.transform_utils import convert_transform_to_pose
+from gear_place.gear_place_utilities import (
+    norm, 
+    avg, 
+    dist_from_point, 
+    distance_between_two_points, 
+    rotate_points_around_angle,
+    X_OFFSET,
+    Y_OFFSET,
+    Z_CAMERA_OFFSET,
+    Z_TO_TABLE,
+    convert_color_to_depth,
+    convert_color_to_depth_radius,
+    average_of_points,
+    remove_identical_points,
+    closest_to_center
+  )
 
 from geometry_msgs.msg import Pose, Point
 
@@ -39,56 +55,12 @@ from gear_place.moving_gear import MovingGear
 from gear_place.multiple_gears import MultipleGears, MultipleGearsColor
 from math import sqrt, sin, cos, pi
 
-X_OFFSET = 0.038  # offset from the camera to the gripper
-Y_OFFSET = 0.03
-Z_TO_TABLE = -0.247
-Z_CAMERA_OFFSET = 0.0435
-X_DEPTH_TO_COLOR = [(467,389),(402,347),(376,331),(405,349),(422,360)] # points made using depth values and color values
-Y_DEPTH_TO_COLOR = [(148,177),(191,204),(103,146),(300,275),(241,238)]
-
 class Error(Exception):
   def __init__(self, value: str):
       self.value = value
 
   def __str__(self):
       return repr(self.value)
-
-
-def norm(x: float, y: float, z: float) -> float:
-  return __import__("math").sqrt(x**2 + y**2 + z**2)
-
-def avg(arr : list) -> float:
-    return sum(arr)/len(arr)
-
-def dist_from_point(x_val : float, y_val : float)->float:
-    return sqrt(x_val**2+y_val**2)
-
-def distance_between_two_points(x_vals : list, y_vals : list) -> float:
-    return abs(dist_from_point(x_vals[1],y_vals[1])-dist_from_point(x_vals[0],y_vals[0]))
-
-def rotate_points_around_angle(x_val : float, y_val : float, angle : float) -> tuple:
-    return x_val * cos(angle) - y_val * sin(angle),x_val * sin(angle) + y_val * cos(angle)
-
-def convert_color_to_depth(point : tuple) -> tuple:
-    """
-    predicts the corresponding depth point from a given color point using multiple linear functions
-    built from already found points
-    """
-    estimated_x_vals = [(X_DEPTH_TO_COLOR[j][1]-X_DEPTH_TO_COLOR[i][1])
-                        /(X_DEPTH_TO_COLOR[j][0]-X_DEPTH_TO_COLOR[i][0])
-                        *(point[0]-X_DEPTH_TO_COLOR[i][0])+X_DEPTH_TO_COLOR[i][1]
-                        for i in range(len(X_DEPTH_TO_COLOR)) for j in range(len(X_DEPTH_TO_COLOR))
-                        if i != j]
-    estimated_y_vals = [(Y_DEPTH_TO_COLOR[j][1]-Y_DEPTH_TO_COLOR[i][1])
-                        /(Y_DEPTH_TO_COLOR[j][0]-Y_DEPTH_TO_COLOR[i][0])
-                        *(point[1]-Y_DEPTH_TO_COLOR[i][0])+Y_DEPTH_TO_COLOR[i][1]
-                        for i in range(len(Y_DEPTH_TO_COLOR)) for j in range(len(Y_DEPTH_TO_COLOR))
-                        if i != j]
-
-    return (int(round(sum(estimated_x_vals)/len(estimated_x_vals),0)),int(round(sum(estimated_y_vals)/len(estimated_y_vals),0)))
-
-def convert_color_to_depth_radius(radius : float) -> float:
-    return 0.735831781 * radius
 
 class GearPlace(Node):
   def __init__(self):
@@ -430,61 +402,6 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to pick up gear")
           raise Error("Unable to pick up gear")
 
-  def average_of_points(self, arr : list)-> tuple:
-      """
-      Takes in a list of points and returns the average of them
-      """
-      num_points = len(arr)
-      return (
-          sum([arr[i][0] for i in range(num_points)])/num_points,
-          sum([arr[i][1] for i in range(num_points)])/num_points,
-          min([arr[i][2] for i in range(num_points)])
-      )
-
-  def closest_to_center(self, arr : list) -> int:
-      """
-      Returns the coordinates of the gear which is closest to the center of the camera
-      """
-      vals = [sqrt(sum([(arr[i][j]-[X_OFFSET,Y_OFFSET][j])**2 for j in range(2)])) for i in range(len(arr))]
-      try:
-        return vals.index(min(vals))
-      except:
-          return -1
-
-  def remove_identical_points(self, arr : list, radius_vals : dict) -> list:
-      """
-      Removes duplicate coordinates from different positions
-      """
-      bad_measurements = []
-      for i in range(len(arr) - 1):
-          radius_list = []
-          if radius_vals[arr[i]]!=0:
-              radius_list.append(radius_vals[arr[i]])
-          close_vals = []
-          close_vals.append(arr[i])
-          for j in range(i + 1, len(arr)):
-              
-              if (
-                  sqrt((arr[i][0] - arr[j][0]) ** 2 + (arr[i][1] - arr[j][1]) ** 2)
-                  <= 0.03
-              ):  # Gets rid of the points which are within 30mm of each other
-                  bad_measurements.append(
-                      j
-                  )  # ensures that the first instance of a valid gear is saved
-
-              if (sqrt(sum([(arr[i][k]-arr[j][k])**2 for k in range(3)]))<=0.01): # adds point to list if it is close enough
-                  close_vals.append(arr[j])
-                  if radius_vals[(arr[j])]!=0:
-                    radius_list.append(radius_vals[arr[j]])
-          arr[i] = self.average_of_points(close_vals)
-          radius_vals[arr[i]] = avg(radius_list) if len(radius_list)>0 else 0
-      bad_measurements = sorted(list(set(bad_measurements)))[
-          ::-1
-      ]  # sorts the indicies in decending order so the correct values are removed in next loop
-      for ind in bad_measurements:  # deletes duplicated gears
-          del arr[ind]
-      return arr
-
   def find_distance(self, arr : list) -> float:
       return sqrt(arr[0] ** 2 + arr[1] ** 2)
 
@@ -549,7 +466,7 @@ class GearPlace(Node):
                       robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
                   )  # moves to the next position
 
-          distances_from_home = self.remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
+          distances_from_home = remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
 
           distances_from_home = [
               distances_from_home[i]
@@ -618,8 +535,8 @@ class GearPlace(Node):
             multiple_gears.destroy_node()
             object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
             closest_gears =  object_depth.coordinates
-            correct_gear_index = self.closest_to_center(closest_gears)
-            correct_gear = closest_gears[self.closest_to_center(closest_gears)] if correct_gear_index>0 else [0 for _ in range(3)]
+            correct_gear_index = closest_to_center(closest_gears)
+            correct_gear = closest_gears[closest_to_center(closest_gears)] if correct_gear_index>0 else [0 for _ in range(3)]
           self.get_logger().info(", ".join([str(val) for val in correct_gear]))
           if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
               self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
@@ -679,7 +596,7 @@ class GearPlace(Node):
                             -1 * coord[2])] = object_depth.radius_vals[coord]
             multiple_gears_color.destroy_node()
 
-        distances_from_home = self.remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
+        distances_from_home = remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
 
         distances_from_home = [
             distances_from_home[i]
@@ -744,8 +661,8 @@ class GearPlace(Node):
           rclpy.spin_once(object_depth)  # Gets the distance from the camera
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
           closest_gears =  object_depth.coordinates
-          correct_gear_index = self.closest_to_center(closest_gears)
-          correct_gear = closest_gears[self.closest_to_center(closest_gears)] if correct_gear_index>0 else [0 for _ in range(3)]
+          correct_gear_index = closest_to_center(closest_gears)
+          correct_gear = closest_gears[closest_to_center(closest_gears)] if correct_gear_index>0 else [0 for _ in range(3)]
         multiple_gears.destroy_node()
         self.get_logger().info(", ".join([str(val) for val in correct_gear]))
         if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
@@ -811,7 +728,7 @@ class GearPlace(Node):
                                 -1 * coord[2])] = object_depth.radius_vals[coord]
                 multiple_gears.destroy_node()
 
-        distances_from_home = self.remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
+        distances_from_home = remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
 
         distances_from_home = [
             distances_from_home[i]
@@ -876,7 +793,7 @@ class GearPlace(Node):
           multiple_gears.destroy_node()
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
           closest_gears =  object_depth.coordinates
-          correct_gear = closest_gears[self.closest_to_center(closest_gears)]
+          correct_gear = closest_gears[closest_to_center(closest_gears)]
           correct_coordinates = correct_gear
           self._call_move_cartesian_smooth_service(0.001,0.001,0.0,0.15,0.2)
           last_point=(last_point[0]+0.001,last_point[1]+0.001)
