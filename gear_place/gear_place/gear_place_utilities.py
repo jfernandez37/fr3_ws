@@ -1,4 +1,4 @@
-X_OFFSET = 0.038  # offset from the camera to the gripper
+X_OFFSET = 0.039  # offset from the camera to the gripper
 Y_OFFSET = 0.024
 Z_TO_TABLE = -0.247
 Z_CAMERA_OFFSET = 0.0435
