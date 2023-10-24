@@ -1,5 +1,5 @@
 X_OFFSET = 0.038  # offset from the camera to the gripper
-Y_OFFSET = 0.027
+Y_OFFSET = 0.025
 Z_TO_TABLE = -0.247
 Z_CAMERA_OFFSET = 0.0435
 X_DEPTH_TO_COLOR = [(467,389),(402,347),(376,331),(405,349),(422,360)] # points made using depth values and color values
