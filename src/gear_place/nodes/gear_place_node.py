@@ -34,6 +34,7 @@ def main(args=None):
 
         supervisor._enable_conveyor_service(True)
         supervisor._set_conveyor_state_service(speed=50, direction=0)
+        sleep(10)
         supervisor._enable_conveyor_service(False)
 
     except Error as e:
