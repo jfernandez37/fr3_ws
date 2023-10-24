@@ -573,7 +573,7 @@ void RobotCommander::grasp_object(double object_width)
     for(int i = 0; i < 2; i++){
       open_gripper();
       RCLCPP_ERROR(get_logger(),"Unable to grasp object");
-      move_robot_cartesian_smooth(0.0,0.0,-0.001, default_velocity_, default_acceleration_);
+      move_robot_cartesian_smooth(0.009,0.0,-0.001, default_velocity_, default_acceleration_);
       if (!gripper_->grasp(object_width, gripper_speed_, gripper_force_))
       {
           open_gripper();
