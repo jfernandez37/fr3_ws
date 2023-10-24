@@ -20,7 +20,7 @@ def main(args=None):
         # sleep(1.0)
         # supervisor.call_rotate_single_joint(6,-pi/2,True)
         # supervisor.call_move_cartesian_smooth_service(-0.27,0.0,0.0,0.3,0.3)
-        # supervisor.call_multiple_gears_single_scan(gear_width)
+        # supervisor.single_scan_multiple_gears(gear_width)
         gear_positions, radius_vals = supervisor.scan_multiple_gears_grid()
         supervisor.pick_up_multiple_gears(
             gear_positions,radius_vals,

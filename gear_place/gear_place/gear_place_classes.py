@@ -619,7 +619,7 @@ class GearPlace(Node):
               self._call_move_to_joint_position(self.current_joint_positions)
               offset_needed = False
 
-  def scan_multiple_gears_single_scan(self):
+  def single_scan_multiple_gears(self):
     """
     Scans the area for gears. Uses only one position to find the gears.
     """
