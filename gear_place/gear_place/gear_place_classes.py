@@ -552,7 +552,7 @@ class GearPlace(Node):
             else:
               self.get_logger().info(f"Not picking up {gear_color} gear. Moving on...")
 
-  def scan_multiple_gears_single_scan(self, object_width : float):
+  def scan_multiple_gears_single_scan(self):
     """
     Scans the area for gears. Uses only one position to find the gears.
     """
