@@ -132,6 +132,12 @@ class GearPlace(Node):
       self.move_to_joint_position_client = self.create_client(MoveToJointPosition, "move_to_joint_position")
       self.get_joint_positions_client = self.create_client(GetJointPositions, "get_joint_positions")
       self.move_cartesian_smooth_client = self.create_client(MoveCartesianSmooth, "move_cartesian_smooth")
+      self.enable_conveyor_client = self.create_client(
+          EnableConveyor, "conveyor/enable"
+      )
+      self.set_conveyor_state_client = self.create_client(
+          SetConveyorState, "conveyor/set_state"
+      )
 
   def wait(self, duration: float):
       start = self.get_clock().now()
@@ -740,7 +746,7 @@ class GearPlace(Node):
         self.get_logger().info(", ".join([str(val) for val in correct_gear]))
         if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
             self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
-            self._call_pick_up_gear_coord_service(False,0.005,0.0, gear_point[2], object_width,True)
+            self._call_pick_up_gear_coord_service(False,0.005,0.0, gear_point[2]+0.16, object_width,True)
             last_point=(last_point[0]+0.005,last_point[1])
         else:
           self._call_pick_up_gear_coord_service(
@@ -1161,19 +1167,7 @@ class GearPlace(Node):
       if not result.success:
           self.get_logger().error(f"Unable to move {x},{y},{z}")
           raise Error("Unable to move to location")
-
-
-
-class ConveyorClass(Node):
-  def _init__(self):
-      # Service Clients
-      self.enable_conveyor_client = self.create_client(
-          EnableConveyor, "enable_conveyor"
-      )
-      self.set_conveyor_state_client = self.create_client(
-          SetConveyorState, "set_conveyor_state"
-      )
-
+      
   def _enable_conveyor_service(self, enable: bool):
       """
       Calls the enable_conveyor callback
@@ -1185,7 +1179,7 @@ class ConveyorClass(Node):
       request = EnableConveyor.Request()
       request.enable = enable
 
-      future = self.create_client(EnableConveyor, "enable_conveyor").call_async(
+      future = self.enable_conveyor_client.call_async(
           request
       )
 
@@ -1210,10 +1204,10 @@ class ConveyorClass(Node):
           f"at a speed of {speed}",
       )
       request = SetConveyorState.Request()
-      request.speed = speed
-      request.direction = direction
+      request.speed = float(speed)
+      request.direction = int(direction)
 
-      future = self.create_client(SetConveyorState, "set_conveyor_state").call_async(
+      future = self.set_conveyor_state_client.call_async(
           request
       )
 
