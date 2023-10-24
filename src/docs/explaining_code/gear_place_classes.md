@@ -339,7 +339,8 @@ y_movements = [a[1] for a in robot_moves]  # just the y direction movements
 gears_found = 0
 updated_radius_vals = {}
 ```
-Next, inside of a loop that runs until gears are found, the moves are looped through. ```python
+Next, inside of a loop that runs until gears are found, the moves are looped through. 
+```python
 while gears_found == 0:
     for ind in range(len(robot_moves)+1):  # loops through the scanning positions
 ```
@@ -491,3 +492,25 @@ self._call_put_down_force(0.1)
 self._call_move_to_joint_position(self.current_joint_positions)
 offset_needed = False
 ```
+#_call_multiple_gears_single_scan
+This function is very similar to `_call_pick_up_multiple_gears` except the starting position is up higher and the scan is only done at a single position. This higher position is moved to at the beginning of the funciton using this command:
+```python
+self._call_move_to_named_pose_service("high_scan")
+```
+Another major difference is that for the scan, the class that is used is not `MultipleGears`, but `MultipleGearsColor`. This class uses the color image from the camera to detect the gears instead of the depth image, which allows gears which are further away from the camera to be detected. Since there is only a single single position, the coordinates do not have to be saved in relation to any position other than the current positon.
+```python
+for coord in object_depth.coordinates:
+    if coord.count(0.0)==0:  # adds coordinates if not all 0. Duplicates are removed later
+        distances_from_home.append(
+            (
+                -1 * coord[1],
+                -1 * coord[0],
+                -1 * coord[2]
+            )
+        )
+        updated_radius_vals[(
+                -1 * coord[1],
+                -1 * coord[0],
+                -1 * coord[2])] = object_depth.radius_vals[coord]
+```
+Other than these small differences, everything else in the function is the same as `_call_pick_up_multiple_gears` except that the color scan is used instead of the depth scan.
