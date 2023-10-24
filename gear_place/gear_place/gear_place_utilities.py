@@ -88,7 +88,7 @@ def remove_identical_points(arr : list, radius_vals : dict) -> list:
                 close_vals.append(arr[j])
                 if radius_vals[(arr[j])]!=0:
                     radius_list.append(radius_vals[arr[j]])
-        arr[i] = self.average_of_points(close_vals)
+        arr[i] = average_of_points(close_vals)
         radius_vals[arr[i]] = avg(radius_list) if len(radius_list)>0 else 0
     bad_measurements = sorted(list(set(bad_measurements)))[
         ::-1
