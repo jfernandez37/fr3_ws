@@ -412,3 +412,82 @@ self.get_logger().info(
 for movment in distances_from_home:
     self.get_logger().info("Movement: " + str(movment))
 ```
+The robot then returns to the home position, and declares 4 variables. The first of these is a list which holds the last point visited. This is in relation to the home position and allows the robot to go from one gear to the next without having to return to the home position between each gear. Second is a boolean variable which keeps track of whether the offset is needed. It is only needed for the first time, as once the gripper is directly over the gear, the next movement does not require an offset. Finally, the last two are thresholds for the gear sizes. This allows the program to see which size the gear is. The gear is either small, medium, or large.
+```python
+self._call_move_to_named_pose_service("home")
+last_point = [0, 0]
+offset_needed = True
+low_gear_threshold = 0.0275
+high_gear_thershold = 0.041
+```
+Next, each movement is looped through. To start each loop, the move is calculated in relation to the current position instead of the home position and the current position is set.
+```python
+move = [
+    gear_point[i] - last_point[i] for i in range(2)
+]  # finds the next movement to the next gear
+last_point = gear_point
+```
+The size of the gear is then found using the radius values and the threshold values declared earlier. If the radius value was not declared successfully, a message will be output to the screen. If it is found successfully, the color of the gear will be output. To classify the gear, its radius is put into a list with the thresholds which is then sorted. Depending on the position of the radius in the sorted list, the gear size can be determined.
+```python
+if updated_radius_vals[gear_point] ==0:
+    gear_color == "not found"
+    self.get_logger().info("Could not find gear color")
+else:
+    thresholds = sorted([low_gear_threshold, high_gear_thershold,updated_radius_vals[gear_point]])
+    gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
+    self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
+```
+The gripper is then opened to pick up the gear and the robot moves directly above the gear. If the offset is needed, it is accounted for.
+```python
+self._call_open_gripper_service()  # opens the gripper
+          
+if offset_needed:
+self._call_move_cartesian_smooth_service(
+    move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
+)  # moves above the gear
+else:
+self._call_move_cartesian_smooth_service(
+    move[0], move[1], 0.0, 0.15,0.2
+)  # moves above the gear
+```
+After the initial move, a second check is done above the gear. This is done the same way as the detection before with one difference. If multiple gears are found, the correct gear is set to the closest gear to the center of the gripper.
+```python
+while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <3:
+    counter+=1
+    multiple_gears = MultipleGears(self.connected)
+    rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
+    self.connected = multiple_gears.connected
+    while (
+        sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
+        or not multiple_gears.ran
+    ):  # loops until it has run and until there are no None values
+        multiple_gears.destroy_node()
+        multiple_gears = MultipleGears(self.connected)
+        rclpy.spin_once(multiple_gears)
+        self.connected = multiple_gears.connected
+    object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
+    rclpy.spin_once(object_depth)  # Gets the distance from the camera
+    multiple_gears.destroy_node()
+    object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+    closest_gears =  object_depth.coordinates
+    correct_gear_index = self.closest_to_center(closest_gears)
+    correct_gear = closest_gears[self.closest_to_center(closest_gears)] if correct_gear_index>0 else [0 for _ in range(3)]
+```
+If the second check is not successful, the robot will still attempt to pick up the gear in the current position. If it is successful, the robot will move directly above it and pick it up.
+```python
+if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
+    self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
+    self._call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2], object_width, False)
+else:
+self._call_pick_up_gear_coord_service(
+    True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width, False
+)
+last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
+```
+Finally, the robot will put the gear back down. To do this, the current joint positions are read using the call back, the put_down_force service is called, and the robot moves back to the joint position. The program then sets the offset_needed variable to false, as it has already been accounted for after the first gear.
+```python
+self._call_get_joint_positions()
+self._call_put_down_force(0.1)
+self._call_move_to_joint_position(self.current_joint_positions)
+offset_needed = False
+```
