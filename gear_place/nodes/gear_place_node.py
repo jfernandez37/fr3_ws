@@ -39,7 +39,7 @@ def main(args=None):
 
 
         supervisor.enable_conveyor_service(True)
-        supervisor.set_conveyor_state_service(speed=10, direction=0)
+        supervisor.set_conveyor_state_service(speed=1, direction=0)
         sleep(10)
         supervisor.enable_conveyor_service(False)
 
