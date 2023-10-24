@@ -713,9 +713,7 @@ class GearPlace(Node):
       """
       self.get_logger().info("Opening gripper")
 
-      request = OpenGripper.Request()
-
-      future = self.open_gripper_client.call_async(request)
+      future = self.open_gripper_client.call_async(OpenGripper.Request())
 
       rclpy.spin_until_future_complete(self, future, timeout_sec=8)
 
@@ -833,9 +831,7 @@ class GearPlace(Node):
       """
       self.get_logger().info("Getting camera angle")
 
-      request = GetCameraAngle.Request()
-
-      future = self.get_camera_angle_client.call_async(request)
+      future = self.get_camera_angle_client.call_async(GetCameraAngle.Request())
 
       rclpy.spin_until_future_complete(self,future,timeout_sec=2)
 
@@ -912,9 +908,7 @@ class GearPlace(Node):
       """
       self.get_logger().info("Getting joint positions")
 
-      request = GetJointPositions.Request()
-
-      future = self.get_joint_positions_client.call_async(request)
+      future = self.get_joint_positions_client.call_async(GetJointPositions.Request())
 
       rclpy.spin_until_future_complete(self,future,timeout_sec=10)
 
