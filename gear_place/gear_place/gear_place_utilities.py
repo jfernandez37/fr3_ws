@@ -42,7 +42,7 @@ def convert_color_to_depth(point : tuple) -> tuple:
 def convert_color_to_depth_radius(radius : float) -> float:
     return 0.735831781 * radius
 
-def average_of_points(self, arr : list)-> tuple:
+def average_of_points(arr : list)-> tuple:
     """
     Takes in a list of points and returns the average of them
     """
@@ -53,7 +53,7 @@ def average_of_points(self, arr : list)-> tuple:
         min([arr[i][2] for i in range(num_points)])
     )
 
-def closest_to_center(self, arr : list) -> int:
+def closest_to_center(arr : list) -> int:
     """
     Returns the coordinates of the gear which is closest to the center of the camera
     """
@@ -63,7 +63,7 @@ def closest_to_center(self, arr : list) -> int:
     except:
         return -1
 
-def remove_identical_points(self, arr : list, radius_vals : dict) -> list:
+def remove_identical_points(arr : list, radius_vals : dict) -> list:
     """
     Removes duplicate coordinates from different positions
     """
