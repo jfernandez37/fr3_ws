@@ -1204,8 +1204,8 @@ class GearPlace(Node):
           f"at a speed of {speed}",
       )
       request = SetConveyorState.Request()
-      request.speed = speed
-      request.direction = direction
+      request.speed = float(speed)
+      request.direction = int(direction)
 
       future = self.set_conveyor_state_client.call_async(
           request
