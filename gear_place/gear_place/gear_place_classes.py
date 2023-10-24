@@ -50,6 +50,7 @@ from gear_place.gear_place_utilities import (
 from geometry_msgs.msg import Pose, Point
 
 from gear_place.find_object_color import FindObjectColor
+from gear_place.find_object import FindObject
 from gear_place.object_depth import ObjectDepth
 from gear_place.moving_gear import MovingGear
 from gear_place.multiple_gears import MultipleGears, MultipleGearsColor
@@ -203,20 +204,21 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to move {x},{y},{z}")
           raise Error("Unable to move to location")
 
-  def call_pick_up_gear_service(self, object_width : float):
+  def call_pick_up_gear_service(self, object_width : float,depth_or_color:bool):
       """
       Calls the pick_up_gear callback
       """
       self.get_logger().info(f"Picking up gear")
       gear_center_target = [0 for _ in range(3)]
+      requested_class = FindObject if depth_or_color else FindObjectColor
       while (
           gear_center_target.count(0) == 3 or None in gear_center_target
       ):  # runs until valid coordinates are found
-          find_object_color = FindObjectColor()
-          rclpy.spin_once(find_object_color) # Finds the gear
+          find_object = requested_class()
+          rclpy.spin_once(find_object) # Finds the gear
           c = 0
           while (
-              find_object_color.ret_cent_gear().count(None) != 0
+              find_object.ret_cent_gear().count(None) != 0
           ):  # Runs and guarantees that none of the coordinates are none type
               c += 1
 
@@ -226,13 +228,13 @@ class GearPlace(Node):
                   )  # Moves to the center of the cart
                   sleep(1)
               else:
-                  find_object_color.destroy_node()
-                  find_object_color = FindObjectColor()
-                  rclpy.spin_once(find_object_color)
-          object_depth = ObjectDepth([convert_color_to_depth(find_object_color.ret_cent_gear())],{})
+                  find_object.destroy_node()
+                  find_object = requested_class()
+                  rclpy.spin_once(find_object)
+          object_depth = ObjectDepth([find_object.ret_cent_gear()] if depth_or_color else[convert_color_to_depth(find_object.ret_cent_gear())],{})
           rclpy.spin_once(object_depth)  # Gets the distance from the camera
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-          find_object_color.destroy_node()
+          find_object.destroy_node()
           gear_center_target = object_depth.coordinates[0]
       self.get_logger().info("gear_center_target: "+str(gear_center_target))
 
@@ -481,7 +483,7 @@ class GearPlace(Node):
       )  # outputs the number of gears found
       return distances_from_home,updated_radius_vals
   
-  def pick_up_multiple_gears_depth(self, distances_from_home: list, updated_radius_vals: list, object_width : float, starting_position: str, colors: list,depth_or_color: bool):
+  def pick_up_multiple_gears(self, distances_from_home: list, updated_radius_vals: list, object_width : float, starting_position: str, colors: list,depth_or_color: bool):
       for movment in distances_from_home:
           self.get_logger().info("Movement: " + str(movment))
 
