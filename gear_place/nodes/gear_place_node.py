@@ -23,10 +23,11 @@ def main(args=None):
         # supervisor.single_scan_multiple_gears(gear_width)
         gear_positions, radius_vals = supervisor.single_scan_multiple_gears()
         supervisor.pick_up_multiple_gears(
-            gear_positions,radius_vals,
+            gear_positions,
+            radius_vals,
             gear_width, 
             "high_scan",
-            ["orange","yellow"],
+            ["green"],
             True
         )
         # supervisor.call_move_to_named_pose_service("above_conveyor")
