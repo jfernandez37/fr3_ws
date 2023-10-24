@@ -120,7 +120,7 @@ class GearPlace(Node):
           except KeyboardInterrupt:
               raise Error("Ctrl+C pressed")
 
-  def _call_move_to_named_pose_service(self, named_pose: str):
+  def call_move_to_named_pose_service(self, named_pose: str):
       """
       Calls the move_to_named_pose callback
       """
@@ -146,7 +146,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to move to pose: {named_pose}")
           raise Error("Unable to move to pose")
 
-  def _call_move_cartesian_service(self, x : float, y : float, z : float, v_max : float, acc : float):
+  def call_move_cartesian_service(self, x : float, y : float, z : float, v_max : float, acc : float):
       """
       Calls the move_cartesian callback
       """
@@ -174,7 +174,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to move {x},{y},{z}")
           raise Error("Unable to move to location")
     
-  def _call_move_cartesian_angle_service(self, x : float, y : float, z : float, v_max : float, acc : float, angle : float):
+  def call_move_cartesian_angle_service(self, x : float, y : float, z : float, v_max : float, acc : float, angle : float):
       """
       Calls the move_cartesian_angle callback
       """
@@ -203,7 +203,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to move {x},{y},{z}")
           raise Error("Unable to move to location")
 
-  def _call_pick_up_gear_service(self, object_width : float):
+  def call_pick_up_gear_service(self, object_width : float):
       """
       Calls the pick_up_gear callback
       """
@@ -221,7 +221,7 @@ class GearPlace(Node):
               c += 1
 
               if c % 5 == 0:
-                  self._call_move_cartesian_smooth_service(
+                  self.call_move_cartesian_smooth_service(
                       0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
                   )  # Moves to the center of the cart
                   sleep(1)
@@ -257,7 +257,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to pick up gear")
           raise Error("Unable to pick up gear")
 
-  def _call_put_gear_down_service(self, z : float):
+  def call_put_gear_down_service(self, z : float):
       """
       Calls the put_gear_down callback
       """
@@ -282,11 +282,11 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to put gear down")
           raise Error("Unable to put gear down")
 
-  def _call_move_above_gear(self):
+  def call_move_above_gear(self):
       """
       Moves the robot above the gear
       """
-      self._call_get_camera_angle()
+      self.call_get_camera_angle()
       moving_gear = MovingGear()
       while not moving_gear.found_gear or len(moving_gear.x_vals) == 0:
           moving_gear.run()
@@ -329,11 +329,11 @@ class GearPlace(Node):
 
       distance_lost_to_acc = gear_speed * second_t1 / 2
       
-      self._call_move_cartesian_angle_service(y_value * -1 + X_OFFSET + ratio_y * distance_lost_to_acc,x_value * -1 + Y_OFFSET + ratio_x * distance_lost_to_acc,0.0,velocity, acceleration, self.current_camera_angle)
-      self._call_move_cartesian_angle_service(final_y * -1 + X_OFFSET,final_x * -1 + Y_OFFSET, 0.0, gear_speed, second_acceleration,self.current_camera_angle)
+      self.call_move_cartesian_angle_service(y_value * -1 + X_OFFSET + ratio_y * distance_lost_to_acc,x_value * -1 + Y_OFFSET + ratio_x * distance_lost_to_acc,0.0,velocity, acceleration, self.current_camera_angle)
+      self.call_move_cartesian_angle_service(final_y * -1 + X_OFFSET,final_x * -1 + Y_OFFSET, 0.0, gear_speed, second_acceleration,self.current_camera_angle)
 
   
-  def _call_pick_up_moving_gear_service(self, object_width : float):
+  def call_pick_up_moving_gear_service(self, object_width : float):
       """
       Calls the pick_up_moving_gear callback
       """
@@ -427,9 +427,9 @@ class GearPlace(Node):
       updated_radius_vals = {}
       while gears_found == 0:
           for ind in range(len(robot_moves)+1):  # loops through the scanning positions
-              self._call_get_joint_positions()
+              self.call_get_joint_positions()
               self.get_logger().info("Current joint positions: " + ", ".join([str(val) for val in self.current_joint_positions]))
-              self._call_get_camera_angle()
+              self.call_get_camera_angle()
               self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
               for _ in range(2):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
                   multiple_gears = MultipleGears(self.connected)
@@ -462,7 +462,7 @@ class GearPlace(Node):
                               )] = object_depth.radius_vals[coord]
                   multiple_gears.destroy_node()
               if ind != len(robot_moves):
-                  self._call_move_cartesian_smooth_service(
+                  self.call_move_cartesian_smooth_service(
                       robot_moves[ind][0], robot_moves[ind][1], 0.0, 0.15, 0.2
                   )  # moves to the next position
 
@@ -475,7 +475,7 @@ class GearPlace(Node):
           ]  # removes points which are too far from the home position
           gears_found = len(distances_from_home)
           if gears_found==0:
-              self._call_move_to_named_pose_service("home")
+              self.call_move_to_named_pose_service("home")
               self.get_logger().info("No gears found. Trying again")
       self.get_logger().info(
           f"{len(distances_from_home)} gears found."
@@ -487,7 +487,7 @@ class GearPlace(Node):
           self.get_logger().info("Movement: " + str(movment))
 
       if starting_position != "current":
-        self._call_move_to_named_pose_service(starting_position)
+        self.call_move_to_named_pose_service(starting_position)
       last_point = [0, 0]
       offset_needed = True
       low_gear_threshold = 0.0275
@@ -505,14 +505,14 @@ class GearPlace(Node):
               thresholds = sorted([low_gear_threshold, high_gear_thershold,updated_radius_vals[gear_point]])
               gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
               self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
-          self._call_open_gripper_service()  # opens the gripper
+          self.call_open_gripper_service()  # opens the gripper
           
           if offset_needed:
-            self._call_move_cartesian_smooth_service(
+            self.call_move_cartesian_smooth_service(
                 move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
             )  # moves above the gear
           else:
-            self._call_move_cartesian_smooth_service(
+            self.call_move_cartesian_smooth_service(
                 move[0], move[1], 0.0, 0.15,0.2
             )  # moves above the gear
           correct_gear = [0.0,0.0,0.0]
@@ -540,30 +540,30 @@ class GearPlace(Node):
           self.get_logger().info(", ".join([str(val) for val in correct_gear]))
           if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
               self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
-              self._call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2], object_width, False)
+              self.call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2], object_width, False)
           else:
-            self._call_pick_up_gear_coord_service(
+            self.call_pick_up_gear_coord_service(
                 True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width, False
             )
             last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
-        #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
-          self._call_get_joint_positions()
-          self._call_put_down_force(0.1)
-          self._call_move_to_joint_position(self.current_joint_positions)
+        #   self.call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
+          self.call_get_joint_positions()
+          self.call_put_down_force(0.1)
+          self.call_move_to_joint_position(self.current_joint_positions)
           offset_needed = False
 
-  def _call_multiple_gears_single_scan(self, object_width : float):
+  def call_multiple_gears_single_scan(self, object_width : float):
     """
     Scans the area for gears. Uses only one position to find the gears.
     """
-    self._call_move_to_named_pose_service("high_scan")
-    self._call_get_camera_angle()
+    self.call_move_to_named_pose_service("high_scan")
+    self.call_get_camera_angle()
     distances_from_home = []
     self.get_logger().info(f"Scanning for gears")
     gears_found = 0
     updated_radius_vals = {}
     while gears_found == 0:
-        self._call_get_camera_angle()
+        self.call_get_camera_angle()
         self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
         for _ in range(3):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
             multiple_gears_color = MultipleGearsColor(self.connected)
@@ -605,7 +605,7 @@ class GearPlace(Node):
         ]  # removes points which are too far from the home position
         gears_found = len(distances_from_home)
         if gears_found==0:
-            self._call_move_to_named_pose_service("high_scan")
+            self.call_move_to_named_pose_service("high_scan")
             self.get_logger().info("No gears found. Trying again")
     self.get_logger().info(
         f"{len(distances_from_home)} gears found. Picking up the gears"
@@ -617,7 +617,7 @@ class GearPlace(Node):
     offset_needed = True
     low_gear_threshold = 0.03
     high_gear_thershold = 0.045
-    self._call_move_cartesian_smooth_service(0.0,0.0,-0.16,0.15,0.2)
+    self.call_move_cartesian_smooth_service(0.0,0.0,-0.16,0.15,0.2)
     for gear_point in distances_from_home:  # loops through the movements to the gears
         move = [
             gear_point[i] - last_point[i] for i in range(2)
@@ -631,14 +631,14 @@ class GearPlace(Node):
             thresholds = sorted([low_gear_threshold, high_gear_thershold,updated_radius_vals[gear_point]])
             gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
             self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
-        self._call_open_gripper_service()  # opens the gripper
+        self.call_open_gripper_service()  # opens the gripper
         
         if offset_needed:
-          self._call_move_cartesian_smooth_service(
+          self.call_move_cartesian_smooth_service(
               move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
           )  # moves above the gear
         else:
-          self._call_move_cartesian_smooth_service(
+          self.call_move_cartesian_smooth_service(
               move[0], move[1], 0.0, 0.15,0.2
           )  # moves above the gear
         correct_gear = [0.0,0.0,0.0]
@@ -667,35 +667,35 @@ class GearPlace(Node):
         self.get_logger().info(", ".join([str(val) for val in correct_gear]))
         if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
             self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
-            self._call_pick_up_gear_coord_service(False,0.005,0.0, gear_point[2]+0.16, object_width,True)
+            self.call_pick_up_gear_coord_service(False,0.005,0.0, gear_point[2]+0.16, object_width,True)
             last_point=(last_point[0]+0.005,last_point[1])
         else:
-          self._call_pick_up_gear_coord_service(
+          self.call_pick_up_gear_coord_service(
               True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width, True
           )
           last_point=(last_point[0]+-1*correct_gear[1]+X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
-      #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
-        self._call_get_joint_positions()
-        self._call_put_down_force(0.1)
-        self._call_move_to_joint_position(self.current_joint_positions)
+      #   self.call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
+        self.call_get_joint_positions()
+        self.call_put_down_force(0.1)
+        self.call_move_to_joint_position(self.current_joint_positions)
         offset_needed = False
   
-  def _call_multiple_gears_rotated_scan(self, object_width : float):
+  def call_multiple_gears_rotated_scan(self, object_width : float):
     """
     Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
     """
     y_dist_from_home = [0.1,-0.1]
     pose_names = ["rotate_scan_1","rotate_scan_2"]
-    self._call_move_to_named_pose_service("home")
-    self._call_get_camera_angle()
+    self.call_move_to_named_pose_service("home")
+    self.call_get_camera_angle()
     distances_from_home = []
     self.get_logger().info(f"Scanning for gears")
     gears_found = 0
     updated_radius_vals = {}
     while gears_found == 0:
         for i in range(2):
-            self._call_get_camera_angle()
-            self._call_move_to_named_pose_service(pose_names[i])
+            self.call_get_camera_angle()
+            self.call_move_to_named_pose_service(pose_names[i])
             self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
             for _ in range(10):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
                 multiple_gears = MultipleGears(self.connected)
@@ -737,7 +737,7 @@ class GearPlace(Node):
         ]  # removes points which are too far from the home position
         gears_found = len(distances_from_home)
         if gears_found==0:
-            self._call_move_to_named_pose_service("home")
+            self.call_move_to_named_pose_service("home")
             self.get_logger().info("No gears found. Trying again")
     self.get_logger().info(
         f"{len(distances_from_home)} gears found. Picking up the gears"
@@ -745,7 +745,7 @@ class GearPlace(Node):
     for movment in distances_from_home:
         self.get_logger().info("Movement: " + str(movment))
 
-    self._call_move_to_named_pose_service("home")
+    self.call_move_to_named_pose_service("home")
     last_point = [0, 0]
     offset_needed = False
     low_gear_threshold = 0.0275
@@ -763,14 +763,14 @@ class GearPlace(Node):
             thresholds = sorted([low_gear_threshold, high_gear_thershold,updated_radius_vals[gear_point]])
             gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
             self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
-        self._call_open_gripper_service()  # opens the gripper
+        self.call_open_gripper_service()  # opens the gripper
         
         if offset_needed:
-          self._call_move_cartesian_smooth_service(
+          self.call_move_cartesian_smooth_service(
               move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
           )  # moves above the gear
         else:
-          self._call_move_cartesian_smooth_service(
+          self.call_move_cartesian_smooth_service(
               move[0], move[1], 0.0, 0.15,0.2
           )  # moves above the gear
         correct_coordinates = [0.0,0.0,0.0]
@@ -795,22 +795,22 @@ class GearPlace(Node):
           closest_gears =  object_depth.coordinates
           correct_gear = closest_gears[closest_to_center(closest_gears)]
           correct_coordinates = correct_gear
-          self._call_move_cartesian_smooth_service(0.001,0.001,0.0,0.15,0.2)
+          self.call_move_cartesian_smooth_service(0.001,0.001,0.0,0.15,0.2)
           last_point=(last_point[0]+0.001,last_point[1]+0.001)
         self.get_logger().info(", ".join([str(val) for val in correct_gear]))
         if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
             self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
-            # self._call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2], object_width)
+            # self.call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2], object_width)
         else:
-          self._call_pick_up_gear_coord_service(
+          self.call_pick_up_gear_coord_service(
               True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width, False
           )
           last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
-      #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
-        self._call_put_down_force(0.1)
+      #   self.call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
+        self.call_put_down_force(0.1)
         offset_needed = False
 
-  def _call_move_to_position_service(self, p: Point, rot: float = 0.0):
+  def call_move_to_position_service(self, p: Point, rot: float = 0.0):
       """
       Calls the move_to_position callback
       """
@@ -833,7 +833,7 @@ class GearPlace(Node):
       if not result.success:
           raise Error(f"Unable to move to desired position [{p.x}, {p.y}, {p.z}]")
 
-  def _call_open_gripper_service(self):
+  def call_open_gripper_service(self):
       """
       Calls the open_gripper callback
       """
@@ -854,7 +854,7 @@ class GearPlace(Node):
       if not result.success:
           raise Error("Unable to move to open gripper")
 
-  def _call_pick_up_gear_coord_service(self, offset_bool : bool, x : float, y : float, z : float, object_width : float, default_up : bool):
+  def call_pick_up_gear_coord_service(self, offset_bool : bool, x : float, y : float, z : float, object_width : float, default_up : bool):
       """
       Calls the pick_up_gear callback
       """
@@ -885,7 +885,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to pick up gear")
           raise Error("Unable to pick up gear")
 
-  def _call_put_gear_down_camera(self, z : float):
+  def call_put_gear_down_camera(self, z : float):
       """
       Uses the camera to put down the gear at the correct height
       """
@@ -930,7 +930,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to put gear down using camera")
           raise Error("Unable to put gear down using camera")
     
-  def _call_put_down_force(self, force:float):
+  def call_put_down_force(self, force:float):
       """
       Calls the put_down_force callback
       """
@@ -953,7 +953,7 @@ class GearPlace(Node):
       if not result.success:
           raise Error("Unable to put down gear using force motion generator")
     
-  def _call_get_camera_angle(self):
+  def call_get_camera_angle(self):
       """
       Calls the get_camera_angle callback
       """
@@ -973,7 +973,7 @@ class GearPlace(Node):
 
       self.current_camera_angle = result.angle
     
-  def _call_move_to_joint_position(self, target_position : list):
+  def call_move_to_joint_position(self, target_position : list):
     """
     Calls the move_to_joint_position callback
     """
@@ -997,7 +997,7 @@ class GearPlace(Node):
     if not result.success:
         raise Error("Unable to move to the given joint positions")
     
-  def _call_rotate_single_joint(self,joint : int, angle : float, radians : bool):
+  def call_rotate_single_joint(self,joint : int, angle : float, radians : bool):
       """
       Calls the rotate_single_joint callback
       """
@@ -1032,7 +1032,7 @@ class GearPlace(Node):
       if not result.success:
           raise Error("Unable to rotate joint to given angle")
       
-  def _call_get_joint_positions(self):
+  def call_get_joint_positions(self):
       """
       Calls the get_camera_angle callback
       """
@@ -1062,7 +1062,7 @@ class GearPlace(Node):
         
         return convert_transform_to_pose(t)
   
-  def _call_move_cartesian_smooth_service(self, x : float, y : float, z : float, v_max : float, acc : float):
+  def call_move_cartesian_smooth_service(self, x : float, y : float, z : float, v_max : float, acc : float):
       """
       Calls the move_cartesian_smooth callback
       """
