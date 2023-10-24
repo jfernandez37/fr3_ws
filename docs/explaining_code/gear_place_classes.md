@@ -1,6 +1,6 @@
 # gear_place_classes.py
 
-##init
+## init
 ```python 
 self.current_camera_angle = 0.0
 ```
@@ -16,7 +16,7 @@ self.name_of_service_client = self.create_client(NameOfService,"name_of_service"
 ```
 This creates the clients for each service so that they can be called in the python program. The services are all defined in `robot_commander.cpp`
 
-#_call_move_to_named_pose_service
+## _call_move_to_named_pose_service
 
 ```python
 request = MoveToNamedPose.Request()
@@ -45,7 +45,7 @@ if not result.success:
 ```
 The result is then retrieved from the future and if the request was not successful, an error is raised.
 
-#_call_move_cartesian_service
+## _call_move_cartesian_service
 
 This function is essentially the same as `_call_move_to_named_pose_service` except the request and response is changed from the `MoveToNamedPose` service to `MoveCartesian`.
 
@@ -62,7 +62,7 @@ future = self.move_cartesian_client.call_async(request)
 ```
 This is the request. The variables in the request are changed to the ones required for MoveCartesian and the name of the client is changed to the  `move_cartesian_client`.
 
-#_call_move_cartesian_angle_service
+## _call_move_cartesian_angle_service
 This function is the same as `_call_move_cartesian_service`, but with an additional variable in the request for the angle. This is the request:
 
 ```python
@@ -76,7 +76,7 @@ request.acceleration = acc
 request.angle = angle
 ```
 
-#_call_pick_up_gear_service
+## _call_pick_up_gear_service
 This function starts by making a list containing three zeroes:
 ```python
 gear_center_target = [0 for _ in range(3)]
@@ -140,7 +140,7 @@ future = self.pick_up_gear_client.call_async(request)
 
 The rest of the function is identical to the previous ones.
 
-#_call_put_gear_down_service
+## _call_put_gear_down_service
 The request for this service only has one variable, the z movement. This is the simplest way to put the gear down, but it requires the z movement to already be known. This is the request:
 ```python
 request = PutGearDown.Request()
@@ -150,7 +150,7 @@ z_movement = max(
 request.z = z_movement
 ```
 
-#_call_move_above_gear
+## _call_move_above_gear
 First, an instance of the `MovingGear` class is run until the gear is found successfuly twice. The class only adds values to x_vals if the gear is found twice
 ```python
 moving_gear = MovingGear()
@@ -233,10 +233,10 @@ self._call_move_cartesian_angle_service(final_y * -1 + X_OFFSET,final_x * -1 + Y
 ```
 The angle movement has to be used because all calculations for x and y values where done in relation to the camera and not the base.
 
-#_call_pick_up_moving_gear_service
+## _call_pick_up_moving_gear_service
 Largely, the math in this section is the same as `_call_move_above_gear`. The major difference is that this function moves down to pick the gear up instead of moving above the gear.
 
-#average_of_points
+## average_of_points
 This function takes in a list of points and finds the average of all of them. First, the number of points is found.
 ```python
 num_points = len(arr)
@@ -250,7 +250,7 @@ return (
 )
 ```
 
-#closest_to_center
+## closest_to_center
 This finds the gear closest to the center of the gripper. First, the distances from the center of the gripper and the center of the gear is taken.
 ```python
 vals = [sqrt(sum([(arr[i][j]-[X_OFFSET,Y_OFFSET][j])**2 for j in range(2)])) for i in range(len(arr))]
@@ -263,7 +263,7 @@ except:
     return -1
 ```
 
-#remove_identical_points
+## remove_identical_points
 This function removes points which are identical from the list. This can happen when scans are done more than once or scans are done in different positions in relation a primary position. First, an empty list is created to hold all of the bad_measurements and a loop is started that loops through all of points.
 ```python
 bad_measurements = []
@@ -320,7 +320,7 @@ This function finds the distance from (0,0) and a point. This is used to invalid
 return sqrt(arr[0] ** 2 + arr[1] ** 2)
 ```
 
-#_call_pick_up_multiple_gears
+## _call_pick_up_multiple_gears
 First, four lists are made. The first holds the distances from the centers of the gears found to the home position. The second is a list of the movements to get to the next scanning position. The final two are the x movments and the y movments of all movements to scanning position. This is used to hold the accurate distances to the gears from the home position. Also, a counter for the number of gears found and a dictionary to hold updated radius values is created.
 ```python
 distances_from_home = []
@@ -492,7 +492,7 @@ self._call_put_down_force(0.1)
 self._call_move_to_joint_position(self.current_joint_positions)
 offset_needed = False
 ```
-#_call_multiple_gears_single_scan
+## _call_multiple_gears_single_scan
 This function is very similar to `_call_pick_up_multiple_gears` except the starting position is up higher and the scan is only done at a single position. This higher position is moved to at the beginning of the funciton using this command:
 ```python
 self._call_move_to_named_pose_service("high_scan")
@@ -514,11 +514,11 @@ for coord in object_depth.coordinates:
                 -1 * coord[2])] = object_depth.radius_vals[coord]
 ```
 Other than these small differences, everything else in the function is the same as `_call_pick_up_multiple_gears` except that the color scan is used instead of the depth scan.
-#_call_multiple_gears_rotated_scan
+## _call_multiple_gears_rotated_scan
 This function is not working yet, but two positions are scanned at different angles and then the roobot records their positon in relation to the home position.
-#_call_open_gripper_service
+## _call_open_gripper_service
 This funciton calls the service to open the gripper. There are no variables in the request.
-#_call_pick_up_gear_coord_service
+## _call_pick_up_gear_coord_service
 This function picks up a gear given coordinates. Also, using the `offset_bool` parameter, the offset can either be applied or not. Also, using the `default_up` parameter, the robot can move up the default amount or the amount set using the coordinates. This is the request for this service:
 ```python
 z_movement = max(
@@ -534,7 +534,7 @@ request.z = z_movement
 request.object_width = object_width
 request.default_up = default_up
 ```
-#_call_put_gear_down_camera
+## _call_put_gear_down_camera
 This function uses the camera to put the gear down. A z value is still asked for as a fail safe so the robot does not move into an object. First, 4 variables are declared, the depth values which record the recorded z values from the camera, the x_center and y_center, which are used to declare the pixels for detection, and a counter so the robot does not scan infinitely if it can not detect the surface below.
 ```python
 depth_vals = []
