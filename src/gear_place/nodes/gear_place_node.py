@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import rclpy
-from gear_place.gear_place_classes import GearPlace, Error, ConveyorClass
+from gear_place.gear_place_classes import GearPlace, Error
 from time import sleep
 from math import pi
 
@@ -10,7 +10,6 @@ def main(args=None):
     gear_width = 0.0095
     try:
         supervisor = GearPlace()
-        conveyor_supervisor = ConveyorClass("aprs_ros_conveyor")
         supervisor.wait(5)
         # supervisor._call_open_gripper_service()
         # supervisor._call_move_to_named_pose_service("home")
