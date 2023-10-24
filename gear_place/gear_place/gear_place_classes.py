@@ -565,11 +565,12 @@ class GearPlace(Node):
       )  # outputs the number of gears found
       return distances_from_home,updated_radius_vals
   
-  def pick_up_multiple_gears_depth(self, distances_from_home: list, updated_radius_vals: list, object_width : float):
+  def pick_up_multiple_gears_depth(self, distances_from_home: list, updated_radius_vals: list, object_width : float, starting_position: str):
       for movment in distances_from_home:
           self.get_logger().info("Movement: " + str(movment))
 
-      self._call_move_to_named_pose_service("home")
+      if starting_position != "current":
+        self._call_move_to_named_pose_service(starting_position)
       last_point = [0, 0]
       offset_needed = True
       low_gear_threshold = 0.0275
