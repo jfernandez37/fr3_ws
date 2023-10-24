@@ -12,24 +12,24 @@ def main(args=None):
         supervisor = GearPlace()
         supervisor.wait(5)
         supervisor.call_open_gripper_service()
+        supervisor.call_move_cartesian_smooth_service(0.0,0.0,0.1,0.3,0.3)
         # supervisor.call_move_to_named_pose_service("home")
         # supervisor.call_move_to_named_pose_service("high_scan")
-        # supervisor.call_pick_up_gear_service(gear_width)
+        supervisor.call_pick_up_gear_service(gear_width, True)
         # supervisor.call_multiple_gears_single_scan(gear_width)
         # supervisor.call_rotate_single_joint(6,90.0,False)
         # sleep(1.0)
         # supervisor.call_rotate_single_joint(6,-pi/2,True)
-        # supervisor.call_move_cartesian_smooth_service(-0.27,0.0,0.0,0.3,0.3)
         # supervisor.single_scan_multiple_gears(gear_width)
-        gear_positions, radius_vals = supervisor.single_scan_multiple_gears()
-        supervisor.pick_up_multiple_gears(
-            gear_positions,
-            radius_vals,
-            gear_width, 
-            "high_scan",
-            ["green"],
-            True
-        )
+        # gear_positions, radius_vals = supervisor.single_scan_multiple_gears()
+        # supervisor.pick_up_multiple_gears(
+        #     gear_positions,
+        #     radius_vals,
+        #     gear_width, 
+        #     "high_scan",
+        #     ["green"],
+        #     True
+        # )
         # supervisor.call_move_to_named_pose_service("above_conveyor")
         # supervisor.wait(2) 
         # while True:
