@@ -329,8 +329,6 @@ void RobotCommander::move_robot_cartesian_angle(double x, double y, double z, do
   std::unique_ptr<CartesianMotionGenerator> cartesian_motion_generator;
   double x_val = x * cos(angle) - y * sin(angle);
   double y_val = x * sin(angle) + y * cos(angle);
-  std::cout << "X before: " << x << "\tY before: "<<y<<std::endl;
-  std::cout << "X after: " << x_val << "\tY after: "<<y_val<<std::endl;
   try
   {
     cartesian_motion_generator = std::make_unique<CartesianMotionGenerator>(x_val, y_val, z, maximum_velocity, acceleration, current_state_);
@@ -372,7 +370,6 @@ void RobotCommander::put_down_force_cb_(const std::shared_ptr<gear_place_interfa
       put_down_force(request->force);
       auto end = std::chrono::high_resolution_clock::now();
       std::chrono::duration<double> duration = end - start;
-      std::cout <<"Duration: "<<duration.count() << std::endl;
       time = duration.count();
     }
     open_gripper();
