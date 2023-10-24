@@ -410,6 +410,7 @@ class GearPlace(Node):
       """
       Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
       """
+      self.call_move_to_named_pose_service("home")
       distances_from_home = []
       robot_moves = [
           [0.0, -0.1],
