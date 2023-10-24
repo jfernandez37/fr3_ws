@@ -1167,3 +1167,57 @@ class GearPlace(Node):
       if not result.success:
           self.get_logger().error(f"Unable to move {x},{y},{z}")
           raise Error("Unable to move to location")
+      
+  def _enable_conveyor_service(self, enable: bool):
+      """
+      Calls the enable_conveyor callback
+      """
+      self.get_logger().info(
+          ("Enabling " if enable else "Disabling ") + "the conveyor belt"
+      )
+
+      request = EnableConveyor.Request()
+      request.enable = enable
+
+      future = self.create_client(EnableConveyor, "enable_conveyor").call_async(
+          request
+      )
+
+      rclpy.spin_until_future_complete(self, future, timeout_sec=8)
+
+      if not future.done():
+          raise Error("Timeout reached when calling enable_conveyor service")
+
+      result: EnableConveyor.Response
+      result = future.result()
+
+      if not result.success:
+          raise Error(f"Unable to enable the conveyor belt")
+
+  def _set_conveyor_state_service(self, speed: float, direction: float):
+      """
+      Calls the set_conveyor_state callback
+      """
+      self.get_logger().info(
+          "Moving the conveyor"+
+          ("forward" if direction == 0 else "backward")+
+          f"at a speed of {speed}",
+      )
+      request = SetConveyorState.Request()
+      request.speed = speed
+      request.direction = direction
+
+      future = self.create_client(SetConveyorState, "set_conveyor_state").call_async(
+          request
+      )
+
+      rclpy.spin_until_future_complete(self, future, timeout_sec=20)
+
+      if not future.done():
+          raise Error("Tiemout reached when calling set_conveyor_state service")
+
+      result: SetConveyorState.Response
+      result = future.result()
+
+      if not result.success:
+          raise Error(f"Unable to move the conveyor belt")
