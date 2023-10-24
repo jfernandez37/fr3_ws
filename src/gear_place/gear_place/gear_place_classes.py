@@ -133,10 +133,10 @@ class GearPlace(Node):
       self.get_joint_positions_client = self.create_client(GetJointPositions, "get_joint_positions")
       self.move_cartesian_smooth_client = self.create_client(MoveCartesianSmooth, "move_cartesian_smooth")
       self.enable_conveyor_client = self.create_client(
-          EnableConveyor, "enable_conveyor"
+          EnableConveyor, "conveyor/enable"
       )
       self.set_conveyor_state_client = self.create_client(
-          SetConveyorState, "set_conveyor_state"
+          SetConveyorState, "conveyor/set_state"
       )
 
   def wait(self, duration: float):
