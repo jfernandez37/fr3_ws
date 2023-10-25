@@ -439,7 +439,7 @@ class GearPlace(Node):
 
       request.x = -1 * gear_center_target[1] + X_OFFSET
       request.y = -1 * gear_center_target[0] + Y_OFFSET
-      request.z = -1 * gear_center_target[2] + Z_CAMERA_OFFSET + 0.0075
+      request.z = -1 * gear_center_target[2] + Z_CAMERA_OFFSET
       request.object_width = object_width
 
       future = self.pick_up_gear_client.call_async(request)
