@@ -399,6 +399,8 @@ class GearPlace(Node):
       """
       Calls the pick_up_gear callback
       """
+      low_gear_threshold = 0.0275 if depth_or_color else 0.03
+      high_gear_thershold = 0.041 if depth_or_color else 0.045
       self.get_logger().info(f"Picking up gear")
       gear_center_target = [0 for _ in range(3)]
       requested_class = FindObject if depth_or_color else FindObjectColor
@@ -429,7 +431,10 @@ class GearPlace(Node):
           find_object.destroy_node()
           gear_center_target = object_depth.coordinates[0]
       self.get_logger().info("gear_center_target: "+str(gear_center_target))
-
+      coord = object_depth.coordinates[0]
+      self.get_logger().info("Picking up "+
+                             ["yellow", "orange", "green"][sorted([low_gear_threshold, high_gear_thershold,object_depth.radius_vals[coord]]).index(object_depth.radius_vals[coord])]+
+                             "gear")
       request = PickUpGear.Request()
 
       request.x = -1 * gear_center_target[1] + X_OFFSET
