@@ -399,7 +399,7 @@ class GearPlace(Node):
       """
       Calls the pick_up_gear callback
       """
-      low_gear_threshold = 0.0275 if depth_or_color else 0.03
+      low_gear_threshold = 0.0275 if depth_or_color else 0.0275
       high_gear_thershold = 0.041 if depth_or_color else 0.045
       self.get_logger().info(f"Picking up gear")
       gear_center_target = [0 for _ in range(3)]
