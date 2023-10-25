@@ -321,7 +321,7 @@ class GearPlace(Node):
       )  # outputs the number of gears found
       return distances_from_home,updated_radius_vals
   
-  def single_scan_multiple_gears(self):
+  def single_scan_multiple_gears(self)->(list,dict):
     """
     Scans the area for gears. Uses only one position to find the gears.
     """
