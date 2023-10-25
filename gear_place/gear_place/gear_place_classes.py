@@ -379,6 +379,15 @@ class GearPlace(Node):
     )  # outputs the number of gears found
     return distances_from_home, updated_radius_vals
 
+  def select_scan(self, type_scan="single",robot_moves=[]):
+      if type_scan=="single":
+          return self.single_scan_multiple_gears()
+      elif type_scan=="grid":
+          return (self.scan_multiple_gears_grid() if robot_moves==[] else self.scan_multiple_gears_grid(robot_moves))
+      else:
+          self.get_logger().error(f"{type_scan} is not a valid scan type. Please choose between \"single\" and \"grid\"")
+          return [],{}
+  
   # ===========================================================
   #                 pick up gear functions
   # ===========================================================
