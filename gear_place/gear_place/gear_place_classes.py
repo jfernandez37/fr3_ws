@@ -395,7 +395,7 @@ class GearPlace(Node):
   #                 pick up gear functions
   # ===========================================================
 
-  def call_pick_up_gear_service(self, object_width : float,depth_or_color:bool, starting_position="current"):
+  def call_pick_up_gear_service(self, depth_or_color : bool, object_width = 0.0095, starting_position="current"):
       """
       Calls the pick_up_gear callback
       """
