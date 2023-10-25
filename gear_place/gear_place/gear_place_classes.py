@@ -612,11 +612,13 @@ class GearPlace(Node):
                     if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
                         self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
                         self.call_pick_up_gear_coord_service(False,0.005,0.0, gear_point[2], object_width,True)
+                        z=gear_point[2]
                         last_point=(last_point[0]+0.005,last_point[1])
                     else:
                         self.call_pick_up_gear_coord_service(
                             True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width, True
                         )
+                        z=-1*correct_gear[2]
                         last_point=(last_point[0]+-1*correct_gear[1]+X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
                     #   self.call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
                     self.call_get_joint_positions()
