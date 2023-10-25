@@ -568,14 +568,14 @@ class GearPlace(Node):
                   thresholds = sorted([low_gear_threshold, high_gear_thershold,updated_radius_vals[gear_point]])
                   gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
                   self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
-              self._call_open_gripper_service()  # opens the gripper
+              self.call_open_gripper_service()  # opens the gripper
               
               if offset_needed:
-                self._call_move_cartesian_smooth_service(
+                self.call_move_cartesian_smooth_service(
                     move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
                 )  # moves above the gear
               else:
-                self._call_move_cartesian_smooth_service(
+                self.call_move_cartesian_smooth_service(
                     move[0], move[1], 0.0, 0.15,0.2
                 )  # moves above the gear
               correct_gear = [0.0,0.0,0.0]
@@ -607,17 +607,17 @@ class GearPlace(Node):
               self.get_logger().info(", ".join([str(val) for val in correct_gear]))
               if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
                   self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
-                  self._call_pick_up_gear_coord_service(False,0.005,0.0, gear_point[2], object_width,True)
+                  self.call_pick_up_gear_coord_service(False,0.005,0.0, gear_point[2], object_width,True)
                   last_point=(last_point[0]+0.005,last_point[1])
               else:
-                self._call_pick_up_gear_coord_service(
+                self.call_pick_up_gear_coord_service(
                     True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width, True
                 )
                 last_point=(last_point[0]+-1*correct_gear[1]+X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
-            #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
-              self._call_get_joint_positions()
+            #   self.call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
+              self.call_get_joint_positions()
               self.put_gear_down_choose_type("force",force=0.1)
-              self._call_move_to_joint_position(self.current_joint_positions)
+              self.call_move_to_joint_position(self.current_joint_positions)
               offset_needed = False
 
   # ===========================================================
