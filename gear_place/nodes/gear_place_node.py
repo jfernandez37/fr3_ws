@@ -20,12 +20,12 @@ def main(args=None):
         # sleep(1.0)
         # supervisor.call_rotate_single_joint(6,-pi/2,True)
         # supervisor.single_scan_multiple_gears(gear_width)
-        gear_positions, radius_vals = supervisor.select_scan("grid")
+        gear_positions, radius_vals = supervisor.select_scan("single")
         supervisor.pick_up_multiple_gears(
             gear_positions,
             radius_vals,
             gear_width, 
-            "home",
+            "high_scan",
             ["orange"],
             False
         )
