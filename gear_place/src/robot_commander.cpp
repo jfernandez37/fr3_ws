@@ -521,6 +521,7 @@ void RobotCommander::pick_up_moving_gear_cb_(
   }
   response->success = true;
 }
+
 void RobotCommander::open_gripper_cb_(
     const std::shared_ptr<gear_place_interfaces::srv::OpenGripper::Request> request,
     std::shared_ptr<gear_place_interfaces::srv::OpenGripper::Response> response)
@@ -542,6 +543,7 @@ void RobotCommander::open_gripper_cb_(
   }
   response->success = true;
 }
+
 void RobotCommander::open_gripper()
 {
   /*
@@ -637,6 +639,7 @@ void RobotCommander::move_robot_to_frame(KDL::Frame target_frame)
     throw CommanderError("Unable to move to target frame");
   }
 }
+
 double RobotCommander::get_camera_angle(){
   return joint_state_msg_.position[6]-0.816665-joint_state_msg_.position[0];
 }
