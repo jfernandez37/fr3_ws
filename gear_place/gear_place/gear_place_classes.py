@@ -659,7 +659,7 @@ class GearPlace(Node):
     
   def put_gear_down_choose_type(self, put_down_type : str, z=0.0,force = 0.0):
       self.call_get_joint_positions()
-      if put_down_type not in ["force", "camera", "value"] or (z == 0.0 and put_down_type!="force") or (put_down_type=="force" and force<=0.0):
+      if put_down_type not in ["force", "camera", "value"] or (z == 0.0 and put_down_type!="force") or (put_down_type=="force" and force<0.0):
           if put_down_type not in ["force", "camera", "value"]:
               self.get_logger().error(f"{put_down_type} is not a valid put down type. The valid options are [force, camera, value].")
           elif z == 0.0 and put_down_type!="force":
@@ -668,7 +668,7 @@ class GearPlace(Node):
               self.get_logger().error(f"The force method needs a non-zero positive force value.")
           self.get_logger().info("Putting gear down using force method with force of 0.1.")
           self.call_put_down_force(0.1)
-      self.call_put_gear_down_service(z) if put_down_type=="value" else (self.call_put_gear_down_camera(z) if put_down_type=="camera" else self.call_put_down_force(force))
+      self.call_put_gear_down_service(z) if put_down_type=="value" else (self.call_put_gear_down_camera(z) if put_down_type=="camera" else self.call_put_down_force(force if force!=0.0 else 0.1))
       self.call_move_to_joint_position(self.current_joint_positions)
 
   # ===========================================================
