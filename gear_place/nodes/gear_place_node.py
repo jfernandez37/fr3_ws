@@ -21,13 +21,12 @@ def main(args=None):
         # supervisor.call_rotate_single_joint(6,-pi/2,True)
         # supervisor.single_scan_multiple_gears(gear_width)
         gear_positions, radius_vals = supervisor.select_scan("single")
-        print(gear_positions)
         supervisor.pick_up_multiple_gears(
             gear_positions,
             radius_vals,
             gear_width, 
             "high_scan",
-            ["green"],
+            ["orange"],
             True
         )
         # supervisor.call_move_to_named_pose_service("above_conveyor")
