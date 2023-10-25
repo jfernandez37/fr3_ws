@@ -25,7 +25,7 @@ def main(args=None):
             gear_positions,
             radius_vals,
             gear_width, 
-            "high_scan",
+            "home",
             ["orange"],
             False
         )
