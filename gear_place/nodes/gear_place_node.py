@@ -15,7 +15,7 @@ def main(args=None):
         supervisor.call_move_to_named_pose_service("home")
         # supervisor.call_move_to_named_pose_service("high_scan")
         supervisor.call_pick_up_gear_service(gear_width, True)
-        supervisor.put_gear_down_choose_type("camera",-0.247)
+        supervisor.put_gear_down_choose_type("force")
         # supervisor.call_multiple_gears_single_scan(gear_width)
         # supervisor.call_rotate_single_joint(6,90.0,False)
         # sleep(1.0)
