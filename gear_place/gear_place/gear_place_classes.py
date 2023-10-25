@@ -492,7 +492,7 @@ class GearPlace(Node):
       last_point = [0, 0]
       offset_needed = True
       low_gear_threshold = 0.0275 if depth_or_color else 0.03
-      high_gear_thershold = 0.041 if depth_or_color else 0.45
+      high_gear_thershold = 0.041 if depth_or_color else 0.045
       detection_class = MultipleGears if depth_or_color else MultipleGearsColor
       for gear_point in distances_from_home:  # loops through the movements to the gears
           if updated_radius_vals[gear_point]!=0:
