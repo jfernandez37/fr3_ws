@@ -395,10 +395,12 @@ class GearPlace(Node):
   #                 pick up gear functions
   # ===========================================================
 
-  def call_pick_up_gear_service(self, object_width : float,depth_or_color:bool):
+  def call_pick_up_gear_service(self, object_width : float,depth_or_color:bool, starting_position="current"):
       """
       Calls the pick_up_gear callback
       """
+      if starting_position!="current":
+          self.call_move_to_named_pose_service(starting_position)
       low_gear_threshold = 0.0275 if depth_or_color else 0.0275
       high_gear_thershold = 0.041 if depth_or_color else 0.045
       self.get_logger().info(f"Picking up gear")
