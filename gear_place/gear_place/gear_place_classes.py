@@ -434,7 +434,7 @@ class GearPlace(Node):
       coord = object_depth.coordinates[0]
       self.get_logger().info("Picking up "+
                              ["yellow", "orange", "green"][sorted([low_gear_threshold, high_gear_thershold,object_depth.radius_vals[coord]]).index(object_depth.radius_vals[coord])]+
-                             "gear")
+                             " gear")
       request = PickUpGear.Request()
 
       request.x = -1 * gear_center_target[1] + X_OFFSET
