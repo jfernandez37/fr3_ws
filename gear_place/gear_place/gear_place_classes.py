@@ -484,7 +484,7 @@ class GearPlace(Node):
       )  # outputs the number of gears found
       return distances_from_home,updated_radius_vals
   
-  def pick_up_multiple_gears(self, distances_from_home: list, updated_radius_vals: list, object_width : float, starting_position: str, colors: list,depth_or_color: bool):
+  def pick_up_multiple_gears(self, distances_from_home: list, updated_radius_vals: list, object_width : float, starting_position: str, colors: list,depth_or_color: bool, put_down_type = "force", force = 0.1):
       for movment in distances_from_home:
           self.get_logger().info("Movement: " + str(movment))
 
@@ -547,13 +547,15 @@ class GearPlace(Node):
                 if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
                     self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
                     self.call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2] - (0.01 if gear_color=="green" else 0), object_width, False)
+                    z = gear_point[2] - (0.01 if gear_color=="green" else 0)
                 else:
                   self.call_pick_up_gear_coord_service(
                       True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2] - (0.01 if gear_color=="green" else 0), object_width, False
                   )
                   last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
+                  z = -1*correct_gear[2] - (0.01 if gear_color=="green" else 0)
                 self.call_get_joint_positions()
-                self.call_put_down_force(0.1)
+                self.put_gear_down_choose_type(put_down_type,z=z,force=force)
                 self.call_move_to_joint_position(self.current_joint_positions)
                 offset_needed = False
       else:
@@ -620,7 +622,7 @@ class GearPlace(Node):
                 last_point=(last_point[0]+-1*correct_gear[1]+X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
             #   self._call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
               self._call_get_joint_positions()
-              self._call_put_down_force(0.1)
+              self.put_gear_down_choose_type("force",force=0.1)
               self._call_move_to_joint_position(self.current_joint_positions)
               offset_needed = False
 
