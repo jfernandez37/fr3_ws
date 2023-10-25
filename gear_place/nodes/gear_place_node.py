@@ -27,7 +27,8 @@ def main(args=None):
             gear_width, 
             "high_scan",
             ["orange"],
-            False
+            False,
+            "camera"
         )
         # supervisor.call_move_to_named_pose_service("above_conveyor")
         # supervisor.wait(2) 
