@@ -488,143 +488,74 @@ class GearPlace(Node):
           self.call_move_cartesian_smooth_service(0.0,0.0,-0.16,0.15,0.2)
       last_point = [0, 0]
       offset_needed = True
-      low_gear_threshold = 0.0275
-      high_gear_thershold = 0.041
-      if depth_or_color:
-        for gear_point in distances_from_home:  # loops through the movements to the gears
-            if updated_radius_vals[gear_point]!=0:
-              thresholds = sorted([low_gear_threshold, high_gear_thershold,updated_radius_vals[gear_point]])
-              gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
-              if gear_color in colors:
-                move = [
-                    gear_point[i] - last_point[i] for i in range(2)
-                ]  # finds the next movement to the next gear
-                last_point = gear_point
-                self.get_logger().info("Next_move:" + str(move))
-                self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
-                self.call_open_gripper_service()  # opens the gripper
-                
-                if offset_needed:
-                  self.call_move_cartesian_smooth_service(
-                      move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
-                  )  # moves above the gear
-                else:
-                  self.call_move_cartesian_smooth_service(
-                      move[0], move[1], 0.0, 0.15,0.2
-                  )  # moves above the gear
-                correct_gear = [0.0,0.0,0.0]
-                counter = 0
-                while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <3:
-                  counter+=1
-                  multiple_gears = MultipleGears(self.connected)
-                  rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
-                  self.connected = multiple_gears.connected
-                  while (
-                      sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
-                      or not multiple_gears.ran
-                  ):  # loops until it has run and until there are no None values
-                      multiple_gears.destroy_node()
-                      multiple_gears = MultipleGears(self.connected)
-                      rclpy.spin_once(multiple_gears)
-                      self.connected = multiple_gears.connected
-                  object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
-                  rclpy.spin_once(object_depth)  # Gets the distance from the camera
-                  multiple_gears.destroy_node()
-                  object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-                  closest_gears = [coord 
-                                   for coord in object_depth.coordinates 
-                                   if gear_color == 
-                                   ["yellow", "orange", "green"][sorted([low_gear_threshold, high_gear_thershold,object_depth.radius_vals[coord]]).index(object_depth.radius_vals[coord])]] #ensures that the gear color mateches
-                  correct_gear_index = closest_to_center(closest_gears)
-                  correct_gear = closest_gears[closest_to_center(closest_gears)] if correct_gear_index>0 else [0 for _ in range(3)]
-                self.get_logger().info(", ".join([str(val) for val in correct_gear]))
-                if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
-                    self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
-                    self.call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2] - (0.01 if gear_color=="green" else 0), object_width, False)
-                    z = gear_point[2] - (0.01 if gear_color=="green" else 0)
-                else:
-                  self.call_pick_up_gear_coord_service(
-                      True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2] - (0.01 if gear_color=="green" else 0), object_width, False
-                  )
-                  last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
-                  z = -1*correct_gear[2] - (0.01 if gear_color=="green" else 0)
-                self.call_get_joint_positions()
-                self.put_gear_down_choose_type(put_down_type,z=z,force=force)
-                self.call_move_to_joint_position(self.current_joint_positions)
-                offset_needed = False
-      else:
-          low_gear_threshold = 0.03
-          high_gear_thershold = 0.045
-          for gear_point in distances_from_home:  # loops through the movements to the gears
-              if updated_radius_vals[gear_point]!=0:
-                thresholds = sorted([low_gear_threshold, high_gear_thershold,updated_radius_vals[gear_point]])
-                gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
-                if gear_color in colors:
-                    move = [
-                        gear_point[i] - last_point[i] for i in range(2)
-                    ]  # finds the next movement to the next gear
-                    last_point = gear_point
-                    self.get_logger().info("Next_move:" + str(move))
-                    if updated_radius_vals[gear_point] ==0:
-                        gear_color == "not found"
-                        self.get_logger().info("Could not find gear color")
-                    else:
-                        thresholds = sorted([low_gear_threshold, high_gear_thershold,updated_radius_vals[gear_point]])
-                        gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
-                        self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
-                    self.call_open_gripper_service()  # opens the gripper
-                    
-                    if offset_needed:
-                        self.call_move_cartesian_smooth_service(
-                            move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
-                        )  # moves above the gear
-                    else:
-                        self.call_move_cartesian_smooth_service(
-                            move[0], move[1], 0.0, 0.15,0.2
-                        )  # moves above the gear
-                    correct_gear = [0.0,0.0,0.0]
-                    counter = 0
-                    multiple_gears = MultipleGearsColor(self.connected)
-                    rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
-                    self.connected = multiple_gears.connected
-                    while (
-                        sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
-                        or not multiple_gears.ran
-                    ):  # loops until it has run and until there are no None values
-                        multiple_gears.destroy_node()
-                        multiple_gears = MultipleGearsColor(self.connected)
-                        rclpy.spin_once(multiple_gears)
-                        self.connected = multiple_gears.connected
-                    while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <15:
-                        counter+=1
-                        object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears.g_centers],
-                                                {convert_color_to_depth(point):[convert_color_to_depth(p) for p in multiple_gears.dist_points[point]] for point in multiple_gears.g_centers})
-                        rclpy.spin_once(object_depth)  # Gets the distance from the camera
-                        object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-                        closest_gears = [coord 
-                                        for coord in object_depth.coordinates 
-                                        if gear_color == 
-                                        ["yellow", "orange", "green"][sorted([low_gear_threshold, high_gear_thershold,object_depth.radius_vals[coord]]).index(object_depth.radius_vals[coord])]] #ensures that the gear color mateches
-                        correct_gear_index = closest_to_center(closest_gears)
-                        correct_gear = closest_gears[closest_to_center(closest_gears)] if correct_gear_index>0 else [0 for _ in range(3)]
+      low_gear_threshold = 0.0275 if depth_or_color else 0.03
+      high_gear_thershold = 0.041 if depth_or_color else 0.45
+      detection_class = MultipleGears if depth_or_color else MultipleGearsColor
+      for gear_point in distances_from_home:  # loops through the movements to the gears
+          if updated_radius_vals[gear_point]!=0:
+            thresholds = sorted([low_gear_threshold, high_gear_thershold,updated_radius_vals[gear_point]])
+            gear_color = ["yellow", "orange", "green"][thresholds.index(updated_radius_vals[gear_point])]
+            if gear_color in colors:
+              move = [
+                  gear_point[i] - last_point[i] for i in range(2)
+              ]  # finds the next movement to the next gear
+              last_point = gear_point
+              self.get_logger().info("Next_move:" + str(move))
+              self.get_logger().info(f"Picking up a {gear_color} gear with radius size of {updated_radius_vals[gear_point]}")
+              self.call_open_gripper_service()  # opens the gripper
+              
+              if offset_needed:
+                self.call_move_cartesian_smooth_service(
+                    move[0]+X_OFFSET, move[1]+Y_OFFSET, 0.0, 0.15, 0.2
+                )  # moves above the gear
+              else:
+                self.call_move_cartesian_smooth_service(
+                    move[0], move[1], 0.0, 0.15,0.2
+                )  # moves above the gear
+              correct_gear = [0.0,0.0,0.0]
+              counter = 0
+              while (correct_gear in [[0.0,0.0,0.0],[None for _ in range(3)]] or sum(correct_gear)==0.0) and counter <3:
+                counter+=1
+                multiple_gears = detection_class(self.connected)
+                rclpy.spin_once(multiple_gears)  # finds multiple gears if there are multiple
+                self.connected = multiple_gears.connected
+                while (
+                    sum([cent.count(None) for cent in multiple_gears.g_centers]) != 0
+                    or not multiple_gears.ran
+                ):  # loops until it has run and until there are no None values
                     multiple_gears.destroy_node()
-                    self.get_logger().info(", ".join([str(val) for val in correct_gear]))
-                    if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
-                        self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
-                        self.call_pick_up_gear_coord_service(False,0.005,0.0, gear_point[2], object_width,True)
-                        z=gear_point[2]
-                        last_point=(last_point[0]+0.005,last_point[1])
-                    else:
-                        self.call_pick_up_gear_coord_service(
-                            True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2], object_width, True
-                        )
-                        z=-1*correct_gear[2]
-                        last_point=(last_point[0]+-1*correct_gear[1]+X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
-                    #   self.call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
-                    self.call_get_joint_positions()
-                    self.put_gear_down_choose_type("camera",z=z)
-                    self.call_move_to_joint_position(self.current_joint_positions)
-                    offset_needed = False
+                    multiple_gears = detection_class(self.connected)
+                    rclpy.spin_once(multiple_gears)
+                    self.connected = multiple_gears.connected
+                if depth_or_color:
+                  object_depth = ObjectDepth(multiple_gears.g_centers, multiple_gears.dist_points)
+                else:
+                  object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears.g_centers], 
+                                       {convert_color_to_depth(point):[convert_color_to_depth(p) for p in multiple_gears.dist_points[point]] for point in multiple_gears.g_centers})
+                rclpy.spin_once(object_depth)  # Gets the distance from the camera
+                multiple_gears.destroy_node()
+                object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+                closest_gears = [coord 
+                                  for coord in object_depth.coordinates 
+                                  if gear_color == 
+                                  ["yellow", "orange", "green"][sorted([low_gear_threshold, high_gear_thershold,object_depth.radius_vals[coord]]).index(object_depth.radius_vals[coord])]] #ensures that the gear color mateches
+                correct_gear_index = closest_to_center(closest_gears)
+                correct_gear = closest_gears[closest_to_center(closest_gears)] if correct_gear_index>0 else [0 for _ in range(3)]
+              self.get_logger().info(", ".join([str(val) for val in correct_gear]))
+              if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
+                  self.get_logger().error("Second check above gear did not work. Attempting to pick up with current position")
+                  self.call_pick_up_gear_coord_service(False,0.0,0.0, gear_point[2] - (0.01 if gear_color=="green" else 0), object_width, False)
+                  z = gear_point[2] - (0.01 if gear_color=="green" else 0)
+              else:
+                self.call_pick_up_gear_coord_service(
+                    True, -1*correct_gear[1], -1*correct_gear[0],-1*correct_gear[2] - (0.01 if gear_color=="green" else 0), object_width, False
+                )
+                last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
+                z = -1*correct_gear[2] - (0.01 if gear_color=="green" else 0)
+              self.call_get_joint_positions()
+              self.put_gear_down_choose_type(put_down_type,z=z,force=force)
+              self.call_move_to_joint_position(self.current_joint_positions)
+              offset_needed = False
 
   # ===========================================================
   #                 put down gear functions
