@@ -409,21 +409,12 @@ class GearPlace(Node):
       ):  # runs until valid coordinates are found
           find_object = requested_class()
           rclpy.spin_once(find_object) # Finds the gear
-          c = 0
           while (
               find_object.ret_cent_gear().count(None) != 0
           ):  # Runs and guarantees that none of the coordinates are none type
-              c += 1
-
-              if c % 5 == 0:
-                  self.call_move_cartesian_smooth_service(
-                      0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
-                  )  # Moves to the center of the cart
-                  sleep(1)
-              else:
-                  find_object.destroy_node()
-                  find_object = requested_class()
-                  rclpy.spin_once(find_object)
+                find_object.destroy_node()
+                find_object = requested_class()
+                rclpy.spin_once(find_object)
           object_depth = ObjectDepth([find_object.ret_cent_gear()] if depth_or_color else[convert_color_to_depth(find_object.ret_cent_gear())],
                                      find_object.dist_points if depth_or_color else {convert_color_to_depth(find_object.ret_cent_gear()):[convert_color_to_depth(p) for p in find_object.dist_points[find_object.ret_cent_gear()]]})
           rclpy.spin_once(object_depth)  # Gets the distance from the camera
