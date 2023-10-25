@@ -422,7 +422,8 @@ class GearPlace(Node):
                   find_object.destroy_node()
                   find_object = requested_class()
                   rclpy.spin_once(find_object)
-          object_depth = ObjectDepth([find_object.ret_cent_gear()] if depth_or_color else[convert_color_to_depth(find_object.ret_cent_gear())],{})
+          object_depth = ObjectDepth([find_object.ret_cent_gear()] if depth_or_color else[convert_color_to_depth(find_object.ret_cent_gear())],
+                                     find_object.dist_points if depth_or_color else {convert_color_to_depth(find_object.ret_cent_gear()):[convert_color_to_depth(p) for p in find_object.dist_points[find_object.ret_cent_gear()]]})
           rclpy.spin_once(object_depth)  # Gets the distance from the camera
           object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
           find_object.destroy_node()

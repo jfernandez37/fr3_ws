@@ -1,6 +1,6 @@
 import cv2
 from rclpy.node import Node
-
+from math import sqrt
 import numpy as np
 
 from sensor_msgs.msg import Image  # msg for recieving the image
@@ -19,6 +19,7 @@ class FindObject(Node):
         self.gy = None
         self.ex = None
         self.ey = None
+        self.dist_points = {}
         self.radius = 0
         self.thresh_image = None
         self.declare_parameter("thresh_value", 50)
@@ -101,6 +102,7 @@ class FindObject(Node):
             + ("threshold" if c == 1 else "thresholds")
         )
         (x, y), self.radius = cv2.minEnclosingCircle(contours[closest_to_circle])
+        self.radius = int(self.radius)
         self.gx = int(x)
         self.gy = int(y)
         self.ex = int(x)+int(self.radius)
@@ -115,6 +117,19 @@ class FindObject(Node):
         self.get_logger().info(
             f"X coordinate for gear: {self.gx}, y coordinate for gear {self.gy}. Circle ratio: {round(contour_to_circle_ratio,5)}"
         )
+        unit_circle = sqrt(2)/2
+        between_x_y = int(unit_circle*self.radius)
+        self.dist_points[(self.gx, self.gy)] = []
+        if self.gx+self.radius <=640:
+            self.dist_points[(self.gx, self.gy)].append((self.gx+self.radius,self.gy))
+        if self.gx-self.radius >=0:
+            self.dist_points[(self.gx, self.gy)].append((self.gx-self.radius,self.gy))
+        if self.gy+self.radius <= 480:
+            self.dist_points[(self.gx, self.gy)].append((self.gx,self.gy+self.radius))
+        if self.gy-self.radius >=0:
+            self.dist_points[(self.gx, self.gy)].append((self.gx,self.gy-self.radius))
+
+        self.dist_points[(self.gx, self.gy)]+=[(self.gx+between_x_y*[-1,1][i],self.gy+between_x_y*[-1,1][j]) for i in range(2) for j in range(2) if 0<=self.gx+between_x_y*[-1,1][i]<=640 and 0<=self.gy+between_x_y*[-1,1][i]<=480]
 
     def ret_cent_gear(self):
         """

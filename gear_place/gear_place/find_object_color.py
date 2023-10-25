@@ -1,6 +1,6 @@
 import cv2
 from rclpy.node import Node
-
+from math import sqrt
 import numpy as np
 
 from sensor_msgs.msg import Image  # msg for recieving the image
@@ -108,6 +108,7 @@ class FindObjectColor(Node):
         self.gy = int(y)
         self.ex = int(x)+int(self.radius)
         self.ey = int(y)
+        self.radius = int(self.radius)
         try:
             (h, w) = self.cv_image.shape[:2]
             self.cx = w // 2
@@ -118,6 +119,19 @@ class FindObjectColor(Node):
         self.get_logger().info(
             f"X coordinate for gear: {self.gx}, y coordinate for gear {self.gy}. Circle ratio: {round(contour_to_circle_ratio,5)}"
         )
+        unit_circle = sqrt(2)/2
+        between_x_y = int(unit_circle*self.radius)
+        self.dist_points[(self.gx, self.gy)] = []
+        if self.gx+self.radius <=640:
+            self.dist_points[(self.gx, self.gy)].append((self.gx+self.radius,self.gy))
+        if self.gx-self.radius >=0:
+            self.dist_points[(self.gx, self.gy)].append((self.gx-self.radius,self.gy))
+        if self.gy+self.radius <= 480:
+            self.dist_points[(self.gx, self.gy)].append((self.gx,self.gy+self.radius))
+        if self.gy-self.radius >=0:
+            self.dist_points[(self.gx, self.gy)].append((self.gx,self.gy-self.radius))
+
+        self.dist_points[(self.gx, self.gy)]+=[(self.gx+between_x_y*[-1,1][i],self.gy+between_x_y*[-1,1][j]) for i in range(2) for j in range(2) if 0<=self.gx+between_x_y*[-1,1][i]<=640 and 0<=self.gy+between_x_y*[-1,1][i]<=480]
 
     def ret_cent_gear(self):
         """
