@@ -243,13 +243,7 @@ class GearPlace(Node):
   #                   scanning functions
   # ===========================================================
 
-  def scan_multiple_gears_grid(self)->(list,dict):
-      """
-      Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
-      """
-      self.call_move_to_named_pose_service("home")
-      distances_from_home = []
-      robot_moves = [
+  def scan_multiple_gears_grid(self,robot_moves = [
           [0.0, -0.1],
           [-0.1, 0.0],
           [-0.1, 0.0],
@@ -257,8 +251,12 @@ class GearPlace(Node):
           [0.1, 0.0],
           [0.1, 0.1],
           [-0.1, 0.0],
-          [-0.1, 0.0],
-      ]  # cartesian movements starting at home position. Scans the area in front of the robot.
+          [-0.1, 0.0]])->(list,dict):
+      """
+      Scans the area for gears. Finds the distances between the center of each gear and the home position and picks up each gear.
+      """
+      self.call_move_to_named_pose_service("home")
+      distances_from_home = []
       x_movements = [a[0] for a in robot_moves]  # just the x direction movements
       y_movements = [a[1] for a in robot_moves]  # just the y direction movements
       self.get_logger().info(f"Scanning for gears")
