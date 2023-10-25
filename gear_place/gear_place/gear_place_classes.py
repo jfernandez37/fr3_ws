@@ -620,7 +620,7 @@ class GearPlace(Node):
                         last_point=(last_point[0]+-1*correct_gear[1]+X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
                     #   self.call_put_gear_down_camera(-1*coorect_gear[2])  # puts the gear down
                     self.call_get_joint_positions()
-                    self.put_gear_down_choose_type("force",force=0.1)
+                    self.put_gear_down_choose_type("camera")
                     self.call_move_to_joint_position(self.current_joint_positions)
                     offset_needed = False
 
