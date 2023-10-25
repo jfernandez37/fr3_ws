@@ -601,8 +601,8 @@ class GearPlace(Node):
                                   for coord in object_depth.coordinates 
                                   if gear_color == 
                                   ["yellow", "orange", "green"][sorted([low_gear_threshold, high_gear_thershold,object_depth.radius_vals[coord]]).index(object_depth.radius_vals[coord])]] #ensures that the gear color mateches
-                correct_gear_index = self.closest_to_center(closest_gears)
-                correct_gear = closest_gears[self.closest_to_center(closest_gears)] if correct_gear_index>0 else [0 for _ in range(3)]
+                correct_gear_index = closest_to_center(closest_gears)
+                correct_gear = closest_gears[closest_to_center(closest_gears)] if correct_gear_index>0 else [0 for _ in range(3)]
               multiple_gears.destroy_node()
               self.get_logger().info(", ".join([str(val) for val in correct_gear]))
               if correct_gear.count(0.0)>=1 or correct_gear.count(None)>=1:
