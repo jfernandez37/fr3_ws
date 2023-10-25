@@ -12,7 +12,7 @@ def main(args=None):
         supervisor = GearPlace()
         supervisor.wait(5)
         supervisor.call_open_gripper_service()
-        # supervisor.call_move_to_named_pose_service("home")
+        supervisor.call_move_to_named_pose_service("home")
         # supervisor.call_move_to_named_pose_service("high_scan")
         supervisor.call_pick_up_gear_service(gear_width, True)
         supervisor.put_gear_down_choose_type("camera",-0.247)
