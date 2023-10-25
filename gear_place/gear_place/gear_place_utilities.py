@@ -96,3 +96,6 @@ def remove_identical_points(arr : list, radius_vals : dict) -> list:
     for ind in bad_measurements:  # deletes duplicated gears
         del arr[ind]
     return arr
+
+def find_distance(arr : list) -> float:
+    return sqrt(arr[0] ** 2 + arr[1] ** 2)

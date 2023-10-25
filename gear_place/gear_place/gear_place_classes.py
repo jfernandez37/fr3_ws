@@ -44,7 +44,8 @@ from gear_place.gear_place_utilities import (
     convert_color_to_depth_radius,
     average_of_points,
     remove_identical_points,
-    closest_to_center
+    closest_to_center,
+    find_distance
   )
 
 from geometry_msgs.msg import Pose, Point
@@ -121,31 +122,38 @@ class GearPlace(Node):
           except KeyboardInterrupt:
               raise Error("Ctrl+C pressed")
 
-  def call_move_to_named_pose_service(self, named_pose: str):
+  def call_open_gripper_service(self):
       """
-      Calls the move_to_named_pose callback
+      Calls the open_gripper callback
       """
-      self.get_logger().info(f"Moving to {named_pose}")
+      self.get_logger().info("Opening gripper")
 
-      request = MoveToNamedPose.Request()
+      future = self.open_gripper_client.call_async(OpenGripper.Request())
 
-      request.pose = named_pose
-
-      future = self.move_to_named_pose_client.call_async(
-          request
-      )
-
-      rclpy.spin_until_future_complete(self, future, timeout_sec=10)
+      rclpy.spin_until_future_complete(self, future, timeout_sec=8)
 
       if not future.done():
-          raise Error("Timeout reached when calling move_to_named_pose service")
+          raise Error("Timeout reached when calling open_gripper service")
 
-      result: MoveToNamedPose.Response
+      result: OpenGripper.Response
       result = future.result()
 
       if not result.success:
-          self.get_logger().error(f"Unable to move to pose: {named_pose}")
-          raise Error("Unable to move to pose")
+          raise Error("Unable to move to open gripper")
+
+  def calculate_world_pose(self, frame_id: str) -> Pose:
+        # Lookup transform from world to frame_id
+        try:
+            t = self.tf_buffer.lookup_transform('world', frame_id, rclpy.time.Time())
+        except TransformException as ex:
+            self.get_logger().info(f'Could not transform {frame_id} to world: {ex}')
+            raise Error("Unable to transform between frames")
+        
+        return convert_transform_to_pose(t)
+
+  # ===========================================================
+  #               cartesian movment functions
+  # ===========================================================
 
   def call_move_cartesian_service(self, x : float, y : float, z : float, v_max : float, acc : float):
       """
@@ -203,208 +211,37 @@ class GearPlace(Node):
       if not result.success:
           self.get_logger().error(f"Unable to move {x},{y},{z}")
           raise Error("Unable to move to location")
-
-  def call_pick_up_gear_service(self, object_width : float,depth_or_color:bool):
-      """
-      Calls the pick_up_gear callback
-      """
-      self.get_logger().info(f"Picking up gear")
-      gear_center_target = [0 for _ in range(3)]
-      requested_class = FindObject if depth_or_color else FindObjectColor
-      while (
-          gear_center_target.count(0) == 3 or None in gear_center_target
-      ):  # runs until valid coordinates are found
-          find_object = requested_class()
-          rclpy.spin_once(find_object) # Finds the gear
-          c = 0
-          while (
-              find_object.ret_cent_gear().count(None) != 0
-          ):  # Runs and guarantees that none of the coordinates are none type
-              c += 1
-
-              if c % 5 == 0:
-                  self.call_move_cartesian_smooth_service(
-                      0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
-                  )  # Moves to the center of the cart
-                  sleep(1)
-              else:
-                  find_object.destroy_node()
-                  find_object = requested_class()
-                  rclpy.spin_once(find_object)
-          object_depth = ObjectDepth([find_object.ret_cent_gear()] if depth_or_color else[convert_color_to_depth(find_object.ret_cent_gear())],{})
-          rclpy.spin_once(object_depth)  # Gets the distance from the camera
-          object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-          find_object.destroy_node()
-          gear_center_target = object_depth.coordinates[0]
-      self.get_logger().info("gear_center_target: "+str(gear_center_target))
-
-      request = PickUpGear.Request()
-
-      request.x = -1 * gear_center_target[1] + X_OFFSET
-      request.y = -1 * gear_center_target[0] + Y_OFFSET
-      request.z = -1 * gear_center_target[2] + Z_CAMERA_OFFSET + 0.0075
-      request.object_width = object_width
-
-      future = self.pick_up_gear_client.call_async(request)
-
-      rclpy.spin_until_future_complete(self, future, timeout_sec=30)
-
-      if not future.done():
-          raise Error("Timeout reached when calling pick_up_gear service")
-
-      result: PickUpGear.Response
-      result = future.result()
-
-      if not result.success:
-          self.get_logger().error(f"Unable to pick up gear")
-          raise Error("Unable to pick up gear")
-
-  def call_put_gear_down_service(self, z : float):
-      """
-      Calls the put_gear_down callback
-      """
-      self.get_logger().info(f"Putting gear down")
-
-      request = PutGearDown.Request()
-      z_movement = max(
-          Z_TO_TABLE, z + Z_CAMERA_OFFSET
-      )  + 0.0005 # z distance from current position to the gear and makes sure it does not try to go below the table
-      request.z = z_movement 
-      future = self.put_gear_down_client.call_async(request)
-
-      rclpy.spin_until_future_complete(self, future, timeout_sec=30)
-
-      if not future.done():
-          raise Error("Timeout reached when calling put gear down service")
-
-      result: PutGearDown.Response
-      result = future.result()
-
-      if not result.success:
-          self.get_logger().error(f"Unable to put gear down")
-          raise Error("Unable to put gear down")
-
-  def call_move_above_gear(self):
-      """
-      Moves the robot above the gear
-      """
-      self.call_get_camera_angle()
-      moving_gear = MovingGear()
-      while not moving_gear.found_gear or len(moving_gear.x_vals) == 0:
-          moving_gear.run()
-      velocity = 0.15
-      acceleration = 0.2
-      slope, intercept = moving_gear.distance_formula()
-
-      intersection_time = (
-              -(velocity**2) / acceleration - intercept
-          ) / (
-              slope - velocity
-          )
-      distance_at_intersection = moving_gear.distance_to_point(
-          moving_gear.point_from_time(intersection_time)
-      )
-
-      if (
-          velocity**2
-      ) / acceleration > distance_at_intersection:  # runs if max velocity needs to be lowered in move_cartesian
-          velocity = (
-              distance_at_intersection / (velocity / acceleration) * 0.9
-          )  # lowers the velocity
-          intersection_time = (
-              -(velocity**2) / acceleration
-              - intercept
-          ) / (
-              slope - velocity
-          )
-      
-      x_value, y_value = moving_gear.point_from_time(intersection_time)
-      
-      ratio_x = x_value/(x_value+y_value)
-      ratio_y = 1 - ratio_x
-      
-      final_x, final_y = moving_gear.point_from_time(intersection_time*3)
-      gear_speed = (distance_between_two_points(moving_gear.x_vals, moving_gear.y_vals)) / (moving_gear.times[1]-moving_gear.times[0])
-
-      second_acceleration = 0.3
-      second_t1 = gear_speed/second_acceleration
-
-      distance_lost_to_acc = gear_speed * second_t1 / 2
-      
-      self.call_move_cartesian_angle_service(y_value * -1 + X_OFFSET + ratio_y * distance_lost_to_acc,x_value * -1 + Y_OFFSET + ratio_x * distance_lost_to_acc,0.0,velocity, acceleration, self.current_camera_angle)
-      self.call_move_cartesian_angle_service(final_y * -1 + X_OFFSET,final_x * -1 + Y_OFFSET, 0.0, gear_speed, second_acceleration,self.current_camera_angle)
   
-  def call_pick_up_moving_gear_service(self, object_width : float):
+  def call_move_cartesian_smooth_service(self, x : float, y : float, z : float, v_max : float, acc : float):
       """
-      Calls the pick_up_moving_gear callback
+      Calls the move_cartesian_smooth callback
       """
-      moving_gear = MovingGear()
-      while not moving_gear.found_gear or len(moving_gear.x_vals) == 0:
-          moving_gear.run()
-      z_movement = -0.2465
-      velocity = 0.15
-      acceleration = 0.2
-      pick_up_constant = (
-          velocity / acceleration + abs(z_movement) / velocity + 0.55
-      )  # time that it takes for the fr3 to open gripper,move down, and grasp the gear
-      slope, intercept = moving_gear.distance_formula()
+      self.get_logger().info(f"Moving {x},{y},{z}")
 
-      intersection_time = (
-          -(velocity**2) / acceleration - velocity * pick_up_constant - intercept
-      ) / (
-          slope - velocity
-      )  # calculates the time where the pick up time equals the gear position
-      distance_at_intersection = moving_gear.distance_to_point(
-          moving_gear.point_from_time(intersection_time)
-      )  # Calculates the distance of the gear to the camera at intersection time
+      request = MoveCartesianSmooth.Request()
+      request.x = x
+      request.y = y
+      request.z = z
+      request.max_velocity = v_max
+      request.acceleration = acc
 
-      if (
-          velocity**2
-      ) / acceleration > distance_at_intersection:  # runs if max velocity needs to be lowered in move_cartesian
-          velocity = (
-              distance_at_intersection / (velocity / acceleration) * 0.9
-          )  # lowers the velocity
-          intersection_time = (
-              -(velocity**2) / acceleration
-              - velocity * pick_up_constant
-              - intercept
-          ) / (
-              slope - velocity
-          )  # calculates the new intersection time
-      request = PickUpMovingGear.Request()
-      if (
-          abs(moving_gear.x_pix[1] - moving_gear.x_pix[0]) > 2
-          or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 2
-      ):  # runs if the gear is moving
-          x_value, y_value = moving_gear.point_from_time(intersection_time)
-          request.x = y_value * -1 + X_OFFSET
-          request.y = x_value * -1 + Y_OFFSET
-      else:  # runs if the gear is stationary
-          self.get_logger().info("Gear not moving")
-          request.x = moving_gear.y_vals[0] * -1 + X_OFFSET
-          request.y = moving_gear.x_vals[0] * -1 + Y_OFFSET
-      request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1 + Z_CAMERA_OFFSET
-      request.object_width = object_width
-      request.angle = self.current_camera_angle
+      future = self.move_cartesian_smooth_client.call_async(request)
 
-      future = self.pick_up_moving_gear_client.call_async(
-          request
-      )
-
-      rclpy.spin_until_future_complete(self, future, timeout_sec=30)
+      rclpy.spin_until_future_complete(self, future, timeout_sec=10)
 
       if not future.done():
-          raise Error("Timeout reached when calling pick_up_moving_gear service")
+          raise Error("Timeout reached when calling move_cartesian_smooth service")
 
-      result: PickUpMovingGear.Response
+      result: MoveCartesianSmooth.Response
       result = future.result()
 
       if not result.success:
-          self.get_logger().error(f"Unable to pick up gear")
-          raise Error("Unable to pick up gear")
-
-  def find_distance(self, arr : list) -> float:
-      return sqrt(arr[0] ** 2 + arr[1] ** 2)
+          self.get_logger().error(f"Unable to move {x},{y},{z}")
+          raise Error("Unable to move to location")
+   
+  # ===========================================================
+  #                   scanning functions
+  # ===========================================================
 
   def scan_multiple_gears_grid(self)->(list,dict):
       """
@@ -473,7 +310,7 @@ class GearPlace(Node):
           distances_from_home = [
               distances_from_home[i]
               for i in range(len(distances_from_home))
-              if self.find_distance(distances_from_home[i]) <= 0.4
+              if find_distance(distances_from_home[i]) <= 0.4
           ]  # removes points which are too far from the home position
           gears_found = len(distances_from_home)
           if gears_found==0:
@@ -484,6 +321,156 @@ class GearPlace(Node):
       )  # outputs the number of gears found
       return distances_from_home,updated_radius_vals
   
+  def single_scan_multiple_gears(self):
+    """
+    Scans the area for gears. Uses only one position to find the gears.
+    """
+    self.call_move_to_named_pose_service("high_scan")
+    self.call_get_camera_angle()
+    distances_from_home = []
+    self.get_logger().info(f"Scanning for gears")
+    gears_found = 0
+    updated_radius_vals = {}
+    while gears_found == 0:
+        self.call_get_camera_angle()
+        self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
+        for _ in range(3):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
+            multiple_gears_color = MultipleGearsColor(self.connected)
+            rclpy.spin_once(multiple_gears_color)  # finds multiple gears if there are multiple
+            self.connected = multiple_gears_color.connected
+            while (
+                sum([cent.count(None) for cent in multiple_gears_color.g_centers]) != 0
+                or not multiple_gears_color.ran
+            ):  # loops until it has run and until there are no None values
+                multiple_gears_color.destroy_node()
+                multiple_gears_color = MultipleGearsColor(self.connected)
+                rclpy.spin_once(multiple_gears_color)
+                self.connected = multiple_gears_color.connected
+            object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears_color.g_centers], 
+                                       {convert_color_to_depth(point):[convert_color_to_depth(p) for p in multiple_gears_color.dist_points[point]] for point in multiple_gears_color.g_centers})
+            rclpy.spin_once(object_depth)  # Gets the distance from the camera
+            object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+            for coord in object_depth.coordinates:
+                if coord.count(0.0)==0:  # adds coordinates if not all 0. Duplicates are removed later
+                    distances_from_home.append(
+                        (
+                            -1 * coord[1],
+                            -1 * coord[0],
+                            -1 * coord[2]
+                        )
+                    )
+                    updated_radius_vals[(
+                            -1 * coord[1],
+                            -1 * coord[0],
+                            -1 * coord[2])] = object_depth.radius_vals[coord]
+            multiple_gears_color.destroy_node()
+
+        distances_from_home = remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
+
+        distances_from_home = [
+            distances_from_home[i]
+            for i in range(len(distances_from_home))
+            if find_distance(distances_from_home[i]) <= 0.7
+        ]  # removes points which are too far from the home position
+        gears_found = len(distances_from_home)
+        if gears_found==0:
+            self.call_move_to_named_pose_service("high_scan")
+            self.get_logger().info("No gears found. Trying again")
+    self.get_logger().info(
+        f"{len(distances_from_home)} gears found"
+    )  # outputs the number of gears found
+    return distances_from_home, updated_radius_vals
+
+  # ===========================================================
+  #                 pick up gear functions
+  # ===========================================================
+
+  def call_pick_up_gear_service(self, object_width : float,depth_or_color:bool):
+      """
+      Calls the pick_up_gear callback
+      """
+      self.get_logger().info(f"Picking up gear")
+      gear_center_target = [0 for _ in range(3)]
+      requested_class = FindObject if depth_or_color else FindObjectColor
+      while (
+          gear_center_target.count(0) == 3 or None in gear_center_target
+      ):  # runs until valid coordinates are found
+          find_object = requested_class()
+          rclpy.spin_once(find_object) # Finds the gear
+          c = 0
+          while (
+              find_object.ret_cent_gear().count(None) != 0
+          ):  # Runs and guarantees that none of the coordinates are none type
+              c += 1
+
+              if c % 5 == 0:
+                  self.call_move_cartesian_smooth_service(
+                      0.05, 0.05 * (-1 if c % 2 == 1 else 1), 0.0, 0.15, 0.2
+                  )  # Moves to the center of the cart
+                  sleep(1)
+              else:
+                  find_object.destroy_node()
+                  find_object = requested_class()
+                  rclpy.spin_once(find_object)
+          object_depth = ObjectDepth([find_object.ret_cent_gear()] if depth_or_color else[convert_color_to_depth(find_object.ret_cent_gear())],{})
+          rclpy.spin_once(object_depth)  # Gets the distance from the camera
+          object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
+          find_object.destroy_node()
+          gear_center_target = object_depth.coordinates[0]
+      self.get_logger().info("gear_center_target: "+str(gear_center_target))
+
+      request = PickUpGear.Request()
+
+      request.x = -1 * gear_center_target[1] + X_OFFSET
+      request.y = -1 * gear_center_target[0] + Y_OFFSET
+      request.z = -1 * gear_center_target[2] + Z_CAMERA_OFFSET + 0.0075
+      request.object_width = object_width
+
+      future = self.pick_up_gear_client.call_async(request)
+
+      rclpy.spin_until_future_complete(self, future, timeout_sec=30)
+
+      if not future.done():
+          raise Error("Timeout reached when calling pick_up_gear service")
+
+      result: PickUpGear.Response
+      result = future.result()
+
+      if not result.success:
+          self.get_logger().error(f"Unable to pick up gear")
+          raise Error("Unable to pick up gear")
+
+  def call_pick_up_gear_coord_service(self, offset_bool : bool, x : float, y : float, z : float, object_width : float, default_up : bool):
+      """
+      Calls the pick_up_gear callback
+      """
+      z_movement = max(
+          Z_TO_TABLE, z + Z_CAMERA_OFFSET
+      )  # z distance from the home position to where the gripper can grab the gear
+      self.get_logger().info(f"Picking up gear")
+      request = PickUpGear.Request()
+
+      request.x = x + (X_OFFSET if offset_bool else 0)
+      request.y = y + (Y_OFFSET if offset_bool else 0)
+      
+      request.z = z_movement
+      request.object_width = object_width
+      request.default_up = default_up
+
+      future = self.pick_up_gear_client.call_async(request)
+
+      rclpy.spin_until_future_complete(self, future, timeout_sec=30)
+
+      if not future.done():
+          raise Error("Timeout reached when calling pick_up_gear service")
+
+      result: PickUpGear.Response
+      result = future.result()
+
+      if not result.success:
+          self.get_logger().error(f"Unable to pick up gear")
+          raise Error("Unable to pick up gear")
+
   def pick_up_multiple_gears(self, distances_from_home: list, updated_radius_vals: list, object_width : float, starting_position: str, colors: list,depth_or_color: bool, put_down_type = "force", force = 0.1):
       for movment in distances_from_home:
           self.get_logger().info("Movement: " + str(movment))
@@ -626,138 +613,34 @@ class GearPlace(Node):
               self._call_move_to_joint_position(self.current_joint_positions)
               offset_needed = False
 
-  def single_scan_multiple_gears(self):
+  # ===========================================================
+  #                 put down gear functions
+  # ===========================================================
+
+  def call_put_gear_down_service(self, z : float):
     """
-    Scans the area for gears. Uses only one position to find the gears.
+    Calls the put_gear_down callback
     """
-    self.call_move_to_named_pose_service("high_scan")
-    self.call_get_camera_angle()
-    distances_from_home = []
-    self.get_logger().info(f"Scanning for gears")
-    gears_found = 0
-    updated_radius_vals = {}
-    while gears_found == 0:
-        self.call_get_camera_angle()
-        self.get_logger().info(f"Current camera angle in radians: {self.current_camera_angle}")
-        for _ in range(3):  # runs until nothing is found, while something is found but coordinates are not, or if it runs 5 times with no results
-            multiple_gears_color = MultipleGearsColor(self.connected)
-            rclpy.spin_once(multiple_gears_color)  # finds multiple gears if there are multiple
-            self.connected = multiple_gears_color.connected
-            while (
-                sum([cent.count(None) for cent in multiple_gears_color.g_centers]) != 0
-                or not multiple_gears_color.ran
-            ):  # loops until it has run and until there are no None values
-                multiple_gears_color.destroy_node()
-                multiple_gears_color = MultipleGearsColor(self.connected)
-                rclpy.spin_once(multiple_gears_color)
-                self.connected = multiple_gears_color.connected
-            object_depth = ObjectDepth([convert_color_to_depth(point) for point in multiple_gears_color.g_centers], 
-                                       {convert_color_to_depth(point):[convert_color_to_depth(p) for p in multiple_gears_color.dist_points[point]] for point in multiple_gears_color.g_centers})
-            rclpy.spin_once(object_depth)  # Gets the distance from the camera
-            object_depth.destroy_node()  # Destroys the node to avoid errors on next loop
-            for coord in object_depth.coordinates:
-                if coord.count(0.0)==0:  # adds coordinates if not all 0. Duplicates are removed later
-                    distances_from_home.append(
-                        (
-                            -1 * coord[1],
-                            -1 * coord[0],
-                            -1 * coord[2]
-                        )
-                    )
-                    updated_radius_vals[(
-                            -1 * coord[1],
-                            -1 * coord[0],
-                            -1 * coord[2])] = object_depth.radius_vals[coord]
-            multiple_gears_color.destroy_node()
+    self.get_logger().info(f"Putting gear down")
 
-        distances_from_home = remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
+    request = PutGearDown.Request()
+    z_movement = max(
+        Z_TO_TABLE, z + Z_CAMERA_OFFSET
+    )  + 0.0005 # z distance from current position to the gear and makes sure it does not try to go below the table
+    request.z = z_movement 
+    future = self.put_gear_down_client.call_async(request)
 
-        distances_from_home = [
-            distances_from_home[i]
-            for i in range(len(distances_from_home))
-            if self.find_distance(distances_from_home[i]) <= 0.7
-        ]  # removes points which are too far from the home position
-        gears_found = len(distances_from_home)
-        if gears_found==0:
-            self.call_move_to_named_pose_service("high_scan")
-            self.get_logger().info("No gears found. Trying again")
-    self.get_logger().info(
-        f"{len(distances_from_home)} gears found"
-    )  # outputs the number of gears found
-    return distances_from_home, updated_radius_vals
+    rclpy.spin_until_future_complete(self, future, timeout_sec=30)
 
-  def call_move_to_position_service(self, p: Point, rot: float = 0.0):
-      """
-      Calls the move_to_position callback
-      """
-      self.get_logger().info(f"Moving to position ({p.x}, {p.y}, {p.z})")
+    if not future.done():
+        raise Error("Timeout reached when calling put gear down service")
 
-      request = MoveToPosition.Request()
-      request.target_position = p
-      request.gripper_rotation = rot
+    result: PutGearDown.Response
+    result = future.result()
 
-      future = self.move_to_position_client.call_async(request)
-
-      rclpy.spin_until_future_complete(self, future, timeout_sec=8)
-
-      if not future.done():
-          raise Error("Timeout reached when calling move_to_position service")
-
-      result: MoveToPosition.Response
-      result = future.result()
-
-      if not result.success:
-          raise Error(f"Unable to move to desired position [{p.x}, {p.y}, {p.z}]")
-
-  def call_open_gripper_service(self):
-      """
-      Calls the open_gripper callback
-      """
-      self.get_logger().info("Opening gripper")
-
-      future = self.open_gripper_client.call_async(OpenGripper.Request())
-
-      rclpy.spin_until_future_complete(self, future, timeout_sec=8)
-
-      if not future.done():
-          raise Error("Timeout reached when calling open_gripper service")
-
-      result: OpenGripper.Response
-      result = future.result()
-
-      if not result.success:
-          raise Error("Unable to move to open gripper")
-
-  def call_pick_up_gear_coord_service(self, offset_bool : bool, x : float, y : float, z : float, object_width : float, default_up : bool):
-      """
-      Calls the pick_up_gear callback
-      """
-      z_movement = max(
-          Z_TO_TABLE, z + Z_CAMERA_OFFSET
-      )  # z distance from the home position to where the gripper can grab the gear
-      self.get_logger().info(f"Picking up gear")
-      request = PickUpGear.Request()
-
-      request.x = x + (X_OFFSET if offset_bool else 0)
-      request.y = y + (Y_OFFSET if offset_bool else 0)
-      
-      request.z = z_movement
-      request.object_width = object_width
-      request.default_up = default_up
-
-      future = self.pick_up_gear_client.call_async(request)
-
-      rclpy.spin_until_future_complete(self, future, timeout_sec=30)
-
-      if not future.done():
-          raise Error("Timeout reached when calling pick_up_gear service")
-
-      result: PickUpGear.Response
-      result = future.result()
-
-      if not result.success:
-          self.get_logger().error(f"Unable to pick up gear")
-          raise Error("Unable to pick up gear")
+    if not result.success:
+        self.get_logger().error(f"Unable to put gear down")
+        raise Error("Unable to put gear down")
 
   def call_put_gear_down_camera(self, z : float):
       """
@@ -805,160 +688,169 @@ class GearPlace(Node):
           raise Error("Unable to put gear down using camera")
     
   def call_put_down_force(self, force:float):
-      """
-      Calls the put_down_force callback
-      """
-      self.get_logger().info("Putting the gear down")
-
-      request = PutDownForce.Request()
-      
-      request.force = force
-
-      future = self.put_down_force_client.call_async(request)
-
-      rclpy.spin_until_future_complete(self, future, timeout_sec=100)
-
-      if not future.done():
-          raise Error("Timeout reached when calling put_down_force service")
-
-      result: PutDownForce.Response
-      result = future.result()
-
-      if not result.success:
-          raise Error("Unable to put down gear using force motion generator")
-    
-  def call_get_camera_angle(self):
-      """
-      Calls the get_camera_angle callback
-      """
-      self.get_logger().info("Getting camera angle")
-
-      future = self.get_camera_angle_client.call_async(GetCameraAngle.Request())
-
-      rclpy.spin_until_future_complete(self,future,timeout_sec=2)
-
-      if not future.done():
-          raise Error("Timeout reached when getting camera angle")
-
-      result: GetCameraAngle.Response
-      result = future.result()
-
-      self.current_camera_angle = result.angle
-    
-  def call_move_to_joint_position(self, target_position : list):
     """
-    Calls the move_to_joint_position callback
+    Calls the put_down_force callback
     """
-    self.get_logger().info("Moving to joint position: "+", ".join([str(val) for val in target_position]))
+    self.get_logger().info("Putting the gear down")
 
-    request = MoveToJointPosition.Request()
+    request = PutDownForce.Request()
     
-    for i in range(7):
-        request.joint_positions[i] = target_position[i]
+    request.force = force
 
-    future = self.move_to_joint_position_client.call_async(request)
+    future = self.put_down_force_client.call_async(request)
 
-    rclpy.spin_until_future_complete(self,future,timeout_sec=10)
+    rclpy.spin_until_future_complete(self, future, timeout_sec=100)
 
     if not future.done():
-        raise Error("Timeout reached when moving to joint position")
+        raise Error("Timeout reached when calling put_down_force service")
 
-    result: MoveToJointPosition.Response
+    result: PutDownForce.Response
     result = future.result()
 
     if not result.success:
-        raise Error("Unable to move to the given joint positions")
+        raise Error("Unable to put down gear using force motion generator")
     
-  def call_rotate_single_joint(self,joint : int, angle : float, radians : bool):
-      """
-      Calls the rotate_single_joint callback
-      """
-      self.get_logger().info(f"Rotating joint {joint} by {angle} "+("pi" if radians else "degrees")+" clockwise")
+  def put_gear_down_choose_type(self, put_down_type : str, z=0.0,force = 0.0):
+      self.call_get_joint_positions()
+      if put_down_type not in ["force", "camera", "value"] or (z == 0.0 and put_down_type!="force") or (put_down_type=="force" and force<=0.0):
+          if put_down_type not in ["force", "camera", "value"]:
+              self.get_logger().error(f"{put_down_type} is not a valid put down type. The valid options are [force, camera, value].")
+          elif z == 0.0 and put_down_type!="force":
+              self.get_logger().error(f"Both camera and value put down methods need non-zero z values.")
+          else:
+              self.get_logger().error(f"The force method needs a non-zero positive force value.")
+          self.get_logger().info("Putting gear down using force method with force of 0.1.")
+          self.call_put_down_force(0.1)
+      self.call_put_gear_down_service(z) if put_down_type=="value" else (self.call_put_gear_down_camera(z) if put_down_type=="camera" else self.call_put_down_force(force))
+      self.call_move_to_joint_position(self.current_joint_positions)
 
-      request = RotateSingleJoint.Request()
-      if radians:
-        if angle>pi:
-            angle=angle - 2*pi
-        elif angle < -1 * pi:
-            angle = angle + 2*pi
-      else:
-        if angle>180:
-            angle=angle-360
-        elif angle < -180:
-            angle = angle +360
+  # ===========================================================
+  #                   moving gear functions
+  # ===========================================================
 
-      request.joint = joint
-      request.angle = float(angle)
-      request.radians = radians
+  def call_move_above_gear(self):
+      """
+      Moves the robot above the gear
+      """
+      self.call_get_camera_angle()
+      moving_gear = MovingGear()
+      while not moving_gear.found_gear or len(moving_gear.x_vals) == 0:
+          moving_gear.run()
+      velocity = 0.15
+      acceleration = 0.2
+      slope, intercept = moving_gear.distance_formula()
+
+      intersection_time = (
+              -(velocity**2) / acceleration - intercept
+          ) / (
+              slope - velocity
+          )
+      distance_at_intersection = moving_gear.distance_to_point(
+          moving_gear.point_from_time(intersection_time)
+      )
+
+      if (
+          velocity**2
+      ) / acceleration > distance_at_intersection:  # runs if max velocity needs to be lowered in move_cartesian
+          velocity = (
+              distance_at_intersection / (velocity / acceleration) * 0.9
+          )  # lowers the velocity
+          intersection_time = (
+              -(velocity**2) / acceleration
+              - intercept
+          ) / (
+              slope - velocity
+          )
       
-      future = self.rotate_single_joint_client.call_async(request)
-
-      rclpy.spin_until_future_complete(self,future,timeout_sec=10)
-
-      if not future.done():
-          raise Error("Timeout reached when calling put_down_force service")
-
-      result: RotateSingleJoint.Response
-      result = future.result()
-
-      if not result.success:
-          raise Error("Unable to rotate joint to given angle")
+      x_value, y_value = moving_gear.point_from_time(intersection_time)
       
-  def call_get_joint_positions(self):
-      """
-      Calls the get_camera_angle callback
-      """
-      self.get_logger().info("Getting joint positions")
+      ratio_x = x_value/(x_value+y_value)
+      ratio_y = 1 - ratio_x
+      
+      final_x, final_y = moving_gear.point_from_time(intersection_time*3)
+      gear_speed = (distance_between_two_points(moving_gear.x_vals, moving_gear.y_vals)) / (moving_gear.times[1]-moving_gear.times[0])
 
-      future = self.get_joint_positions_client.call_async(GetJointPositions.Request())
+      second_acceleration = 0.3
+      second_t1 = gear_speed/second_acceleration
 
-      rclpy.spin_until_future_complete(self,future,timeout_sec=10)
-
-      if not future.done():
-          raise Error("Timeout reached when getting joint positions")
-
-      result: GetJointPositions.Response
-      result = future.result()
-
-      self.current_joint_positions = result.joint_positions
-
-  def calculate_world_pose(self, frame_id: str) -> Pose:
-        # Lookup transform from world to frame_id
-        try:
-            t = self.tf_buffer.lookup_transform('world', frame_id, rclpy.time.Time())
-        except TransformException as ex:
-            self.get_logger().info(f'Could not transform {frame_id} to world: {ex}')
-            raise Error("Unable to transform between frames")
-        
-        return convert_transform_to_pose(t)
+      distance_lost_to_acc = gear_speed * second_t1 / 2
+      
+      self.call_move_cartesian_angle_service(y_value * -1 + X_OFFSET + ratio_y * distance_lost_to_acc,x_value * -1 + Y_OFFSET + ratio_x * distance_lost_to_acc,0.0,velocity, acceleration, self.current_camera_angle)
+      self.call_move_cartesian_angle_service(final_y * -1 + X_OFFSET,final_x * -1 + Y_OFFSET, 0.0, gear_speed, second_acceleration,self.current_camera_angle)
   
-  def call_move_cartesian_smooth_service(self, x : float, y : float, z : float, v_max : float, acc : float):
+  def call_pick_up_moving_gear_service(self, object_width : float):
       """
-      Calls the move_cartesian_smooth callback
+      Calls the pick_up_moving_gear callback
       """
-      self.get_logger().info(f"Moving {x},{y},{z}")
+      moving_gear = MovingGear()
+      while not moving_gear.found_gear or len(moving_gear.x_vals) == 0:
+          moving_gear.run()
+      z_movement = -0.2465
+      velocity = 0.15
+      acceleration = 0.2
+      pick_up_constant = (
+          velocity / acceleration + abs(z_movement) / velocity + 0.55
+      )  # time that it takes for the fr3 to open gripper,move down, and grasp the gear
+      slope, intercept = moving_gear.distance_formula()
 
-      request = MoveCartesianSmooth.Request()
-      request.x = x
-      request.y = y
-      request.z = z
-      request.max_velocity = v_max
-      request.acceleration = acc
+      intersection_time = (
+          -(velocity**2) / acceleration - velocity * pick_up_constant - intercept
+      ) / (
+          slope - velocity
+      )  # calculates the time where the pick up time equals the gear position
+      distance_at_intersection = moving_gear.distance_to_point(
+          moving_gear.point_from_time(intersection_time)
+      )  # Calculates the distance of the gear to the camera at intersection time
 
-      future = self.move_cartesian_smooth_client.call_async(request)
+      if (
+          velocity**2
+      ) / acceleration > distance_at_intersection:  # runs if max velocity needs to be lowered in move_cartesian
+          velocity = (
+              distance_at_intersection / (velocity / acceleration) * 0.9
+          )  # lowers the velocity
+          intersection_time = (
+              -(velocity**2) / acceleration
+              - velocity * pick_up_constant
+              - intercept
+          ) / (
+              slope - velocity
+          )  # calculates the new intersection time
+      request = PickUpMovingGear.Request()
+      if (
+          abs(moving_gear.x_pix[1] - moving_gear.x_pix[0]) > 2
+          or abs(moving_gear.y_pix[1] - moving_gear.y_pix[0]) > 2
+      ):  # runs if the gear is moving
+          x_value, y_value = moving_gear.point_from_time(intersection_time)
+          request.x = y_value * -1 + X_OFFSET
+          request.y = x_value * -1 + Y_OFFSET
+      else:  # runs if the gear is stationary
+          self.get_logger().info("Gear not moving")
+          request.x = moving_gear.y_vals[0] * -1 + X_OFFSET
+          request.y = moving_gear.x_vals[0] * -1 + Y_OFFSET
+      request.z = sum(moving_gear.z_height)/len(moving_gear.z_height) * -1 + Z_CAMERA_OFFSET
+      request.object_width = object_width
+      request.angle = self.current_camera_angle
 
-      rclpy.spin_until_future_complete(self, future, timeout_sec=10)
+      future = self.pick_up_moving_gear_client.call_async(
+          request
+      )
+
+      rclpy.spin_until_future_complete(self, future, timeout_sec=30)
 
       if not future.done():
-          raise Error("Timeout reached when calling move_cartesian_smooth service")
+          raise Error("Timeout reached when calling pick_up_moving_gear service")
 
-      result: MoveCartesianSmooth.Response
+      result: PickUpMovingGear.Response
       result = future.result()
 
       if not result.success:
-          self.get_logger().error(f"Unable to move {x},{y},{z}")
-          raise Error("Unable to move to location")
-      
+          self.get_logger().error(f"Unable to pick up gear")
+          raise Error("Unable to pick up gear")
+
+  # ===========================================================
+  #                  conveyor belt functions
+  # ===========================================================
+  
   def enable_conveyor_service(self, enable: bool):
       """
       Calls the enable_conveyor callback
@@ -1013,17 +905,159 @@ class GearPlace(Node):
 
       if not result.success:
           raise Error(f"Unable to move the conveyor belt")
+
+  # ===========================================================
+  #                  get information functions
+  # ===========================================================
+      
+  def call_get_joint_positions(self):
+      """
+      Calls the get_camera_angle callback
+      """
+      self.get_logger().info("Getting joint positions")
+
+      future = self.get_joint_positions_client.call_async(GetJointPositions.Request())
+
+      rclpy.spin_until_future_complete(self,future,timeout_sec=10)
+
+      if not future.done():
+          raise Error("Timeout reached when getting joint positions")
+
+      result: GetJointPositions.Response
+      result = future.result()
+
+      self.current_joint_positions = result.joint_positions
+
+  def call_get_camera_angle(self):
+      """
+      Calls the get_camera_angle callback
+      """
+      self.get_logger().info("Getting camera angle")
+
+      future = self.get_camera_angle_client.call_async(GetCameraAngle.Request())
+
+      rclpy.spin_until_future_complete(self,future,timeout_sec=2)
+
+      if not future.done():
+          raise Error("Timeout reached when getting camera angle")
+
+      result: GetCameraAngle.Response
+      result = future.result()
+
+      self.current_camera_angle = result.angle
     
-  def put_gear_down_choose_type(self, put_down_type : str, z=0.0,force = 0.0):
-      self.call_get_joint_positions()
-      if put_down_type not in ["force", "camera", "value"] or (z == 0.0 and put_down_type!="force") or (put_down_type=="force" and force<=0.0):
-          if put_down_type not in ["force", "camera", "value"]:
-              self.get_logger().error(f"{put_down_type} is not a valid put down type. The valid options are [force, camera, value].")
-          elif z == 0.0 and put_down_type!="force":
-              self.get_logger().error(f"Both camera and value put down methods need non-zero z values.")
-          else:
-              self.get_logger().error(f"The force method needs a non-zero positive force value.")
-          self.get_logger().info("Putting gear down using force method with force of 0.1.")
-          self.call_put_down_force(0.1)
-      self.call_put_gear_down_service(z) if put_down_type=="value" else (self.call_put_gear_down_camera(z) if put_down_type=="camera" else self.call_put_down_force(force))
-      self.call_move_to_joint_position(self.current_joint_positions)
+  # ===========================================================
+  #               move to position/pose functions
+  # ===========================================================
+
+  def call_move_to_named_pose_service(self, named_pose: str):
+      """
+      Calls the move_to_named_pose callback
+      """
+      self.get_logger().info(f"Moving to {named_pose}")
+
+      request = MoveToNamedPose.Request()
+
+      request.pose = named_pose
+
+      future = self.move_to_named_pose_client.call_async(
+          request
+      )
+
+      rclpy.spin_until_future_complete(self, future, timeout_sec=10)
+
+      if not future.done():
+          raise Error("Timeout reached when calling move_to_named_pose service")
+
+      result: MoveToNamedPose.Response
+      result = future.result()
+
+      if not result.success:
+          self.get_logger().error(f"Unable to move to pose: {named_pose}")
+          raise Error("Unable to move to pose")
+
+  def call_move_to_position_service(self, p: Point, rot: float = 0.0):
+      """
+      Calls the move_to_position callback
+      """
+      self.get_logger().info(f"Moving to position ({p.x}, {p.y}, {p.z})")
+
+      request = MoveToPosition.Request()
+      request.target_position = p
+      request.gripper_rotation = rot
+
+      future = self.move_to_position_client.call_async(request)
+
+      rclpy.spin_until_future_complete(self, future, timeout_sec=8)
+
+      if not future.done():
+          raise Error("Timeout reached when calling move_to_position service")
+
+      result: MoveToPosition.Response
+      result = future.result()
+
+      if not result.success:
+          raise Error(f"Unable to move to desired position [{p.x}, {p.y}, {p.z}]")
+
+  # ===========================================================
+  #                 joint movment functions
+  # ===========================================================
+
+  def call_move_to_joint_position(self, target_position : list):
+    """
+    Calls the move_to_joint_position callback
+    """
+    self.get_logger().info("Moving to joint position: "+", ".join([str(val) for val in target_position]))
+
+    request = MoveToJointPosition.Request()
+    
+    for i in range(7):
+        request.joint_positions[i] = target_position[i]
+
+    future = self.move_to_joint_position_client.call_async(request)
+
+    rclpy.spin_until_future_complete(self,future,timeout_sec=10)
+
+    if not future.done():
+        raise Error("Timeout reached when moving to joint position")
+
+    result: MoveToJointPosition.Response
+    result = future.result()
+
+    if not result.success:
+        raise Error("Unable to move to the given joint positions")
+    
+  def call_rotate_single_joint(self,joint : int, angle : float, radians : bool):
+      """
+      Calls the rotate_single_joint callback
+      """
+      self.get_logger().info(f"Rotating joint {joint} by {angle} "+("pi" if radians else "degrees")+" clockwise")
+
+      request = RotateSingleJoint.Request()
+      if radians:
+        if angle>pi:
+            angle=angle - 2*pi
+        elif angle < -1 * pi:
+            angle = angle + 2*pi
+      else:
+        if angle>180:
+            angle=angle-360
+        elif angle < -180:
+            angle = angle +360
+
+      request.joint = joint
+      request.angle = float(angle)
+      request.radians = radians
+      
+      future = self.rotate_single_joint_client.call_async(request)
+
+      rclpy.spin_until_future_complete(self,future,timeout_sec=10)
+
+      if not future.done():
+          raise Error("Timeout reached when calling rotate_single_joint service")
+
+      result: RotateSingleJoint.Response
+      result = future.result()
+
+      if not result.success:
+          raise Error("Unable to rotate joint to given angle")
