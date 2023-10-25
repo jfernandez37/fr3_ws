@@ -665,7 +665,7 @@ class GearPlace(Node):
           elif z == 0.0 and put_down_type!="force":
               self.get_logger().error(f"Both camera and value put down methods need non-zero z values.")
           else:
-              self.get_logger().error(f"The force method needs a non-zero positive force value.")
+              self.get_logger().error(f"The force method needs a positive force value.")
           self.get_logger().info("Putting gear down using force method with force of 0.1.")
           self.call_put_down_force(0.1)
       self.call_put_gear_down_service(z) if put_down_type=="value" else (self.call_put_gear_down_camera(z) if put_down_type=="camera" else self.call_put_down_force(force if force!=0.0 else 0.1))
