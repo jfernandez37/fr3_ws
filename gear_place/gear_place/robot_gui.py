@@ -414,8 +414,50 @@ class FR3_GUI(tk.Tk):
 def main():
     app = FR3_GUI()
     app.mainloop()
-
-    print(app.selected_commands)
+    main_node = open("test.py",'w')
+    main_node.write("#!/usr/bin/env python3\n\nimport rclpy\n\nfrom gear_place.gear_place_classes import GearPlace, Error\n\nfrom time import sleep\n\nfrom math import pi\n\n\ndef main(args=None):"+
+                    "\n\trclpy.init(args=args)\n\ttry:\n\t\tsupervisor = GearPlace()\n\t\tsupervisor.wait(5)")
+    for command in app.selected_commands:
+        if command["command_type"]=="open_gripper":
+            main_node.write("\n\t\tsupervisor.call_open_gripper_service()")
+        elif command["command_type"]=="cartesian_movement":
+            if command["type"]=="standard":
+                main_node.write(f"\n\t\tsupervisor.call_move_cartesian_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
+            elif command["type"]=="angle":
+                main_node.write(f"\n\t\tsupervisor.call_move_cartesian_angle_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']},{command['angle']})")
+            else:
+                main_node.write(f"\n\t\tsupervisor.call_move_cartesian_smooth_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
+        elif command["command_type"]=="scanning":
+            main_node.write(f"\n\t\tsupervisor.select_scan(type_scan={command['scan_type']}"+("" if command['robot_moves']=="" or command['scan_type']=="single" else f",[{command['robot_moves']}]")+")")
+        elif command["command_type"]=="pick_up_single_gear":
+            main_node.write(f"\n\t\tsupervisor.call_pick_up_gear_service({command['depth_or_color']},{command['object_width']},{command['starting_position']})")
+        elif command["command_type"]=="pick_up_multiple_gears":
+            comma_needed=False
+            color_list = "["
+            if command["yellow"]=='1':
+                color_list+="yellow"
+                comma_needed=True
+            if command["red"]=='1':
+                if comma_needed:
+                    color_list+=","
+                color_list+="red"
+                comma_needed=True
+            if command["green"]=='1':
+                if comma_needed:
+                    color_list+=","
+                color_list+="green"
+            color_list+="]"
+            main_node.write(f"\n\t\tsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},{command['starting_position']},{color_list},{command['depth_or_color']},{command['put_down_type']},{command['force']})")
+        elif command["command_type"]=="put_down_gear":
+            main_node.write(f"\n\t\tsupervisor.put_gear_down_choose_type({command['put_down_type']},{command['z']},{command['force']})")
+        elif command["command_type"]=="moving_gears":
+            if command["movement_type"]=="pick_up:":
+                main_node.write(f"\n\t\tsupervisor.call_move_up_moving_gear_service({command['object_width']})")
+            else:
+                main_node.write("\n\t\tsupervisor.call_move_above_gear()")
+        elif command["command_type"]=="move_to_named_pose":
+            main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose({command['name_pose']})")
+    main_node.write("\n\texcept Error as e:\n\n\t\tprint(e)\n\nif __name__ == \"__main__\":\n\tmain()")
 
 
 if __name__ == '__main__':
