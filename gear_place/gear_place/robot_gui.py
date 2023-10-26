@@ -26,8 +26,7 @@ class FR3_GUI(tk.Tk):
         self.current_widgets = [self.add_new_command_button]
     
     def add_command(self):
-        for widget in self.current_widgets:
-            widget.pack_forget()
+        self.clear_window()
         command_type = tk.StringVar()
         command_type.set(COMMAND_TYPES[0])
         selected_parameters = {}
@@ -40,10 +39,13 @@ class FR3_GUI(tk.Tk):
         self.selected_commands.append(selected_parameters)
 
     def save_command(self):
-        for widget in self.current_widgets:
-            widget.pack_forget()
+        self.clear_window()
         self.add_new_command_button.pack(side=tk.BOTTOM)
         self.current_widgets.append(self.add_new_command_button)
+    
+    def clear_window(self):
+        for widget in self.current_widgets:
+            widget.pack_forget()
 
         
 
