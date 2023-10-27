@@ -94,8 +94,8 @@ class FR3_GUI(tk.Tk):
         self.parameters["yellow"] = tk.StringVar()
         self.parameters["yellow"].set("0")
 
-        self.parameters["red"] = tk.StringVar()
-        self.parameters["red"].set("0")
+        self.parameters["orange"] = tk.StringVar()
+        self.parameters["orange"].set("0")
 
         self.parameters["green"] = tk.StringVar()
         self.parameters["green"].set("0")
@@ -168,7 +168,7 @@ class FR3_GUI(tk.Tk):
         self.parameters["object_width"].set("0.0095")
         self.parameters["starting_position"].set(STARTING_POSITIONS[1])
         self.parameters["yellow"].set("0")
-        self.parameters["red"].set("0")
+        self.parameters["orange"].set("0")
         self.parameters["green"].set("0")
         self.parameters["put_down_type"].set(PUT_DOWN_TYPES[0])
         self.parameters["force"].set("0.0")
@@ -320,9 +320,9 @@ class FR3_GUI(tk.Tk):
         yellow_button = tk.Checkbutton(self, text="Yellow", variable=self.parameters["yellow"], onvalue="1", offvalue="0", height=1, width=20)
         yellow_button.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(yellow_button)
-        red_button = tk.Checkbutton(self, text="Red", variable=self.parameters["red"], onvalue="1", offvalue="0", height=1, width=20)
-        red_button.pack(pady=5, side=tk.TOP)
-        self.current_widgets.append(red_button)
+        orange_button = tk.Checkbutton(self, text="Orange", variable=self.parameters["orange"], onvalue="1", offvalue="0", height=1, width=20)
+        orange_button.pack(pady=5, side=tk.TOP)
+        self.current_widgets.append(orange_button)
         green_button = tk.Checkbutton(self, text="Green", variable=self.parameters["green"], onvalue="1", offvalue="0", height=1, width=20)
         green_button.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(green_button)
@@ -499,10 +499,10 @@ def main(args=None):
             if command["yellow"]=='1':
                 color_list+="yellow"
                 comma_needed=True
-            if command["red"]=='1':
+            if command["orange"]=='1':
                 if comma_needed:
                     color_list+=","
-                color_list+="red"
+                color_list+="orange"
                 comma_needed=True
             if command["green"]=='1':
                 if comma_needed:
