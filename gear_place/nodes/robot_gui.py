@@ -166,7 +166,7 @@ class FR3_GUI(tk.Tk):
         self.parameters["robot_moves"].set("")
         self.parameters["depth_or_color"].set(CAMERA_TYPES[0])
         self.parameters["object_width"].set("0.0095")
-        self.parameters["starting_position"].set(STARTING_POSITIONS[0])
+        self.parameters["starting_position"].set(STARTING_POSITIONS[1])
         self.parameters["yellow"].set("0")
         self.parameters["red"].set("0")
         self.parameters["green"].set("0")
@@ -181,6 +181,7 @@ class FR3_GUI(tk.Tk):
 
     def show_correct_menu(self,_,__,___):
         self.clear_window()
+        self.reset_parameters()
         self.command_type_menu.pack(pady=5, side=tk.TOP)
         self.save_button.pack(pady=5, side=tk.BOTTOM)
         self.current_widgets.append(self.command_type_menu)
@@ -289,7 +290,8 @@ class FR3_GUI(tk.Tk):
         object_width_entry = tk.Entry(self, textvariable=self.parameters["object_width"])
         object_width_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(object_width_entry)
-
+        
+        self.parameters["starting_position"].set(STARTING_POSITIONS[0])
         starting_position_label = tk.Label(self, text="Please choose the named position that the robot should pick up the gear")
         starting_position_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(starting_position_label)
