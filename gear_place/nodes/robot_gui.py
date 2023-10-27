@@ -30,6 +30,19 @@ class FR3_GUI(tk.Tk):
         self.resizable(width=False, height=False)
         self.grid_columnconfigure(0, weight=1)
 
+        # cancel flag
+        self.cancel_flag = tk.StringVar()
+        self.cancel_flag.set('0')
+
+        # command counter
+        self.command_counter = tk.StringVar()
+        self.command_counter.set('0')
+        self.command_counter.trace('w',self.update_label)
+
+        # label with all current commands
+        self.selected_command_label = tk.Label(self,text="Current code:\n\n")
+        self.selected_command_label.pack(pady=10, side=tk.TOP)
+
         self.parameters = {}
 
         # Get the current screen width and height
@@ -39,12 +52,14 @@ class FR3_GUI(tk.Tk):
 
         self.geometry('800x750')
 
+        self.cancel_button = tk.Button(self, text="Cancel", command = self.cancel_function)
+        self.cancel_button.pack(pady=5, side=tk.BOTTOM)
         self.save_all_button = tk.Button(self, text="Save all", command=self.destroy)
         self.save_all_button.pack(pady=5, side=tk.BOTTOM)
         self.add_new_command_button = tk.Button(self,text="Add command", command=self.add_command)
         self.add_new_command_button.pack(pady=5, side=tk.BOTTOM)
         
-        self.current_widgets = [self.add_new_command_button,self.save_all_button]
+        self.current_widgets = [self.add_new_command_button,self.save_all_button, self.cancel_button,self.selected_command_label]
         
         # tk command type variable
         self.command_type = tk.StringVar()
@@ -128,6 +143,10 @@ class FR3_GUI(tk.Tk):
         self.parameters["duration"] = tk.StringVar()
         self.parameters["duration"].set(0.0)
 
+    def cancel_function(self):  # cancels at any point in the program
+        self.cancel_flag.set('1')
+        self.destroy()
+
     def add_command(self):
         self.clear_window()
         self.command_type_menu = tk.OptionMenu(self,self.command_type, *COMMAND_TYPES)
@@ -141,12 +160,17 @@ class FR3_GUI(tk.Tk):
     def save_command(self):
         self.parameters["command_type"].set(self.command_type.get())
         self.selected_commands.append({key:self.parameters[key].get()  for key in self.parameters.keys()})
+        self.command_counter.set(str(int(len(self.selected_commands))))
         self.reset_parameters(True)
         self.clear_window()
+        self.cancel_button.pack(pady=5, side=tk.BOTTOM)
         self.save_all_button.pack(pady=5, side=tk.BOTTOM)
         self.add_new_command_button.pack(pady=5, side=tk.BOTTOM)
+        self.selected_command_label.pack(pady=10, side=tk.TOP)
         self.current_widgets.append(self.add_new_command_button)
         self.current_widgets.append(self.save_all_button)
+        self.current_widgets.append(self.cancel_button)
+        self.current_widgets.append(self.selected_command_label)
     
     def clear_window(self):
         for widget in self.current_widgets:
@@ -471,69 +495,122 @@ class FR3_GUI(tk.Tk):
             entry_box["state"]=tk.NORMAL
         else:
             entry_box["state"]=tk.DISABLED
+    
+    def update_label(self,_,__,___):
+        updated_text="Current code:\n\n"
+        for command in self.selected_commands:
+            if command["command_type"]=="open_gripper":
+                updated_text+=("\nsupervisor.call_open_gripper_service()")
+            elif command["command_type"]=="cartesian_movement":
+                if command["type"]=="standard":
+                    updated_text+=(f"\nsupervisor.call_move_cartesian_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
+                elif command["type"]=="angle":
+                    updated_text+=(f"\nsupervisor.call_move_cartesian_angle_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']},{command['angle']})")
+                else:
+                    updated_text+=(f"\nsupervisor.call_move_cartesian_smooth_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
+            elif command["command_type"]=="scanning":
+                updated_text+=(f"\ndistances_from_home,updated_radius_vals = supervisor.select_scan(type_scan=\"{command['scan_type']}\""+("" if command['robot_moves']=="" or command['scan_type']=="single" else f",[\"{command['robot_moves']}\"]")+")")
+            elif command["command_type"]=="pick_up_single_gear":
+                updated_text+=(f"\nsupervisor.call_pick_up_gear_service(\"{command['depth_or_color']}\",{command['object_width']},\"{command['starting_position']}\")")
+            elif command["command_type"]=="pick_up_multiple_gears":
+                comma_needed=False
+                color_list = "["
+                if command["yellow"]=='1':
+                    color_list+="yellow"
+                    comma_needed=True
+                if command["orange"]=='1':
+                    if comma_needed:
+                        color_list+=","
+                    color_list+="orange"
+                    comma_needed=True
+                if command["green"]=='1':
+                    if comma_needed:
+                        color_list+=","
+                    color_list+="green"
+                color_list+="]"
+                updated_text+=(f"\nsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",\"{color_list}\",\"{command['depth_or_color']}\",\"{command['put_down_type']}\",{command['force']},\"{command['put_down_pose']}\")")
+            elif command["command_type"]=="put_down_gear":
+                updated_text+=(f"\nsupervisor.put_gear_down_choose_type(\"{command['put_down_type']}\",{command['z']},{command['force']})")
+            elif command["command_type"]=="moving_gears":
+                if command["movement_type"]=="pick_up:":
+                    updated_text+=(f"\nsupervisor.call_move_up_moving_gear_service({command['object_width']})")
+                else:
+                    updated_text+=("\nsupervisor.call_move_above_gear()")
+            elif command["command_type"]=="move_to_named_pose":
+                updated_text+=(f"\nsupervisor.call_move_to_named_pose_service(\"{command['name_pose']}\")")
+            elif command["command_type"]=="enable_conveyor":
+                updated_text+=(f"\nsupervisor.enable_conveyor_service(True)")
+            elif command["command_type"]=="disable_conveyor":
+                updated_text+=(f"\nsupervisor.enable_conveyor_service(False)")
+            elif command["command_type"]=="move_conveyor":
+                updated_text+=(f"\nsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
+            elif command["command_type"]=="sleep":
+                updated_text+=(f"\nsleep({command['duration']})")
+        self.selected_command_label.config(text=updated_text)
 
 
 
 def main(args=None):
     app = FR3_GUI()
     app.mainloop()
-    main_node = open(os.getcwd()+"/src/gear_place/gear_place/nodes/gear_place_node.py",'w')
-    main_node.write("#!/usr/bin/env python3\n\nimport rclpy\n\nfrom gear_place.gear_place_classes import GearPlace, Error\n\nfrom time import sleep\n\nfrom math import pi\n\n\ndef main(args=None):"+
-                    "\n\trclpy.init(args=args)\n\ttry:\n\t\tsupervisor = GearPlace()\n\t\tsupervisor.wait(5)")
-    for command in app.selected_commands:
-        if command["command_type"]=="open_gripper":
-            main_node.write("\n\t\tsupervisor.call_open_gripper_service()")
-        elif command["command_type"]=="cartesian_movement":
-            if command["type"]=="standard":
-                main_node.write(f"\n\t\tsupervisor.call_move_cartesian_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
-            elif command["type"]=="angle":
-                main_node.write(f"\n\t\tsupervisor.call_move_cartesian_angle_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']},{command['angle']})")
-            else:
-                main_node.write(f"\n\t\tsupervisor.call_move_cartesian_smooth_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
-        elif command["command_type"]=="scanning":
-            main_node.write(f"\n\t\tdistances_from_home,updated_radius_vals = supervisor.select_scan(type_scan=\"{command['scan_type']}\""+("" if command['robot_moves']=="" or command['scan_type']=="single" else f",[\"{command['robot_moves']}\"]")+")")
-        elif command["command_type"]=="pick_up_single_gear":
-            main_node.write(f"\n\t\tsupervisor.call_pick_up_gear_service(\"{command['depth_or_color']}\",{command['object_width']},\"{command['starting_position']}\")")
-        elif command["command_type"]=="pick_up_multiple_gears":
-            comma_needed=False
-            color_list = "["
-            if command["yellow"]=='1':
-                color_list+="yellow"
-                comma_needed=True
-            if command["orange"]=='1':
-                if comma_needed:
-                    color_list+=","
-                color_list+="orange"
-                comma_needed=True
-            if command["green"]=='1':
-                if comma_needed:
-                    color_list+=","
-                color_list+="green"
-            color_list+="]"
-            main_node.write(f"\n\t\tsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",\"{color_list}\",\"{command['depth_or_color']}\",\"{command['put_down_type']}\",{command['force']},\"{command['put_down_pose']}\")")
-        elif command["command_type"]=="put_down_gear":
-            main_node.write(f"\n\t\tsupervisor.put_gear_down_choose_type(\"{command['put_down_type']}\",{command['z']},{command['force']})")
-        elif command["command_type"]=="moving_gears":
-            if command["movement_type"]=="pick_up:":
-                main_node.write(f"\n\t\tsupervisor.call_move_up_moving_gear_service({command['object_width']})")
-            else:
-                main_node.write("\n\t\tsupervisor.call_move_above_gear()")
-        elif command["command_type"]=="move_to_named_pose":
-            main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose_service(\"{command['name_pose']}\")")
-        elif command["command_type"]=="enable_conveyor":
-            main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(True)")
-        elif command["command_type"]=="disable_conveyor":
-            main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(False)")
-        elif command["command_type"]=="move_conveyor":
-            main_node.write(f"\n\t\tsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
-        elif command["command_type"]=="sleep":
-            main_node.write(f"\n\t\tsleep({command['duration']})")
-    main_node.write("\n\texcept Error as e:\n\n\t\tprint(e)\n\nif __name__ == \"__main__\":\n\tmain()")
-    main_node.close()
-    os.system("cd ~/fr3_ws")
-    os.system("colcon build")
-    os.system("source install/setup.bash")
-    os.system("ros2 launch gear_place gear.launch.py")
+    if app.cancel_flag.get()=="0":
+        main_node = open(os.getcwd()+"/src/gear_place/gear_place/nodes/gear_place_node.py",'w')
+        main_node.write("#!/usr/bin/env python3\n\nimport rclpy\n\nfrom gear_place.gear_place_classes import GearPlace, Error\n\nfrom time import sleep\n\nfrom math import pi\n\n\ndef main(args=None):"+
+                        "\n\trclpy.init(args=args)\n\ttry:\n\t\tsupervisor = GearPlace()\n\t\tsupervisor.wait(5)")
+        for command in app.selected_commands:
+            if command["command_type"]=="open_gripper":
+                main_node.write("\n\t\tsupervisor.call_open_gripper_service()")
+            elif command["command_type"]=="cartesian_movement":
+                if command["type"]=="standard":
+                    main_node.write(f"\n\t\tsupervisor.call_move_cartesian_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
+                elif command["type"]=="angle":
+                    main_node.write(f"\n\t\tsupervisor.call_move_cartesian_angle_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']},{command['angle']})")
+                else:
+                    main_node.write(f"\n\t\tsupervisor.call_move_cartesian_smooth_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
+            elif command["command_type"]=="scanning":
+                main_node.write(f"\n\t\tdistances_from_home,updated_radius_vals = supervisor.select_scan(type_scan=\"{command['scan_type']}\""+("" if command['robot_moves']=="" or command['scan_type']=="single" else f",[\"{command['robot_moves']}\"]")+")")
+            elif command["command_type"]=="pick_up_single_gear":
+                main_node.write(f"\n\t\tsupervisor.call_pick_up_gear_service(\"{command['depth_or_color']}\",{command['object_width']},\"{command['starting_position']}\")")
+            elif command["command_type"]=="pick_up_multiple_gears":
+                comma_needed=False
+                color_list = "["
+                if command["yellow"]=='1':
+                    color_list+="yellow"
+                    comma_needed=True
+                if command["orange"]=='1':
+                    if comma_needed:
+                        color_list+=","
+                    color_list+="orange"
+                    comma_needed=True
+                if command["green"]=='1':
+                    if comma_needed:
+                        color_list+=","
+                    color_list+="green"
+                color_list+="]"
+                main_node.write(f"\n\t\tsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",\"{color_list}\",\"{command['depth_or_color']}\",\"{command['put_down_type']}\",{command['force']},\"{command['put_down_pose']}\")")
+            elif command["command_type"]=="put_down_gear":
+                main_node.write(f"\n\t\tsupervisor.put_gear_down_choose_type(\"{command['put_down_type']}\",{command['z']},{command['force']})")
+            elif command["command_type"]=="moving_gears":
+                if command["movement_type"]=="pick_up:":
+                    main_node.write(f"\n\t\tsupervisor.call_move_up_moving_gear_service({command['object_width']})")
+                else:
+                    main_node.write("\n\t\tsupervisor.call_move_above_gear()")
+            elif command["command_type"]=="move_to_named_pose":
+                main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose_service(\"{command['name_pose']}\")")
+            elif command["command_type"]=="enable_conveyor":
+                main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(True)")
+            elif command["command_type"]=="disable_conveyor":
+                main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(False)")
+            elif command["command_type"]=="move_conveyor":
+                main_node.write(f"\n\t\tsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
+            elif command["command_type"]=="sleep":
+                main_node.write(f"\n\t\tsleep({command['duration']})")
+        main_node.write("\n\texcept Error as e:\n\n\t\tprint(e)\n\nif __name__ == \"__main__\":\n\tmain()")
+        main_node.close()
+        os.system("cd ~/fr3_ws")
+        os.system("colcon build")
+        os.system("source install/setup.bash")
+        os.system("ros2 launch gear_place gear.launch.py")
 
 
 if __name__ == '__main__':
