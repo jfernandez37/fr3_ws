@@ -3,6 +3,7 @@
 import tkinter as tk
 from functools import partial
 import rclpy
+import os
 
 CAMERA_TYPES = ["depth","color"]
 COMMAND_TYPES = ["open_gripper","cartesian_movement","scanning","pick_up_single_gear","pick_up_multiple_gears","put_down_gear","moving_gears","move_to_named_pose"]
@@ -419,7 +420,7 @@ class FR3_GUI(tk.Tk):
 def main(args=None):
     app = FR3_GUI()
     app.mainloop()
-    main_node = open("test.py",'w')
+    main_node = open(os.getcwd()+"/src/gear_place/gear_place/nodes/gear_place_node.py",'w')
     main_node.write("#!/usr/bin/env python3\n\nimport rclpy\n\nfrom gear_place.gear_place_classes import GearPlace, Error\n\nfrom time import sleep\n\nfrom math import pi\n\n\ndef main(args=None):"+
                     "\n\trclpy.init(args=args)\n\ttry:\n\t\tsupervisor = GearPlace()\n\t\tsupervisor.wait(5)")
     for command in app.selected_commands:
