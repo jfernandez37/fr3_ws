@@ -378,6 +378,7 @@ class GearPlace(Node):
     self.get_logger().info(
         f"{len(distances_from_home)} gears found"
     )  # outputs the number of gears found
+    self.call_move_cartesian_smooth_service(0.0,0.0,-0.16,0.15,0.2)
     return distances_from_home, updated_radius_vals
 
   def select_scan(self, type_scan="single",robot_moves=[]):
