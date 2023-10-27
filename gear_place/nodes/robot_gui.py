@@ -115,6 +115,7 @@ class FR3_GUI(tk.Tk):
         self.command_type.trace('w', self.show_correct_menu)
 
     def save_command(self):
+        self.parameters["command_type"].set(self.command_type.get())
         self.selected_commands.append({key:self.parameters[key].get()  for key in self.parameters.keys()})
         self.reset_parameters()
         self.clear_window()
@@ -122,7 +123,7 @@ class FR3_GUI(tk.Tk):
         self.add_new_command_button.pack(pady=5, side=tk.BOTTOM)
         self.current_widgets.append(self.add_new_command_button)
         self.current_widgets.append(self.save_all_button)
-        self.parameters["command_type"].set(self.command_type.get())
+        
         
     
     def clear_window(self):
