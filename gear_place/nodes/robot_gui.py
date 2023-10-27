@@ -462,7 +462,7 @@ def main(args=None):
             else:
                 main_node.write("\n\t\tsupervisor.call_move_above_gear()")
         elif command["command_type"]=="move_to_named_pose":
-            main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose(\"{command['name_pose']})")
+            main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose(\"{command['name_pose']}\")")
     main_node.write("\n\texcept Error as e:\n\n\t\tprint(e)\n\nif __name__ == \"__main__\":\n\tmain()")
 
 
