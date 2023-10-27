@@ -2,4 +2,4 @@ build/
 install/
 log/
 .vscode/
-src/gear_place/nodes/gear_place_node.py
+gear_place/nodes/gear_place_node.py
