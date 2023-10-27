@@ -126,7 +126,6 @@ class FR3_GUI(tk.Tk):
         
     
     def clear_window(self):
-        print(len(self.current_widgets))
         for widget in self.current_widgets:
             widget.pack_forget()
         self.current_widgets.clear()
