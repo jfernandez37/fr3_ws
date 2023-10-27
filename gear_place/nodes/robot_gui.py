@@ -13,12 +13,15 @@ COMMAND_TYPES = ["open_gripper",
                  "put_down_gear","moving_gears",
                  "move_to_named_pose",
                  "enable_conveyor",
-                 "disable_conveyor"]
+                 "disable_conveyor",
+                 "move_conveyor",
+                 "sleep"]
 SCAN_TYPES = ["single", "grid"]
 STARTING_POSITIONS = ["current","home","high_scan","rotate_scan_1","rotate_scan_2","above_conveyor","position_1","position_2"]
 PUT_DOWN_TYPES = ["force", "camera", "value"]
 CARTESIAN_TYPES = ["standard","angle","smooth"]
 MOVEMENT_TYPES = ["pick_up","above"]
+CONVEYOR_DIRECTIONS = ["forward","backward"]
 class FR3_GUI(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -111,6 +114,17 @@ class FR3_GUI(tk.Tk):
         self.parameters["name_pose"] = tk.StringVar()
         self.parameters["name_pose"].set(STARTING_POSITIONS[1])
 
+        # tk conveyor parameters
+        self.parameters["conveyor_speed"] = tk.StringVar()
+        self.parameters["conveyor_speed"].set(0.0)
+
+        self.parameters["conveyor_direction"] = tk.StringVar()
+        self.parameters["conveyor_direction"].set(CONVEYOR_DIRECTIONS[0])
+
+        # tk sleep parameter
+        self.parameters["duration"] = tk.StringVar()
+        self.parameters["duration"].set(0.0)
+
     def add_command(self):
         self.clear_window()
         self.command_type_menu = tk.OptionMenu(self,self.command_type, *COMMAND_TYPES)
@@ -130,8 +144,6 @@ class FR3_GUI(tk.Tk):
         self.add_new_command_button.pack(pady=5, side=tk.BOTTOM)
         self.current_widgets.append(self.add_new_command_button)
         self.current_widgets.append(self.save_all_button)
-        
-        
     
     def clear_window(self):
         for widget in self.current_widgets:
@@ -159,7 +171,10 @@ class FR3_GUI(tk.Tk):
         self.parameters["force"].set("0.0")
         self.parameters["movement_type"].set(MOVEMENT_TYPES[0])
         self.parameters["name_pose"].set(STARTING_POSITIONS[1])
-    
+        self.parameters["conveyor_speed"].set(0.0)
+        self.parameters["conveyor_direction"].set(CONVEYOR_DIRECTIONS[0])
+        self.parameters["duration"].set(0.0)
+
     def show_correct_menu(self,_,__,___):
         self.clear_window()
         self.command_type_menu.pack(pady=5, side=tk.TOP)
@@ -180,6 +195,10 @@ class FR3_GUI(tk.Tk):
             self.show_moving_gears_menu()
         elif self.command_type.get()=="move_to_named_pose":
             self.show_named_pose_menu()
+        elif self.command_type.get()=="move_conveyor":
+            self.show_move_conveyor_menu()
+        elif self.command_type.get()=="sleep":
+            self.show_sleep_menu()
     
     def show_cartesian_menu(self):
         cartesian_type_label = tk.Label(self, text="Select the type of cartesian movement")
@@ -378,6 +397,28 @@ class FR3_GUI(tk.Tk):
         name_pose_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(name_pose_menu)
 
+    def show_move_conveyor_menu(self):
+        conveyor_speed_label = tk.Label(self, text="Please enter the conveyor speed")
+        conveyor_speed_label.pack(pady=5, side=tk.TOP)
+        self.current_widgets.append(conveyor_speed_label)
+        conveyor_speed_entry = tk.Entry(self, textvariable=self.parameters["conveyor_speed"])
+        conveyor_speed_entry.pack(pady=5, side=tk.TOP)
+        self.current_widgets.append(conveyor_speed_entry)
+
+        conveyor_direction_label = tk.Label(self,text="Select the direction for the conveyor belt")
+        conveyor_direction_label.pack(pady=5,side=tk.TOP)
+        self.current_widgets.append(conveyor_direction_label)
+        conveyor_direction_menu = tk.OptionMenu(self, self.parameters["conveyor_direction"],*CONVEYOR_DIRECTIONS)
+        conveyor_direction_menu.pack(pady=5, side=tk.TOP)
+        self.current_widgets.append(conveyor_direction_menu)
+
+    def show_sleep_menu(self):
+        sleep_label = tk.Label(self, text="Please enter duration for sleep")
+        sleep_label.pack(pady=5, side=tk.TOP)
+        self.current_widgets.append(sleep_label)
+        sleep_entry = tk.Entry(self, textvariable=self.parameters["duration"])
+        sleep_entry.pack(pady=5, side=tk.TOP)
+        self.current_widgets.append(sleep_entry)
 
     def enable_disable_angle_entry(self, entry_box,_,__,___):
         self.parameters["angle"].set("0.0")
@@ -418,11 +459,6 @@ class FR3_GUI(tk.Tk):
             entry_box["state"]=tk.DISABLED
 
 
-
-
-
-
-        
 
 def main(args=None):
     app = FR3_GUI()
@@ -471,9 +507,13 @@ def main(args=None):
         elif command["command_type"]=="move_to_named_pose":
             main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose(\"{command['name_pose']}\")")
         elif command["command_type"]=="enable_conveyor":
-            main_node.write(f"\n\t\tsupervisor.call_enable_conveyor_service(True)")
+            main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(True)")
         elif command["command_type"]=="disable_conveyor":
-            main_node.write(f"\n\t\tsupervisor.call_enable_conveyor_service(False)")
+            main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(False)")
+        elif command["command_type"]=="move_conveyor":
+            main_node.write(f"\n\t\tsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
+        elif command["command_type"]=="sleep":
+            main_node.write(f"\n\t\tsleep({command['duration']})")
     main_node.write("\n\texcept Error as e:\n\n\t\tprint(e)\n\nif __name__ == \"__main__\":\n\tmain()")
     main_node.close()
     os.system("cd ~/fr3_ws")
