@@ -516,7 +516,7 @@ def main(args=None):
             else:
                 main_node.write("\n\t\tsupervisor.call_move_above_gear()")
         elif command["command_type"]=="move_to_named_pose":
-            main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose(\"{command['name_pose']}\")")
+            main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose_service(\"{command['name_pose']}\")")
         elif command["command_type"]=="enable_conveyor":
             main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(True)")
         elif command["command_type"]=="disable_conveyor":
