@@ -1,6 +1,9 @@
-#!/usr/bin/env python3
+try:
+    # !/usr/bin/env python3
+    (int)
+except:
+    (int)
 import tkinter as tk
-from tkinter import ttk
 from functools import partial
 
 CAMERA_TYPES = ["depth","color"]
@@ -128,6 +131,7 @@ class FR3_GUI(tk.Tk):
             widget.pack_forget()
     
     def reset_parameters(self):
+        self.command_type.set(COMMAND_TYPES[0])
         self.parameters["type"].set(CARTESIAN_TYPES[0])
         self.parameters["x"].set("0.0")
         self.parameters["y"].set("0.0")
@@ -429,9 +433,9 @@ def main():
             else:
                 main_node.write(f"\n\t\tsupervisor.call_move_cartesian_smooth_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
         elif command["command_type"]=="scanning":
-            main_node.write(f"\n\t\tsupervisor.select_scan(type_scan={command['scan_type']}"+("" if command['robot_moves']=="" or command['scan_type']=="single" else f",[{command['robot_moves']}]")+")")
+            main_node.write(f"\n\t\tsupervisor.select_scan(type_scan=\"{command['scan_type']}\""+("" if command['robot_moves']=="" or command['scan_type']=="single" else f",[\"{command['robot_moves']}\"]")+")")
         elif command["command_type"]=="pick_up_single_gear":
-            main_node.write(f"\n\t\tsupervisor.call_pick_up_gear_service({command['depth_or_color']},{command['object_width']},{command['starting_position']})")
+            main_node.write(f"\n\t\tsupervisor.call_pick_up_gear_service(\"{command['depth_or_color']}\",{command['object_width']},\"{command['starting_position']}\")")
         elif command["command_type"]=="pick_up_multiple_gears":
             comma_needed=False
             color_list = "["
@@ -448,16 +452,16 @@ def main():
                     color_list+=","
                 color_list+="green"
             color_list+="]"
-            main_node.write(f"\n\t\tsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},{command['starting_position']},{color_list},{command['depth_or_color']},{command['put_down_type']},{command['force']})")
+            main_node.write(f"\n\t\tsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",\"{color_list}\",\"{command['depth_or_color']}\",\"{command['put_down_type']}\",{command['force']})")
         elif command["command_type"]=="put_down_gear":
-            main_node.write(f"\n\t\tsupervisor.put_gear_down_choose_type({command['put_down_type']},{command['z']},{command['force']})")
+            main_node.write(f"\n\t\tsupervisor.put_gear_down_choose_type(\"{command['put_down_type']}\",{command['z']},{command['force']})")
         elif command["command_type"]=="moving_gears":
             if command["movement_type"]=="pick_up:":
                 main_node.write(f"\n\t\tsupervisor.call_move_up_moving_gear_service({command['object_width']})")
             else:
                 main_node.write("\n\t\tsupervisor.call_move_above_gear()")
         elif command["command_type"]=="move_to_named_pose":
-            main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose({command['name_pose']})")
+            main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose(\"{command['name_pose']})")
     main_node.write("\n\texcept Error as e:\n\n\t\tprint(e)\n\nif __name__ == \"__main__\":\n\tmain()")
 
 
