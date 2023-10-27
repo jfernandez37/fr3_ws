@@ -50,7 +50,7 @@ class FR3_GUI(tk.Tk):
         self.screen_height = self.winfo_screenheight()
         
 
-        self.geometry('800x750')
+        self.geometry('1000x750')
 
         self.cancel_button = tk.Button(self, text="Cancel", command = self.cancel_function)
         self.cancel_button.pack(pady=5, side=tk.BOTTOM)
