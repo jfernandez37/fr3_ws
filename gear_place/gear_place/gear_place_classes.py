@@ -84,9 +84,6 @@ class GearPlace(Node):
       # Camera connected
       self.connected = False
 
-      # Conveyor enabled
-      self.conveyor_enabled = False
-
     # TODO
       # Camera to end effector transform
     #   cam_to_ee_tranform = self.tf_buffer.lookup_transform("fr3_hand","camera_mount", rclpy.time.Time())
@@ -798,17 +795,16 @@ class GearPlace(Node):
   #                  conveyor belt functions
   # ===========================================================
   
-  def enable_conveyor_service(self):
+  def enable_conveyor_service(self, enable = True):
       """
       Calls the enable_conveyor callback
       """
       self.get_logger().info(
-          ("Enabling " if not self.conveyor_enabled else "Disabling ") + "the conveyor belt"
+          ("Enabling " if enable else "Disabling ") + "the conveyor belt"
       )
 
-      self.conveyor_enabled = not self.conveyor_enabled
       request = EnableConveyor.Request()
-      request.enable = self.conveyor_enabled
+      request.enable = enable
 
       future = self.enable_conveyor_client.call_async(
           request
