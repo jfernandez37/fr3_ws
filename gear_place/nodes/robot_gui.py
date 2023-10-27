@@ -465,6 +465,11 @@ def main(args=None):
             main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose(\"{command['name_pose']}\")")
     main_node.write("\n\texcept Error as e:\n\n\t\tprint(e)\n\nif __name__ == \"__main__\":\n\tmain()")
 
+    os.system("cd ~/fr3_ws")
+    os.system("colcon build")
+    os.system("source install/setup.bash")
+    os.system("ros2 launch gear_place gear.launch.py")
+
 
 if __name__ == '__main__':
     main()
