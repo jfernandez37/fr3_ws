@@ -141,7 +141,7 @@ class FR3_GUI(tk.Tk):
     def save_command(self):
         self.parameters["command_type"].set(self.command_type.get())
         self.selected_commands.append({key:self.parameters[key].get()  for key in self.parameters.keys()})
-        self.reset_parameters()
+        self.reset_parameters(True)
         self.clear_window()
         self.save_all_button.pack(pady=5, side=tk.BOTTOM)
         self.add_new_command_button.pack(pady=5, side=tk.BOTTOM)
@@ -153,8 +153,9 @@ class FR3_GUI(tk.Tk):
             widget.pack_forget()
         self.current_widgets.clear()
     
-    def reset_parameters(self):
-        self.command_type.set(COMMAND_TYPES[0])
+    def reset_parameters(self, including_command_type:bool):
+        if including_command_type:
+            self.command_type.set(COMMAND_TYPES[0])
         self.parameters["type"].set(CARTESIAN_TYPES[0])
         self.parameters["x"].set("0.0")
         self.parameters["y"].set("0.0")
@@ -181,7 +182,7 @@ class FR3_GUI(tk.Tk):
 
     def show_correct_menu(self,_,__,___):
         self.clear_window()
-        self.reset_parameters()
+        self.reset_parameters(False)
         self.command_type_menu.pack(pady=5, side=tk.TOP)
         self.save_button.pack(pady=5, side=tk.BOTTOM)
         self.current_widgets.append(self.command_type_menu)
