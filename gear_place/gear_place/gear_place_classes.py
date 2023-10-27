@@ -317,6 +317,7 @@ class GearPlace(Node):
       self.get_logger().info(
           f"{len(distances_from_home)} gears found."
       )  # outputs the number of gears found
+      self.call_move_to_named_pose_service("home")
       return distances_from_home,updated_radius_vals
   
   def single_scan_multiple_gears(self)->(list,dict):

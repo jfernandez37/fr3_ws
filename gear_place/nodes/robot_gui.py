@@ -89,7 +89,7 @@ class FR3_GUI(tk.Tk):
         self.parameters["object_width"].set("0.0095")
 
         self.parameters["starting_position"] = tk.StringVar()
-        self.parameters["starting_position"].set(STARTING_POSITIONS[0])
+        self.parameters["starting_position"].set("home")
 
         self.parameters["yellow"] = tk.StringVar()
         self.parameters["yellow"].set("0")
@@ -347,7 +347,7 @@ class FR3_GUI(tk.Tk):
         force_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(force_entry)
 
-        put_down_pose_label = tk.Label(self, text="Please choose the starting position. Choose current to use the current position")
+        put_down_pose_label = tk.Label(self, text="Please choose the pose to put down the gear. Choose current to use the current position")
         put_down_pose_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(put_down_pose_label)
         put_down_pose_menu = tk.OptionMenu(self,self.parameters["put_down_pose"],*STARTING_POSITIONS)
