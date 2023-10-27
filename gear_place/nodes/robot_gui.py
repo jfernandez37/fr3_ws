@@ -106,6 +106,9 @@ class FR3_GUI(tk.Tk):
         self.parameters["force"] = tk.StringVar()
         self.parameters["force"].set("0.0")
 
+        self.parameters["put_down_pose"] = tk.StringVar()
+        self.parameters["put_down_pose"].set(STARTING_POSITIONS[0])
+
         # tk moving gear parameter
         self.parameters["movement_type"] = tk.StringVar()
         self.parameters["movement_type"].set(MOVEMENT_TYPES[0])
@@ -169,6 +172,7 @@ class FR3_GUI(tk.Tk):
         self.parameters["green"].set("0")
         self.parameters["put_down_type"].set(PUT_DOWN_TYPES[0])
         self.parameters["force"].set("0.0")
+        self.parameters["put_down_pose"].set(STARTING_POSITIONS[0])
         self.parameters["movement_type"].set(MOVEMENT_TYPES[0])
         self.parameters["name_pose"].set(STARTING_POSITIONS[1])
         self.parameters["conveyor_speed"].set(0.0)
@@ -343,6 +347,13 @@ class FR3_GUI(tk.Tk):
         force_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(force_entry)
 
+        put_down_pose_label = tk.Label(self, text="Please choose the starting position. Choose current to use the current position")
+        put_down_pose_label.pack(pady=5, side=tk.TOP)
+        self.current_widgets.append(put_down_pose_label)
+        put_down_pose_menu = tk.OptionMenu(self,self.parameters["put_down_pose"],*STARTING_POSITIONS)
+        put_down_pose_menu.pack(pady=5, side=tk.TOP)
+        self.current_widgets.append(put_down_pose_menu)
+
         force_entry_enabled = partial(self.enable_disable_force_entry,force_entry)
         self.parameters["put_down_type"].trace('w',force_entry_enabled)
 
@@ -477,7 +488,7 @@ def main(args=None):
             else:
                 main_node.write(f"\n\t\tsupervisor.call_move_cartesian_smooth_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
         elif command["command_type"]=="scanning":
-            main_node.write(f"\n\t\tsupervisor.select_scan(type_scan=\"{command['scan_type']}\""+("" if command['robot_moves']=="" or command['scan_type']=="single" else f",[\"{command['robot_moves']}\"]")+")")
+            main_node.write(f"\n\t\tdistances_from_home,updated_radius_vals = supervisor.select_scan(type_scan=\"{command['scan_type']}\""+("" if command['robot_moves']=="" or command['scan_type']=="single" else f",[\"{command['robot_moves']}\"]")+")")
         elif command["command_type"]=="pick_up_single_gear":
             main_node.write(f"\n\t\tsupervisor.call_pick_up_gear_service(\"{command['depth_or_color']}\",{command['object_width']},\"{command['starting_position']}\")")
         elif command["command_type"]=="pick_up_multiple_gears":
@@ -496,7 +507,7 @@ def main(args=None):
                     color_list+=","
                 color_list+="green"
             color_list+="]"
-            main_node.write(f"\n\t\tsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",\"{color_list}\",\"{command['depth_or_color']}\",\"{command['put_down_type']}\",{command['force']})")
+            main_node.write(f"\n\t\tsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",\"{color_list}\",\"{command['depth_or_color']}\",\"{command['put_down_type']}\",{command['force']},\"{command['put_down_pose']}\")")
         elif command["command_type"]=="put_down_gear":
             main_node.write(f"\n\t\tsupervisor.put_gear_down_choose_type(\"{command['put_down_type']}\",{command['z']},{command['force']})")
         elif command["command_type"]=="moving_gears":

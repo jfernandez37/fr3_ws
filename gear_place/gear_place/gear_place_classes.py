@@ -478,7 +478,7 @@ class GearPlace(Node):
           self.get_logger().error(f"Unable to pick up gear")
           raise Error("Unable to pick up gear")
 
-  def pick_up_multiple_gears(self, distances_from_home: list, updated_radius_vals: list, object_width : float, starting_position: str, colors: list,depth_or_color: bool, put_down_type = "force", force = 0.1):
+  def pick_up_multiple_gears(self, distances_from_home: list, updated_radius_vals: list, object_width : float, starting_position: str, colors: list,depth_or_color: bool, put_down_type = "force", force = 0.1,put_down_pose="current"):
       for movment in distances_from_home:
           self.get_logger().info("Movement: " + str(movment))
 
@@ -553,6 +553,8 @@ class GearPlace(Node):
                 last_point=(last_point[0]+-1*correct_gear[1] +X_OFFSET,last_point[1]+-1*correct_gear[0]+Y_OFFSET)
                 z = -1*correct_gear[2] - (0.01 if gear_color=="green" else 0)
               self.call_get_joint_positions()
+              if put_down_pose!="current":
+                  self.call_move_to_named_pose_service(put_down_pose)
               self.put_gear_down_choose_type(put_down_type,z=z,force=force)
               self.call_move_to_joint_position(self.current_joint_positions)
               offset_needed = False
