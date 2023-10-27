@@ -639,6 +639,9 @@ class FR3_GUI(tk.Tk):
         command_menu = tk.OptionMenu(self,command_to_remove, *current_commands)
         command_menu.pack(pady=5,side=tk.BOTTOM)
         self.current_widgets.append(command_menu)
+        remove_command_label = tk.Label(self,text="Select the command you would like to remove. The options are numbered in order of appearance and the index selected will be deleted.")
+        remove_command_label.pack(pady=5,side=tk.BOTTOM)
+        self.current_widgets.append(remove_command_label)
         
     
     def remove_and_home(self, selection):
