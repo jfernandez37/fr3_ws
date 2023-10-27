@@ -1,10 +1,8 @@
-try:
-    # !/usr/bin/env python3
-    (int)
-except:
-    (int)
+#!/usr/bin/env python3
+
 import tkinter as tk
 from functools import partial
+import rclpy
 
 CAMERA_TYPES = ["depth","color"]
 COMMAND_TYPES = ["open_gripper","cartesian_movement","scanning","pick_up_single_gear","pick_up_multiple_gears","put_down_gear","moving_gears","move_to_named_pose"]
@@ -28,12 +26,12 @@ class FR3_GUI(tk.Tk):
         self.screen_height = self.winfo_screenheight()
         
 
-        self.geometry('800x550')
+        self.geometry('800x750')
 
         self.save_all_button = tk.Button(self, text="Save all", command=self.destroy)
-        self.save_all_button.pack(side=tk.BOTTOM)
+        self.save_all_button.pack(pady=5, side=tk.BOTTOM)
         self.add_new_command_button = tk.Button(self,text="Add command", command=self.add_command)
-        self.add_new_command_button.pack(side=tk.BOTTOM)
+        self.add_new_command_button.pack(pady=5, side=tk.BOTTOM)
         
         self.current_widgets = [self.add_new_command_button,self.save_all_button]
         
@@ -107,28 +105,30 @@ class FR3_GUI(tk.Tk):
 
     def add_command(self):
         self.clear_window()
-        
         self.command_type_menu = tk.OptionMenu(self,self.command_type, *COMMAND_TYPES)
-        self.command_type_menu.pack(side=tk.TOP)
+        self.command_type_menu.pack(pady=5, side=tk.TOP)
         self.save_button = tk.Button(self,text="Save command",command = self.save_command)
-        self.save_button.pack(side=tk.BOTTOM)
+        self.save_button.pack(pady=5, side=tk.BOTTOM)
         self.current_widgets.append(self.command_type_menu)
         self.current_widgets.append(self.save_button)
         self.command_type.trace('w', self.show_correct_menu)
 
     def save_command(self):
+        self.selected_commands.append({key:self.parameters[key].get()  for key in self.parameters.keys()})
+        self.reset_parameters()
         self.clear_window()
-        self.save_all_button.pack(side=tk.BOTTOM)
-        self.add_new_command_button.pack(side=tk.BOTTOM)
+        self.save_all_button.pack(pady=5, side=tk.BOTTOM)
+        self.add_new_command_button.pack(pady=5, side=tk.BOTTOM)
         self.current_widgets.append(self.add_new_command_button)
         self.current_widgets.append(self.save_all_button)
         self.parameters["command_type"].set(self.command_type.get())
-        self.selected_commands.append({key:self.parameters[key].get()  for key in self.parameters.keys()})
-        self.reset_parameters()
+        
     
     def clear_window(self):
+        print(len(self.current_widgets))
         for widget in self.current_widgets:
             widget.pack_forget()
+        self.current_widgets.clear()
     
     def reset_parameters(self):
         self.command_type.set(COMMAND_TYPES[0])
@@ -154,8 +154,8 @@ class FR3_GUI(tk.Tk):
     
     def show_correct_menu(self,_,__,___):
         self.clear_window()
-        self.command_type_menu.pack(side=tk.TOP)
-        self.save_button.pack(side=tk.BOTTOM)
+        self.command_type_menu.pack(pady=5, side=tk.TOP)
+        self.save_button.pack(pady=5, side=tk.BOTTOM)
         self.current_widgets.append(self.command_type_menu)
         self.current_widgets.append(self.save_button)
         if self.command_type.get()=="cartesian_movement":
@@ -175,52 +175,52 @@ class FR3_GUI(tk.Tk):
     
     def show_cartesian_menu(self):
         cartesian_type_label = tk.Label(self, text="Select the type of cartesian movement")
-        cartesian_type_label.pack(side=tk.TOP)
+        cartesian_type_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_type_label)
         cartesian_type_menu = tk.OptionMenu(self,self.parameters["type"],*CARTESIAN_TYPES)
-        cartesian_type_menu.pack(side=tk.TOP)
+        cartesian_type_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_type_menu)
 
         cartesian_x_label = tk.Label(self, text="Enter the x value for the cartesian movement:")
-        cartesian_x_label.pack(side=tk.TOP)
+        cartesian_x_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_x_label)
         cartesian_x_entry = tk.Entry(self,textvariable=self.parameters["x"])
-        cartesian_x_entry.pack(side=tk.TOP)
+        cartesian_x_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_x_entry)
 
         cartesian_y_label = tk.Label(self, text="Enter the y value for the cartesian movement:")
-        cartesian_y_label.pack(side=tk.TOP)
+        cartesian_y_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_y_label)
         cartesian_y_entry = tk.Entry(self,textvariable=self.parameters["y"])
-        cartesian_y_entry.pack(side=tk.TOP)
+        cartesian_y_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_y_entry)
 
         cartesian_z_label = tk.Label(self, text="Enter the z value for the cartesian movement:")
-        cartesian_z_label.pack(side=tk.TOP)
+        cartesian_z_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_z_label)
         cartesian_z_entry = tk.Entry(self,textvariable=self.parameters["z"])
-        cartesian_z_entry.pack(side=tk.TOP)
+        cartesian_z_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_z_entry)
 
         cartesian_acc_label = tk.Label(self, text="Enter the acceleration value for the cartesian movement:")
-        cartesian_acc_label.pack(side=tk.TOP)
+        cartesian_acc_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_acc_label)
         cartesian_acc_entry = tk.Entry(self,textvariable=self.parameters["acc"])
-        cartesian_acc_entry.pack(side=tk.TOP)
+        cartesian_acc_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_acc_entry)
 
         cartesian_v_max_label = tk.Label(self, text="Enter the y value for the cartesian movement:")
-        cartesian_v_max_label.pack(side=tk.TOP)
+        cartesian_v_max_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_v_max_label)
         cartesian_v_max_entry = tk.Entry(self,textvariable=self.parameters["v_max"])
-        cartesian_v_max_entry.pack(side=tk.TOP)
+        cartesian_v_max_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_v_max_entry)
 
         cartesian_angle_label = tk.Label(self, text="Enter the angle value for the cartesian movement:")
-        cartesian_angle_label.pack(side=tk.TOP)
+        cartesian_angle_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_angle_label)
         cartesian_angle_entry = tk.Entry(self,textvariable=self.parameters["angle"],state=tk.DISABLED)
-        cartesian_angle_entry.pack(side=tk.TOP)
+        cartesian_angle_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_angle_entry)
 
         angle_entry_enabled = partial(self.enable_disable_angle_entry,cartesian_angle_entry)
@@ -228,17 +228,17 @@ class FR3_GUI(tk.Tk):
 
     def show_scanning_menu(self):
         scanning_type_label = tk.Label(self, text="Select the type scan")
-        scanning_type_label.pack(side=tk.TOP)
+        scanning_type_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(scanning_type_label)
         scanning_type_menu = tk.OptionMenu(self,self.parameters["scan_type"],*SCAN_TYPES)
-        scanning_type_menu.pack(side=tk.TOP)
+        scanning_type_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(scanning_type_menu)
 
         robot_moves_label = tk.Label(self, text="Please enter the points for the grid search. Enter them as [x,y] seperated by a comma. Leave blank to do default 3x3 scan.")
-        robot_moves_label.pack(side=tk.TOP)
+        robot_moves_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(robot_moves_label)
         robot_moves_entry = tk.Entry(self, textvariable=self.parameters["robot_moves"],state=tk.DISABLED)
-        robot_moves_entry.pack(side=tk.TOP)
+        robot_moves_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(robot_moves_entry)
 
         robot_moves_entry_enabled = partial(self.enable_disable_robot_moves_entry,robot_moves_entry)
@@ -246,74 +246,74 @@ class FR3_GUI(tk.Tk):
 
     def single_gear_pick_menu(self):
         depth_or_color_label = tk.Label(self, text="Select whether the scan should be done using the depth or color image")
-        depth_or_color_label.pack(side=tk.TOP)
+        depth_or_color_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(depth_or_color_label)
         depth_or_color_menu = tk.OptionMenu(self,self.parameters["depth_or_color"],*CAMERA_TYPES)
-        depth_or_color_menu.pack(side=tk.TOP)
+        depth_or_color_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(depth_or_color_menu)
 
         object_width_label = tk.Label(self, text="Please enter the object_width")
-        object_width_label.pack(side=tk.TOP)
+        object_width_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(object_width_label)
         object_width_entry = tk.Entry(self, textvariable=self.parameters["object_width"])
-        object_width_entry.pack(side=tk.TOP)
+        object_width_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(object_width_entry)
 
         starting_position_label = tk.Label(self, text="Please choose the named position that the robot should pick up the gear")
-        starting_position_label.pack(side=tk.TOP)
+        starting_position_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(starting_position_label)
         starting_position_menu = tk.OptionMenu(self,self.parameters["starting_position"],*STARTING_POSITIONS)
-        starting_position_menu.pack(side=tk.TOP)
+        starting_position_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(starting_position_menu)
     
     def multiple_gears_pick_menu(self):
         object_width_label = tk.Label(self, text="IMPORTANT NOTE: SCANNING MUST BE DONE BEFORE THIS OR IT WILL NOT HAVE GEARS TO PICK UP.\n\nPlease enter the object_width")
-        object_width_label.pack(side=tk.TOP)
+        object_width_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(object_width_label)
         object_width_entry = tk.Entry(self, textvariable=self.parameters["object_width"])
-        object_width_entry.pack(side=tk.TOP)
+        object_width_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(object_width_entry)
 
         starting_position_label = tk.Label(self, text="Please choose the starting position. Choose current to use the current position")
-        starting_position_label.pack(side=tk.TOP)
+        starting_position_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(starting_position_label)
         starting_position_menu = tk.OptionMenu(self,self.parameters["starting_position"],*STARTING_POSITIONS)
-        starting_position_menu.pack(side=tk.TOP)
+        starting_position_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(starting_position_menu)
 
         color_label = tk.Label(self,text="Select the colors that you would like the robot to pick up")
-        color_label.pack(side=tk.TOP)
+        color_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(color_label)
         yellow_button = tk.Checkbutton(self, text="Yellow", variable=self.parameters["yellow"], onvalue="1", offvalue="0", height=1, width=20)
-        yellow_button.pack(side=tk.TOP)
+        yellow_button.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(yellow_button)
         red_button = tk.Checkbutton(self, text="Red", variable=self.parameters["red"], onvalue="1", offvalue="0", height=1, width=20)
-        red_button.pack(side=tk.TOP)
+        red_button.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(red_button)
         green_button = tk.Checkbutton(self, text="Green", variable=self.parameters["green"], onvalue="1", offvalue="0", height=1, width=20)
-        green_button.pack(side=tk.TOP)
+        green_button.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(green_button)
         
 
         depth_or_color_label = tk.Label(self, text="Select whether the second check should be done using the depth or color image")
-        depth_or_color_label.pack(side=tk.TOP)
+        depth_or_color_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(depth_or_color_label)
         depth_or_color_menu = tk.OptionMenu(self,self.parameters["depth_or_color"],*CAMERA_TYPES)
-        depth_or_color_menu.pack(side=tk.TOP)
+        depth_or_color_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(depth_or_color_menu)
 
         put_down_type_label = tk.Label(self,text="Choose the method to put the gear down.")
-        put_down_type_label.pack(side=tk.TOP)
+        put_down_type_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(put_down_type_label)
         put_down_type_menu =tk.OptionMenu(self,self.parameters["put_down_type"],*PUT_DOWN_TYPES)
-        put_down_type_menu.pack(side=tk.TOP)
+        put_down_type_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(put_down_type_menu)
 
         force_label = tk.Label(self, text="Please enter the put down force")
-        force_label.pack(side=tk.TOP)
+        force_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(force_label)
         force_entry = tk.Entry(self, textvariable=self.parameters["force"])
-        force_entry.pack(side=tk.TOP)
+        force_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(force_entry)
 
         force_entry_enabled = partial(self.enable_disable_force_entry,force_entry)
@@ -321,24 +321,24 @@ class FR3_GUI(tk.Tk):
 
     def show_put_down_menu(self):
         put_down_type_label = tk.Label(self,text="Choose the method to put the gear down.")
-        put_down_type_label.pack(side=tk.TOP)
+        put_down_type_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(put_down_type_label)
         put_down_type_menu =tk.OptionMenu(self,self.parameters["put_down_type"],*PUT_DOWN_TYPES)
-        put_down_type_menu.pack(side=tk.TOP)
+        put_down_type_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(put_down_type_menu)
 
         z_label = tk.Label(self, text="Enter the z value down movement. For the table below the FR3, use -0.247.")
-        z_label.pack(side=tk.TOP)
+        z_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(z_label)
         z_entry = tk.Entry(self,textvariable=self.parameters["z"])
-        z_entry.pack(side=tk.TOP)
+        z_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(z_entry)
 
         force_label = tk.Label(self, text="Please enter the put down force.")
-        force_label.pack(side=tk.TOP)
+        force_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(force_label)
         force_entry = tk.Entry(self, textvariable=self.parameters["force"])
-        force_entry.pack(side=tk.TOP)
+        force_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(force_entry)
 
         update_menu = partial(self.update_put_down_menu,z_entry,force_entry)
@@ -346,17 +346,17 @@ class FR3_GUI(tk.Tk):
 
     def show_moving_gears_menu(self):
         movement_type_label = tk.Label(self, text="Select the type of movement")
-        movement_type_label.pack(side=tk.TOP)
+        movement_type_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(movement_type_label)
         movement_type_menu = tk.OptionMenu(self,self.parameters["movement_type"],*MOVEMENT_TYPES)
-        movement_type_menu.pack(side=tk.TOP)
+        movement_type_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(movement_type_menu)
 
         object_width_label = tk.Label(self, text="Please enter the object_width")
-        object_width_label.pack(side=tk.TOP)
+        object_width_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(object_width_label)
         object_width_entry = tk.Entry(self, textvariable=self.parameters["object_width"])
-        object_width_entry.pack(side=tk.TOP)
+        object_width_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(object_width_entry)
 
         object_width_entry_update = partial(self.update_movement_menu,object_width_entry)
@@ -364,10 +364,10 @@ class FR3_GUI(tk.Tk):
 
     def show_named_pose_menu(self):
         name_pose_label = tk.Label(self, text="Please choose the named pose that you would like the robot to move to")
-        name_pose_label.pack(side=tk.TOP)
+        name_pose_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(name_pose_label)
         name_pose_menu = tk.OptionMenu(self,self.parameters["name_pose"],*STARTING_POSITIONS[1:])
-        name_pose_menu.pack(side=tk.TOP)
+        name_pose_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(name_pose_menu)
 
 
@@ -416,7 +416,7 @@ class FR3_GUI(tk.Tk):
 
         
 
-def main():
+def main(args=None):
     app = FR3_GUI()
     app.mainloop()
     main_node = open("test.py",'w')
