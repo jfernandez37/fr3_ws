@@ -821,7 +821,7 @@ class GearPlace(Node):
       if not result.success:
           raise Error(f"Unable to enable the conveyor belt")
 
-  def set_conveyor_state_service(self, speed: float, direction: float):
+  def set_conveyor_state_service(self, speed: float, direction: int):
 
       """
       Calls the set_conveyor_state callback
