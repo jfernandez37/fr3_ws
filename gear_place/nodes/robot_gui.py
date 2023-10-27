@@ -6,7 +6,14 @@ import rclpy
 import os
 
 CAMERA_TYPES = ["depth","color"]
-COMMAND_TYPES = ["open_gripper","cartesian_movement","scanning","pick_up_single_gear","pick_up_multiple_gears","put_down_gear","moving_gears","move_to_named_pose"]
+COMMAND_TYPES = ["open_gripper",
+                 "cartesian_movement",
+                 "scanning","pick_up_single_gear",
+                 "pick_up_multiple_gears",
+                 "put_down_gear","moving_gears",
+                 "move_to_named_pose",
+                 "enable_conveyor",
+                 "disable_conveyor"]
 SCAN_TYPES = ["single", "grid"]
 STARTING_POSITIONS = ["current","home","high_scan","rotate_scan_1","rotate_scan_2","above_conveyor","position_1","position_2"]
 PUT_DOWN_TYPES = ["force", "camera", "value"]
@@ -463,8 +470,12 @@ def main(args=None):
                 main_node.write("\n\t\tsupervisor.call_move_above_gear()")
         elif command["command_type"]=="move_to_named_pose":
             main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose(\"{command['name_pose']}\")")
+        elif command["command_type"]=="enable_conveyor":
+            main_node.write(f"\n\t\tsupervisor.call_enable_conveyor_service(True)")
+        elif command["command_type"]=="disable_conveyor":
+            main_node.write(f"\n\t\tsupervisor.call_enable_conveyor_service(False)")
     main_node.write("\n\texcept Error as e:\n\n\t\tprint(e)\n\nif __name__ == \"__main__\":\n\tmain()")
-
+    main_node.close()
     os.system("cd ~/fr3_ws")
     os.system("colcon build")
     os.system("source install/setup.bash")
