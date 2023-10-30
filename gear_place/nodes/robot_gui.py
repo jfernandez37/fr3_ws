@@ -8,6 +8,7 @@ from gear_place.gui_utils import (
     decimal_val,
     validate_rotation_value
 )
+from math import pi
 
 CAMERA_TYPES = ["depth","color"]
 COMMAND_TYPES = ["open_gripper",
@@ -213,6 +214,23 @@ class FR3_GUI(tk.Tk):
 
     def save_command(self):
         self.parameters["command_type"].set(self.command_type.get())
+        if self.parameters["joint_angle"]!="0.0":
+            try:
+                self.parameters["joint_angle"] = str(float(self.parameters["joint_angle"]))
+            except:
+                if self.parameters["joint_angle"]=="pi":
+                    self.parameters["joint_angle"] = str(round(pi,5))
+                else:
+                    values = self.parameters["joint_angle"].split("/")
+                    try:
+                        val_1 = float(values[0])
+                    except:
+                        val_1 = pi
+                    try:
+                        val_2 = float(values[1])
+                    except:
+                        val_2 = pi
+                    self.parameters["joint_angle"] = str(round(val_1/val_2))
         self.selected_commands.append({key:self.parameters[key].get()  for key in self.parameters.keys()})
         self.command_counter.set(str(int(len(self.selected_commands))))
         self.reset_parameters(True)
