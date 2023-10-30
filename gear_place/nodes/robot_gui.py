@@ -755,6 +755,7 @@ def main(args=None):
             elif command["command_type"]=="move_conveyor":
                 if not conveyor_enabled:
                     main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(True)")
+                    conveyor_enabled = True
                 main_node.write(f"\n\t\tsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
             elif command["command_type"]=="sleep":
                 main_node.write(f"\n\t\tsleep({command['duration']})")
