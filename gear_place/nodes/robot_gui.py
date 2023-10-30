@@ -37,7 +37,7 @@ class FR3_GUI(tk.Tk):
         # command counter
         self.command_counter = tk.StringVar()
         self.command_counter.set('0')
-        self.command_counter.trace('w',self.update_label)
+        self.command_counter.trace('w',self.update_label_and_remove_button)
 
         # label with all current commands
         self.selected_command_label = tk.Label(self,text="Current code:\n\n")
@@ -56,7 +56,7 @@ class FR3_GUI(tk.Tk):
         self.cancel_button.pack(pady=5, side=tk.BOTTOM)
         self.save_all_button = tk.Button(self, text="Save all", command=self.destroy)
         self.save_all_button.pack(pady=5, side=tk.BOTTOM)
-        self.remove_command_button = tk.Button(self,text="Remove command", command=self.remove_command)
+        self.remove_command_button = tk.Button(self,text="Remove command", command=self.remove_command,state=tk.DISABLED)
         self.remove_command_button.pack(pady=5,side=tk.BOTTOM)
         self.add_new_command_button = tk.Button(self,text="Add command", command=self.add_command)
         self.add_new_command_button.pack(pady=5, side=tk.BOTTOM)
@@ -517,7 +517,11 @@ class FR3_GUI(tk.Tk):
         else:
             entry_box["state"]=tk.DISABLED
     
-    def update_label(self,_,__,___):
+    def update_label_and_remove_button(self,_,__,___):
+        if len(self.selected_commands)>0:
+            self.remove_command_button["state"] = tk.NORMAL
+        else:
+            self.remove_command_button["state"] = tk.DISABLED
         updated_text="Current code:\n\n"
         for command in self.selected_commands:
             if command["command_type"]=="open_gripper":
