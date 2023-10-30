@@ -733,19 +733,19 @@ def main(args=None):
                 comma_needed=False
                 color_list = "["
                 if command["yellow"]=='1':
-                    color_list+="yellow"
+                    color_list+="\"yellow\""
                     comma_needed=True
                 if command["orange"]=='1':
                     if comma_needed:
                         color_list+=","
-                    color_list+="orange"
+                    color_list+="\"orange\""
                     comma_needed=True
                 if command["green"]=='1':
                     if comma_needed:
                         color_list+=","
-                    color_list+="green"
+                    color_list+="\"green\""
                 color_list+="]"
-                main_node.write(f"\n\t\tsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",\"{color_list}\",\"{command['depth_or_color']}\",\"{command['put_down_type']}\",{command['force']},\"{command['put_down_pose']}\")")
+                main_node.write(f"\n\t\tsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",{color_list},\"{command['depth_or_color']}\",\"{command['put_down_type']}\",{command['force']},\"{command['put_down_pose']}\")")
                 scan_already = False
             elif command["command_type"]=="put_down_gear":
                 main_node.write(f"\n\t\tsupervisor.put_gear_down_choose_type(\"{command['put_down_type']}\",{command['z']},{command['force']})")
