@@ -758,6 +758,8 @@ def main(args=None):
                 main_node.write(f"\n\t\tsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
             elif command["command_type"]=="sleep":
                 main_node.write(f"\n\t\tsleep({command['duration']})")
+        if conveyor_enabled:
+            main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(False)")
         main_node.write("\n\texcept Error as e:\n\n\t\tprint(e)\n\nif __name__ == \"__main__\":\n\tmain()")
         main_node.close()
         os.system("cd ~/fr3_ws")
