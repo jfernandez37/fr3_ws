@@ -576,7 +576,7 @@ class FR3_GUI(tk.Tk):
             elif command["command_type"]=="scanning":
                 updated_text+=(f"\ndistances_from_home,updated_radius_vals = supervisor.select_scan(type_scan=\"{command['scan_type']}\""+("" if command['robot_moves']=="" or command['scan_type']=="single" else f",[\"{command['robot_moves']}\"]")+")")
             elif command["command_type"]=="pick_up_single_gear":
-                updated_text+=(f"\nsupervisor.call_pick_up_gear_service(\"{command['depth_or_color']}\",{command['object_width']},\"{command['starting_position']}\")")
+                updated_text+=(f"\nsupervisor.call_pick_up_gear_service(\"{'True' if command['depth_or_color']=='depth' else 'False'}\",{command['object_width']},\"{command['starting_position']}\")")
             elif command["command_type"]=="pick_up_multiple_gears":
                 comma_needed=False
                 color_list = "["
@@ -593,7 +593,7 @@ class FR3_GUI(tk.Tk):
                         color_list+=","
                     color_list+="green"
                 color_list+="]"
-                updated_text+=(f"\nsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",\"{color_list}\",\"{command['depth_or_color']}\",\"{command['put_down_type']}\",{command['force']},\"{command['put_down_pose']}\")")
+                updated_text+=(f"\nsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",\"{color_list}\",\"{'True' if command['depth_or_color']=='depth' else 'False'}\",\"{command['put_down_type']}\",{command['force']},\"{command['put_down_pose']}\")")
             elif command["command_type"]=="put_down_gear":
                 updated_text+=(f"\nsupervisor.put_gear_down_choose_type(\"{command['put_down_type']}\",{command['z']},{command['force']})")
             elif command["command_type"]=="moving_gears":
