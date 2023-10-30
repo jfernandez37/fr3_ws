@@ -332,6 +332,8 @@ class FR3_GUI(tk.Tk):
             self.show_move_conveyor_menu()
         elif self.command_type.get()=="rotate_single_joint":
             self.show_single_joint_menu()
+        elif self.command_type.get()=="move_to_joint_position":
+            self.show_joint_position_menu()
         elif self.command_type.get()=="sleep":
             self.show_sleep_menu()
     
@@ -521,6 +523,15 @@ class FR3_GUI(tk.Tk):
         validate_joint_angle = partial(validate_rotation_value, self.parameters["joint_angle"], self.save_button)
         self.parameters["joint_angle"].trace('w', validate_joint_angle)
 
+    def show_joint_position_menu(self):
+        labels = []
+        entrys = []
+        for i in range(7):
+            labels.append(tk.Label(self,text=f"Enter the joint rotation for joint {i}:"))
+            self.pack_and_append(labels[-1])
+            entrys.append(tk.Entry(self,textvariable=self.parameters["joint_positions"][i]))
+            self.pack_and_append(entrys[-1])
+    
     def show_sleep_menu(self):
         sleep_label = tk.Label(self, text="Please enter duration for sleep")
         self.pack_and_append(sleep_label)
@@ -678,6 +689,8 @@ class FR3_GUI(tk.Tk):
                 list_of_commands+=(f"\nsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
             elif command["command_type"]=="rotate_single_joint":
                 list_of_commands+=(f"\nsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
+            elif command["command_type"]=="move_to_joint_position":
+                list_of_commands+=(f"\nsupervisor.call_move_to_joint_position({','.join([val.get() for val in command['joint_positions']])})")
             elif command["command_type"]=="sleep":
                 list_of_commands+=(f"\nsleep({command['duration']})")
         current_commands_label = tk.Label(self,text=list_of_commands)
@@ -777,6 +790,8 @@ def main(args=None):
                 main_node.write(f"\n\t\tsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
             elif command["command_type"]=="rotate_single_joint":
                 main_node.write(f"\n\t\tsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
+            elif command["command_type"]=="move_to_joint_position":
+                main_node.write(f"\nsupervisor.call_move_to_joint_position({','.join([val.get() for val in command['joint_positions']])})")
             elif command["command_type"]=="sleep":
                 main_node.write(f"\n\t\tsleep({command['duration']})")
         if conveyor_enabled:
