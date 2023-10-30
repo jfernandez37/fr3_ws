@@ -21,6 +21,7 @@ COMMAND_TYPES = ["open_gripper",
                  "disable_conveyor",
                  "move_conveyor",
                  "rotate_single_joint",
+                 "move_to_joint_position",
                  "sleep"]
 SCAN_TYPES = ["single", "grid"]
 STARTING_POSITIONS = ["current","home","high_scan","rotate_scan_1","rotate_scan_2","above_conveyor","position_1","position_2"]
@@ -159,6 +160,11 @@ class FR3_GUI(tk.Tk):
         self.parameters["angle_type"] = tk.StringVar()
         self.parameters["angle_type"].set(ANGLE_TYPES[0])
 
+        # tk joint positions parameters
+        self.parameters["joint_positions"] = [tk.StringVar() for i in range(7)]
+        for i in range(len(self.parameters["joint_positions"])):
+            self.parameters["joint_positions"][i].set("0.0")
+
         # tk sleep parameter
         self.parameters["duration"] = tk.StringVar()
         self.parameters["duration"].set(0.0)
@@ -296,6 +302,8 @@ class FR3_GUI(tk.Tk):
         self.parameters['joint_index'].set(JOINT_INDICES[0])
         self.parameters['joint_angle'].set(0.0)
         self.parameters["angle_type"].set(ANGLE_TYPES[0])
+        for i in range(len(self.parameters["joint_positions"])):
+            self.parameters["joint_positions"][i].set("0.0")
 
     def show_correct_menu(self,_,__,___):
         self.clear_window()
