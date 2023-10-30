@@ -5,7 +5,8 @@ from functools import partial
 import rclpy
 import os
 from gear_place.gui_utils import (
-    decimal_val
+    decimal_val,
+    validate_rotation_value
 )
 
 CAMERA_TYPES = ["depth","color"]
@@ -547,6 +548,9 @@ class FR3_GUI(tk.Tk):
         angle_type_menu = tk.OptionMenu(self, self.parameters["angle_type"],*ANGLE_TYPES)
         angle_type_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(angle_type_menu)
+
+        validate_joint_angle = partial(validate_rotation_value, self.parameters["joint_angle"], self.save_button)
+        self.parameters["joint_angle"].trace('w', validate_joint_angle)
 
     def show_sleep_menu(self):
         sleep_label = tk.Label(self, text="Please enter duration for sleep")
