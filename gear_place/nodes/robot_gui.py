@@ -703,6 +703,8 @@ class FR3_GUI(tk.Tk):
                 list_of_commands+=(f"\nsupervisor.enable_conveyor_service(False)")
             elif command["command_type"]=="move_conveyor":
                 list_of_commands+=(f"\nsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
+            elif command["command_type"]=="rotate_single_joint":
+                list_of_commands+=(f"\n\t\tsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
             elif command["command_type"]=="sleep":
                 list_of_commands+=(f"\nsleep({command['duration']})")
         current_commands_label = tk.Label(self,text=list_of_commands)
