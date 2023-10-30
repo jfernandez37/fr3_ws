@@ -86,10 +86,10 @@ class FR3_GUI(tk.Tk):
         self.parameters["z"].set("0.0")
 
         self.parameters["v_max"] = tk.StringVar()
-        self.parameters["v_max"].set("0.0")
+        self.parameters["v_max"].set("0.15")
 
         self.parameters["acc"] = tk.StringVar()
-        self.parameters["acc"].set("0.0")
+        self.parameters["acc"].set("0.2")
         
         self.parameters["angle"] = tk.StringVar()
         self.parameters["angle"].set("0.0")
@@ -239,8 +239,8 @@ class FR3_GUI(tk.Tk):
         self.parameters["x"].set("0.0")
         self.parameters["y"].set("0.0")
         self.parameters["z"].set("0.0")
-        self.parameters["v_max"].set("0.0")
-        self.parameters["acc"].set("0.0")
+        self.parameters["v_max"].set("0.15")
+        self.parameters["acc"].set("0.2")
         self.parameters["angle"].set("0.0")
         self.parameters["scan_type"].set(SCAN_TYPES[0])
         self.parameters["robot_moves"].set("")
