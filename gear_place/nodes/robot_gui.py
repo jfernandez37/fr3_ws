@@ -18,6 +18,7 @@ COMMAND_TYPES = ["open_gripper",
                  "enable_conveyor",
                  "disable_conveyor",
                  "move_conveyor",
+                 "rotate_single_joint",
                  "sleep"]
 SCAN_TYPES = ["single", "grid"]
 STARTING_POSITIONS = ["current","home","high_scan","rotate_scan_1","rotate_scan_2","above_conveyor","position_1","position_2"]
@@ -25,6 +26,8 @@ PUT_DOWN_TYPES = ["force", "camera", "value"]
 CARTESIAN_TYPES = ["standard","angle","smooth"]
 MOVEMENT_TYPES = ["pick_up","above"]
 CONVEYOR_DIRECTIONS = ["forward","backward"]
+JOINT_INDICES = [str(i) for i in range(7)]
+ANGLE_TYPES = ["radians","degree"]
 class FR3_GUI(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -144,10 +147,20 @@ class FR3_GUI(tk.Tk):
         self.parameters["conveyor_direction"] = tk.StringVar()
         self.parameters["conveyor_direction"].set(CONVEYOR_DIRECTIONS[0])
 
+        # tk rotate single joint parameters
+        self.parameters['joint_index'] = tk.StringVar()
+        self.parameters['joint_index'].set(JOINT_INDICES[0])
+
+        self.parameters['joint_angle'] = tk.StringVar()
+        self.parameters['joint_angle'].set(0.0)
+
+        self.parameters["angle_type"] = tk.StringVar()
+        self.parameters["angle_type"].set(ANGLE_TYPES[0])
+
         # tk sleep parameter
         self.parameters["duration"] = tk.StringVar()
         self.parameters["duration"].set(0.0)
-    
+
         #validation functions
         validate_x = partial(decimal_val,self.parameters["x"])
         self.parameters["x"].trace('w',validate_x)
@@ -178,6 +191,7 @@ class FR3_GUI(tk.Tk):
 
         validate_duration = partial(decimal_val, self.parameters["duration"])
         self.parameters["duration"].trace('w',validate_duration)
+
 
     def cancel_function(self):  # cancels at any point in the program
         self.cancel_flag.set('1')
@@ -258,6 +272,9 @@ class FR3_GUI(tk.Tk):
         self.parameters["conveyor_speed"].set(0.0)
         self.parameters["conveyor_direction"].set(CONVEYOR_DIRECTIONS[0])
         self.parameters["duration"].set(0.0)
+        self.parameters['joint_index'].set(JOINT_INDICES[0])
+        self.parameters['joint_angle'].set(0.0)
+        self.parameters["angle_type"].set(ANGLE_TYPES[0])
 
     def show_correct_menu(self,_,__,___):
         self.clear_window()
@@ -284,6 +301,8 @@ class FR3_GUI(tk.Tk):
             self.show_named_pose_menu()
         elif self.command_type.get()=="move_conveyor":
             self.show_move_conveyor_menu()
+        elif self.command_type.get()=="rotate_single_joint":
+            self.show_single_joint_menu()
         elif self.command_type.get()=="sleep":
             self.show_sleep_menu()
     
@@ -506,6 +525,28 @@ class FR3_GUI(tk.Tk):
         conveyor_direction_menu = tk.OptionMenu(self, self.parameters["conveyor_direction"],*CONVEYOR_DIRECTIONS)
         conveyor_direction_menu.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(conveyor_direction_menu)
+
+    def show_single_joint_menu(self):
+        joint_index_label = tk.Label(self,text="Select the index for the joint you would like to rotate")
+        joint_index_label.pack(pady=5,side=tk.TOP)
+        self.current_widgets.append(joint_index_label)
+        joint_index_menu = tk.OptionMenu(self, self.parameters["joint_index"],*JOINT_INDICES)
+        joint_index_menu.pack(pady=5, side=tk.TOP)
+        self.current_widgets.append(joint_index_menu)
+
+        joint_angle_label = tk.Label(self,text="Enter the joint angle in radians or degrees:")
+        joint_angle_label.pack(pady=5,side=tk.TOP)
+        self.current_widgets.append(joint_angle_label)
+        joint_angle_entry = tk.Entry(textvariable=self.parameters["joint_angle"])
+        joint_angle_entry.pack(pady=5, side=tk.TOP)
+        self.current_widgets.append(joint_angle_entry)
+
+        angle_type_label = tk.Label(self,text="Select the type of angle:")
+        angle_type_label.pack(pady=5,side=tk.TOP)
+        self.current_widgets.append(angle_type_label)
+        angle_type_menu = tk.OptionMenu(self, self.parameters["angle_type"],*ANGLE_TYPES)
+        angle_type_menu.pack(pady=5, side=tk.TOP)
+        self.current_widgets.append(angle_type_menu)
 
     def show_sleep_menu(self):
         sleep_label = tk.Label(self, text="Please enter duration for sleep")
@@ -759,6 +800,8 @@ def main(args=None):
                     main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(True)")
                     conveyor_enabled = True
                 main_node.write(f"\n\t\tsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
+            elif command["command_type"]=="rotate_single_joint":
+                main_node.write(f"\n\t\tsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
             elif command["command_type"]=="sleep":
                 main_node.write(f"\n\t\tsleep({command['duration']})")
         if conveyor_enabled:
