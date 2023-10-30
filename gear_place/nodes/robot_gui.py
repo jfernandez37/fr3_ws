@@ -214,14 +214,15 @@ class FR3_GUI(tk.Tk):
 
     def save_command(self):
         self.parameters["command_type"].set(self.command_type.get())
-        if self.parameters["joint_angle"]!="0.0":
+        if self.parameters["joint_angle"].get()!="0.0":
             try:
-                self.parameters["joint_angle"] = str(float(self.parameters["joint_angle"]))
+                self.parameters["joint_angle"].set(str(float(self.parameters["joint_angle"])))
             except:
-                if self.parameters["joint_angle"]=="pi":
-                    self.parameters["joint_angle"] = str(round(pi,5))
+                if self.parameters["joint_angle"].get()=="pi":
+                    self.parameters["joint_angle"].set(str(round(pi,5)))
                 else:
-                    values = self.parameters["joint_angle"].split("/")
+                    multiplier = -1 if "-" in self.parameters["joint_angle"].get() else 1
+                    values = self.parameters["joint_angle"].get().split("/")
                     try:
                         val_1 = float(values[0])
                     except:
@@ -230,7 +231,7 @@ class FR3_GUI(tk.Tk):
                         val_2 = float(values[1])
                     except:
                         val_2 = pi
-                    self.parameters["joint_angle"] = str(round(val_1/val_2))
+                    self.parameters["joint_angle"].set(str(round(val_1/val_2,5)*multiplier))
         self.selected_commands.append({key:self.parameters[key].get()  for key in self.parameters.keys()})
         self.command_counter.set(str(int(len(self.selected_commands))))
         self.reset_parameters(True)

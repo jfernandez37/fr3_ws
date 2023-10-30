@@ -1,7 +1,7 @@
 import tkinter as tk
 
 acceptedNum = "-0123456789."  # for requiring number input
-acceptedRotation="0123456789/.pi"
+acceptedRotation="-0123456789/.pi"
 def require_num_rotation(val):
     """Makes sure a tkinter stringvar is numerical and has no more than one decimal point"""
     perFlag=0
@@ -29,7 +29,10 @@ def validate_rotation_value(rotationValue, button,_,__,___):
     if temp_r.count("/")>0:
         tempSplit=temp_r.split("/")
         if "pi" in tempSplit[0]:
-            rotationValue.set("pi/"+require_num_rotation(tempSplit[1]))
+            if "-" in tempSplit[0]:
+                rotationValue.set("-pi/"+require_num_rotation(tempSplit[1]))
+            else:
+                rotationValue.set("pi/"+require_num_rotation(tempSplit[1]))
             try:
                 float(tempSplit[1])
                 button.config(state=tk.NORMAL)
