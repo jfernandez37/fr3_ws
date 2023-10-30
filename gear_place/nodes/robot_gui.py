@@ -263,9 +263,11 @@ class FR3_GUI(tk.Tk):
         self.clear_window()
         self.reset_parameters(False)
         self.command_type_menu.pack(pady=5, side=tk.TOP)
+        self.back_button.pack(pady=5,side=tk.BOTTOM)
         self.save_button.pack(pady=5, side=tk.BOTTOM)
         self.current_widgets.append(self.command_type_menu)
         self.current_widgets.append(self.save_button)
+        self.current_widgets.append(self.back_button)
         if self.command_type.get()=="cartesian_movement":
             self.show_cartesian_menu()
         elif self.command_type.get()=="scanning":
