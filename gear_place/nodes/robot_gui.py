@@ -4,6 +4,9 @@ import tkinter as tk
 from functools import partial
 import rclpy
 import os
+from gear_place.gui_utils import (
+    decimal_val
+)
 
 CAMERA_TYPES = ["depth","color"]
 COMMAND_TYPES = ["open_gripper",
@@ -144,6 +147,37 @@ class FR3_GUI(tk.Tk):
         # tk sleep parameter
         self.parameters["duration"] = tk.StringVar()
         self.parameters["duration"].set(0.0)
+    
+        #validation functions
+        validate_x = partial(decimal_val,self.parameters["x"])
+        self.parameters["x"].trace('w',validate_x)
+
+        validate_y = partial(decimal_val,self.parameters["y"])
+        self.parameters["y"].trace('w',validate_y)
+
+        validate_z = partial(decimal_val,self.parameters["z"])
+        self.parameters["z"].trace('w',validate_z)
+
+        validate_v_max = partial(decimal_val,self.parameters["v_max"])
+        self.parameters["v_max"].trace('w',validate_v_max)
+
+        validate_acc = partial(decimal_val,self.parameters["acc"])
+        self.parameters["acc"].trace('w',validate_acc)
+
+        validate_angle = partial(decimal_val,self.parameters["angle"])
+        self.parameters["angle"].trace('w',validate_angle)
+
+        validate_object_width = partial(decimal_val, self.parameters["object_width"])
+        self.parameters["object_width"].trace('w',validate_object_width)
+
+        validate_conveyor_speed = partial(decimal_val,self.parameters["conveyor_speed"])
+        self.parameters["coveyor_speed"].trace('w',validate_conveyor_speed)
+
+        validate_force = partial(decimal_val,self.parameters["force"])
+        self.parameters["force"].trace('w',validate_force)
+
+        validate_conveyor_speed = partial(decimal_val, self.parameters["conveyor_speed"])
+        self.parameters["conveyor_speed"].trace('w',validate_conveyor_speed)
 
     def cancel_function(self):  # cancels at any point in the program
         self.cancel_flag.set('1')
@@ -287,7 +321,7 @@ class FR3_GUI(tk.Tk):
         cartesian_acc_entry.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_acc_entry)
 
-        cartesian_v_max_label = tk.Label(self, text="Enter the y value for the cartesian movement:")
+        cartesian_v_max_label = tk.Label(self, text="Enter the maximum velocity value for the cartesian movement:")
         cartesian_v_max_label.pack(pady=5, side=tk.TOP)
         self.current_widgets.append(cartesian_v_max_label)
         cartesian_v_max_entry = tk.Entry(self,textvariable=self.parameters["v_max"])
