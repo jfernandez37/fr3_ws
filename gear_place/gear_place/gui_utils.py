@@ -68,6 +68,8 @@ def decimal_val(val:tk.StringVar,_,__,___):
         if i not in acceptedNum:
             tempStr=tempStr.replace(i, "")
     if tempStr.count('.')>0:
+        if tempStr[0]==".":
+            tempStr="0"+tempStr
         for i in range(len(tempStr)):
             if tempStr[i]=='.' and perFlag==0:
                 perFlag=1
