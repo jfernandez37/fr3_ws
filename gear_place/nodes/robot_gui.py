@@ -171,13 +171,13 @@ class FR3_GUI(tk.Tk):
         self.parameters["object_width"].trace('w',validate_object_width)
 
         validate_conveyor_speed = partial(decimal_val,self.parameters["conveyor_speed"])
-        self.parameters["coveyor_speed"].trace('w',validate_conveyor_speed)
+        self.parameters["conveyor_speed"].trace('w',validate_conveyor_speed)
 
         validate_force = partial(decimal_val,self.parameters["force"])
         self.parameters["force"].trace('w',validate_force)
 
-        validate_conveyor_speed = partial(decimal_val, self.parameters["conveyor_speed"])
-        self.parameters["conveyor_speed"].trace('w',validate_conveyor_speed)
+        validate_duration = partial(decimal_val, self.parameters["duration"])
+        self.parameters["duration"].trace('w',validate_duration)
 
     def cancel_function(self):  # cancels at any point in the program
         self.cancel_flag.set('1')
@@ -692,8 +692,12 @@ class FR3_GUI(tk.Tk):
 
 
 def main(args=None):
+    conveyor_enabled = False
+    scan_already = False
     app = FR3_GUI()
     app.mainloop()
+    command_order =[command['command_type'] for command in app.selected_commands]
+    print(command_order)
     if app.cancel_flag.get()=="0":
         main_node = open(os.getcwd()+"/src/gear_place/gear_place/nodes/gear_place_node.py",'w')
         main_node.write("#!/usr/bin/env python3\n\nimport rclpy\n\nfrom gear_place.gear_place_classes import GearPlace, Error\n\nfrom time import sleep\n\nfrom math import pi\n\n\ndef main(args=None):"+
@@ -709,10 +713,13 @@ def main(args=None):
                 else:
                     main_node.write(f"\n\t\tsupervisor.call_move_cartesian_smooth_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
             elif command["command_type"]=="scanning":
+                scan_already = True
                 main_node.write(f"\n\t\tdistances_from_home,updated_radius_vals = supervisor.select_scan(type_scan=\"{command['scan_type']}\""+("" if command['robot_moves']=="" or command['scan_type']=="single" else f",[\"{command['robot_moves']}\"]")+")")
             elif command["command_type"]=="pick_up_single_gear":
                 main_node.write(f"\n\t\tsupervisor.call_pick_up_gear_service(\"{command['depth_or_color']}\",{command['object_width']},\"{command['starting_position']}\")")
             elif command["command_type"]=="pick_up_multiple_gears":
+                if not scan_already:
+                    main_node.write(f"\n\t\tdistances_from_home,updated_radius_vals = supervisor.select_scan(type_scan=\"grid\")")
                 comma_needed=False
                 color_list = "["
                 if command["yellow"]=='1':
@@ -729,6 +736,7 @@ def main(args=None):
                     color_list+="green"
                 color_list+="]"
                 main_node.write(f"\n\t\tsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",\"{color_list}\",\"{command['depth_or_color']}\",\"{command['put_down_type']}\",{command['force']},\"{command['put_down_pose']}\")")
+                scan_already = False
             elif command["command_type"]=="put_down_gear":
                 main_node.write(f"\n\t\tsupervisor.put_gear_down_choose_type(\"{command['put_down_type']}\",{command['z']},{command['force']})")
             elif command["command_type"]=="moving_gears":
@@ -739,10 +747,14 @@ def main(args=None):
             elif command["command_type"]=="move_to_named_pose":
                 main_node.write(f"\n\t\tsupervisor.call_move_to_named_pose_service(\"{command['name_pose']}\")")
             elif command["command_type"]=="enable_conveyor":
+                conveyor_enabled = True
                 main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(True)")
             elif command["command_type"]=="disable_conveyor":
+                conveyor_enabled = False
                 main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(False)")
             elif command["command_type"]=="move_conveyor":
+                if not conveyor_enabled:
+                    main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(True)")
                 main_node.write(f"\n\t\tsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
             elif command["command_type"]=="sleep":
                 main_node.write(f"\n\t\tsleep({command['duration']})")
