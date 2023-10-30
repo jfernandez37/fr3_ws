@@ -690,7 +690,7 @@ class FR3_GUI(tk.Tk):
             elif command["command_type"]=="rotate_single_joint":
                 list_of_commands+=(f"\nsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
             elif command["command_type"]=="move_to_joint_position":
-                list_of_commands+=(f"\nsupervisor.call_move_to_joint_position({','.join([val.get() for val in command['joint_positions']])})")
+                list_of_commands+=(f"\nsupervisor.call_move_to_joint_position([{','.join([val.get() for val in command['joint_positions']])}])")
             elif command["command_type"]=="sleep":
                 list_of_commands+=(f"\nsleep({command['duration']})")
         current_commands_label = tk.Label(self,text=list_of_commands)
@@ -791,7 +791,7 @@ def main(args=None):
             elif command["command_type"]=="rotate_single_joint":
                 main_node.write(f"\n\t\tsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
             elif command["command_type"]=="move_to_joint_position":
-                main_node.write(f"\nsupervisor.call_move_to_joint_position({','.join([val.get() for val in command['joint_positions']])})")
+                main_node.write(f"\nsupervisor.call_move_to_joint_position([{','.join([val.get() for val in command['joint_positions']])}])")
             elif command["command_type"]=="sleep":
                 main_node.write(f"\n\t\tsleep({command['duration']})")
         if conveyor_enabled:
