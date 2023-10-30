@@ -179,9 +179,6 @@ class FR3_GUI(tk.Tk):
         validate_acc = partial(decimal_val,self.parameters["acc"])
         self.parameters["acc"].trace('w',validate_acc)
 
-        validate_angle = partial(decimal_val,self.parameters["angle"])
-        self.parameters["angle"].trace('w',validate_angle)
-
         validate_object_width = partial(decimal_val, self.parameters["object_width"])
         self.parameters["object_width"].trace('w',validate_object_width)
 
@@ -214,24 +211,25 @@ class FR3_GUI(tk.Tk):
 
     def save_command(self):
         self.parameters["command_type"].set(self.command_type.get())
-        if self.parameters["joint_angle"].get()!="0.0":
-            try:
-                self.parameters["joint_angle"].set(str(float(self.parameters["joint_angle"])))
-            except:
-                if self.parameters["joint_angle"].get()=="pi":
-                    self.parameters["joint_angle"].set(str(round(pi,5)))
-                else:
-                    multiplier = -1 if "-" in self.parameters["joint_angle"].get() else 1
-                    values = self.parameters["joint_angle"].get().split("/")
-                    try:
-                        val_1 = float(values[0])
-                    except:
-                        val_1 = pi
-                    try:
-                        val_2 = float(values[1])
-                    except:
-                        val_2 = pi
-                    self.parameters["joint_angle"].set(str(round(val_1/val_2,5)*multiplier))
+        for key in ["angle","joint_angle"]:
+            if self.parameters[key].get()!="0.0":
+                try:
+                    self.parameters[key].set(str(float(self.parameters[key])))
+                except:
+                    if self.parameters[key].get()=="pi":
+                        self.parameters[key].set(str(round(pi,5)))
+                    else:
+                        multiplier = -1 if "-" in self.parameters[key].get() else 1
+                        values = self.parameters[key].get().split("/")
+                        try:
+                            val_1 = float(values[0])
+                        except:
+                            val_1 = pi
+                        try:
+                            val_2 = float(values[1])
+                        except:
+                            val_2 = pi
+                        self.parameters[key].set(str(round(val_1/val_2,5)*multiplier))
         self.selected_commands.append({key:self.parameters[key].get()  for key in self.parameters.keys()})
         self.command_counter.set(str(int(len(self.selected_commands))))
         self.reset_parameters(True)
@@ -378,6 +376,9 @@ class FR3_GUI(tk.Tk):
 
         angle_entry_enabled = partial(self.enable_disable_angle_entry,cartesian_angle_entry)
         self.parameters["type"].trace('w',angle_entry_enabled)
+
+        validate_cartesian_angle = partial(validate_rotation_value, self.parameters["angle"], self.save_button)
+        self.parameters["angle"].trace('w', validate_cartesian_angle)
 
     def show_scanning_menu(self):
         scanning_type_label = tk.Label(self, text="Select the type scan")
