@@ -78,6 +78,14 @@ There are four main nodes. Three of them are for testing and the final one is fo
   
     This automatically launches the camera with the correct settings, so you do not need to run the camera launch command above.
 
+* launch everything using the GUI
+
+    To use the GUI to build a node with instructions, use the command:
+
+    `ros2 run gear_place robot_gui.py`
+
+    This will walk you through building a file with instructions, then build the workspace and run the node you just created automatically.
+
 ## Packages
 * `gear_place` - Includes all code for moving the robot, identifying the gear with the realsense_camera, and the supervisors to control the robot
 * `gear_place_description` - Includes all meshes, robot visuals, and urdf files for generating the robot description and visualizing the robot in rviz
