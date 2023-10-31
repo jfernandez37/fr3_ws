@@ -1,13 +1,98 @@
-#!/usr/bin/env python3
-
+windows_flag = True
+try:
+    #!/usr/bin/env python3
+    (int)
+except:
+    windows_flag = True
+    (int)
 import tkinter as tk
 from functools import partial
-import rclpy
 import os
-from gear_place.gui_utils import (
-    decimal_val,
-    validate_rotation_value
-)
+if windows_flag:
+    acceptedNum = "-0123456789."  # for requiring number input
+    acceptedRotation="-0123456789/.pi"
+    def require_num_rotation(val):
+        """Makes sure a tkinter stringvar is numerical and has no more than one decimal point"""
+        perFlag=0
+        tempStr=val
+        for i in tempStr:
+            if i not in acceptedNum:
+                tempStr=tempStr.replace(i, "")
+        if tempStr.count('.')>0:
+            for i in range(len(tempStr)):
+                if tempStr[i]=='.' and perFlag==0:
+                    perFlag=1
+                elif tempStr[i]=='.':
+                    tempStr=tempStr[:i]+tempStr[i+1:]
+                    break
+        return tempStr
+
+
+    def validate_rotation_value(rotationValue, button,_,__,___):
+        temp_r=rotationValue.get()
+        temp_r=temp_r.lower()
+        for i in temp_r:
+            if i not in acceptedRotation:
+                temp_r=temp_r.replace(i,"")
+        rotationValue.set(temp_r)
+        if temp_r.count("/")>0:
+            tempSplit=temp_r.split("/")
+            if "pi" in tempSplit[0]:
+                if "-" in tempSplit[0]:
+                    rotationValue.set("-pi/"+require_num_rotation(tempSplit[1]))
+                else:
+                    rotationValue.set("pi/"+require_num_rotation(tempSplit[1]))
+                try:
+                    float(tempSplit[1])
+                    button.config(state=tk.NORMAL)
+                except:
+                    button.config(state=tk.DISABLED)
+            else:
+                rotationValue.set(tempSplit[0]+"/"+require_num_rotation(tempSplit[1]))
+                try:
+                    float(tempSplit[0])
+                    float(tempSplit[1])
+                    button.config(state=tk.NORMAL)
+                except:
+                    button.config(state=tk.DISABLED)
+        else:
+            if temp_r=="pi":
+                button.config(state=tk.NORMAL)
+            else:
+                try:
+                    float(require_num_rotation(temp_r))
+                    rotationValue.set(require_num_rotation(temp_r))
+                    button.config(state=tk.NORMAL)
+                except:
+                    button.config(state=tk.DISABLED)
+
+    def decimal_val(val:tk.StringVar,_,__,___):
+        perFlag=0
+        tempStr=val.get()
+        for i in range(1,len(tempStr)):
+            if tempStr[i]=='-':
+                tempStr=tempStr[:i]+tempStr[i+1:]
+                break
+        for i in tempStr:
+            if i not in acceptedNum:
+                tempStr=tempStr.replace(i, "")
+        if tempStr.count('.')>0:
+            if tempStr[0]==".":
+                tempStr="0"+tempStr
+            elif tempStr[0]=="-" and tempStr["."]:
+                tempStr="-0"+tempStr[1:]
+            for i in range(len(tempStr)):
+                if tempStr[i]=='.' and perFlag==0:
+                    perFlag=1
+                elif tempStr[i]=='.':
+                    tempStr=tempStr[:i]+tempStr[i+1:]
+                    break
+        val.set(tempStr)
+else:
+    from gear_place.gui_utils import (
+        decimal_val,
+        validate_rotation_value
+    )
 from math import pi
 
 CAMERA_TYPES = ["depth","color"]
@@ -730,7 +815,10 @@ def main(args=None):
     command_order =[command['command_type'] for command in app.selected_commands]
     print(command_order)
     if app.cancel_flag.get()=="0":
-        main_node = open(os.getcwd()+"/src/gear_place/gear_place/nodes/gear_place_node.py",'w')
+        if windows_flag:
+            main_node = open('test.py','w')
+        else:
+            main_node = open(os.getcwd()+"/src/gear_place/gear_place/nodes/gear_place_node.py",'w')
         main_node.write("#!/usr/bin/env python3\n\nimport rclpy\n\nfrom gear_place.gear_place_classes import GearPlace, Error\n\nfrom time import sleep\n\nfrom math import pi\n\n\ndef main(args=None):"+
                         "\n\trclpy.init(args=args)\n\ttry:\n\t\tsupervisor = GearPlace()\n\t\tsupervisor.wait(5)")
         for command in app.selected_commands:
@@ -798,10 +886,11 @@ def main(args=None):
             main_node.write(f"\n\t\tsupervisor.enable_conveyor_service(False)")
         main_node.write("\n\texcept Error as e:\n\n\t\tprint(e)\n\nif __name__ == \"__main__\":\n\tmain()")
         main_node.close()
-        os.system("cd ~/fr3_ws")
-        os.system("colcon build")
-        os.system("source install/setup.bash")
-        os.system("ros2 launch gear_place gear.launch.py")
+        if not windows_flag:
+            os.system("cd ~/fr3_ws")
+            os.system("colcon build")
+            os.system("source install/setup.bash")
+            os.system("ros2 launch gear_place gear.launch.py")
 
 
 if __name__ == '__main__':
