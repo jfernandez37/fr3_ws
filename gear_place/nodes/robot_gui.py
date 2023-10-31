@@ -159,7 +159,6 @@ class FR3_GUI(tk.Tk):
         
         # tk command type variable
         self.command_type = tk.StringVar()
-        self.command_type.set(COMMAND_TYPES[0])
 
         self.parameters["command_type"] = tk.StringVar()
 
@@ -168,87 +167,62 @@ class FR3_GUI(tk.Tk):
         self.parameters["type"].set(CARTESIAN_TYPES[0])
 
         self.parameters["x"] = tk.StringVar()
-        self.parameters["x"].set("0.0")
 
         self.parameters["y"] = tk.StringVar()
-        self.parameters["y"].set("0.0")
         
         self.parameters["z"] = tk.StringVar()
-        self.parameters["z"].set("0.0")
 
         self.parameters["v_max"] = tk.StringVar()
-        self.parameters["v_max"].set("0.15")
 
         self.parameters["acc"] = tk.StringVar()
-        self.parameters["acc"].set("0.2")
         
         self.parameters["angle"] = tk.StringVar()
-        self.parameters["angle"].set("0.0")
 
         # tk scanning parameters
         self.parameters["scan_type"] = tk.StringVar()
-        self.parameters["scan_type"].set(SCAN_TYPES[0])
 
         self.parameters["robot_moves"] = tk.StringVar()
-        self.parameters["robot_moves"].set("")
 
         # tk pick up gear parameters
         self.parameters["depth_or_color"] = tk.StringVar()
-        self.parameters["depth_or_color"].set(CAMERA_TYPES[0])
 
         self.parameters["object_width"] = tk.StringVar()
-        self.parameters["object_width"].set("0.0095")
 
         self.parameters["starting_position"] = tk.StringVar()
-        self.parameters["starting_position"].set("home")
 
         self.parameters["yellow"] = tk.StringVar()
-        self.parameters["yellow"].set("0")
 
         self.parameters["orange"] = tk.StringVar()
-        self.parameters["orange"].set("0")
 
         self.parameters["green"] = tk.StringVar()
-        self.parameters["green"].set("0")
 
         self.parameters["put_down_type"] = tk.StringVar()
-        self.parameters["put_down_type"].set(PUT_DOWN_TYPES[0])
 
         self.parameters["force"] = tk.StringVar()
-        self.parameters["force"].set("0.0")
 
         self.parameters["put_down_pose"] = tk.StringVar()
-        self.parameters["put_down_pose"].set(STARTING_POSITIONS[0])
 
         # tk moving gear parameter
         self.parameters["movement_type"] = tk.StringVar()
-        self.parameters["movement_type"].set(MOVEMENT_TYPES[0])
 
         # tk named pose parameter
         self.parameters["name_pose"] = tk.StringVar()
-        self.parameters["name_pose"].set(STARTING_POSITIONS[1])
 
         # tk conveyor parameters
         self.parameters["conveyor_speed"] = tk.StringVar()
-        self.parameters["conveyor_speed"].set(0.0)
 
         self.parameters["conveyor_direction"] = tk.StringVar()
-        self.parameters["conveyor_direction"].set(CONVEYOR_DIRECTIONS[0])
 
         # tk rotate single joint parameters
         self.parameters['joint_index'] = tk.StringVar()
-        self.parameters['joint_index'].set(JOINT_INDICES[0])
 
         self.parameters['joint_angle'] = tk.StringVar()
-        self.parameters['joint_angle'].set(0.0)
 
         self.parameters["angle_type"] = tk.StringVar()
-        self.parameters["angle_type"].set(ANGLE_TYPES[0])
 
         # tk joint positions parameters
-        self.parameters["joint_positions"] = [tk.StringVar() for i in range(7)]
-        for i in range(len(self.parameters["joint_positions"])):
-            self.parameters["joint_positions"][i].set("0.0")
+        for i in range(7):
+            self.parameters[f"joint_position_{i}"] = tk.StringVar()
 
         # tk sleep parameter
         self.parameters["duration"] = tk.StringVar()
@@ -281,6 +255,8 @@ class FR3_GUI(tk.Tk):
 
         validate_duration = partial(decimal_val, self.parameters["duration"])
         self.parameters["duration"].trace('w',validate_duration)
+
+        self.reset_parameters(True)
     
     def pack_and_append(self, widget):
         widget.pack(pady=5,side=tk.TOP)
@@ -381,14 +357,14 @@ class FR3_GUI(tk.Tk):
         self.parameters["put_down_pose"].set(STARTING_POSITIONS[0])
         self.parameters["movement_type"].set(MOVEMENT_TYPES[0])
         self.parameters["name_pose"].set(STARTING_POSITIONS[1])
-        self.parameters["conveyor_speed"].set(0.0)
+        self.parameters["conveyor_speed"].set("0.0")
         self.parameters["conveyor_direction"].set(CONVEYOR_DIRECTIONS[0])
-        self.parameters["duration"].set(0.0)
+        self.parameters["duration"].set("0.0")
         self.parameters['joint_index'].set(JOINT_INDICES[0])
-        self.parameters['joint_angle'].set(0.0)
+        self.parameters['joint_angle'].set("0.0")
         self.parameters["angle_type"].set(ANGLE_TYPES[0])
-        for i in range(len(self.parameters["joint_positions"])):
-            self.parameters["joint_positions"][i].set("0.0")
+        for i in range(7):
+            self.parameters[f"joint_position_{i}"].set("0.0")
 
     def show_correct_menu(self,_,__,___):
         self.clear_window()
@@ -614,7 +590,7 @@ class FR3_GUI(tk.Tk):
         for i in range(7):
             labels.append(tk.Label(self,text=f"Enter the joint rotation for joint {i}:"))
             self.pack_and_append(labels[-1])
-            entrys.append(tk.Entry(self,textvariable=self.parameters["joint_positions"][i]))
+            entrys.append(tk.Entry(self,textvariable=self.parameters[f"joint_position_{i}"]))
             self.pack_and_append(entrys[-1])
     
     def show_sleep_menu(self):
@@ -715,6 +691,8 @@ class FR3_GUI(tk.Tk):
                 updated_text+=(f"\nsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
             elif command["command_type"]=="rotate_single_joint":
                 updated_text+=(f"\nsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
+            elif command["command_type"]=="move_to_joint_position":
+                updated_text+=(f"\nsupervisor.call_move_to_joint_position([{','.join([command[f'joint_position_{i}'] for i in range(7)])}])")
             elif command["command_type"]=="sleep":
                 updated_text+=(f"\nsleep({command['duration']})")
         self.selected_command_label.config(text=updated_text)
@@ -775,7 +753,7 @@ class FR3_GUI(tk.Tk):
             elif command["command_type"]=="rotate_single_joint":
                 list_of_commands+=(f"\nsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
             elif command["command_type"]=="move_to_joint_position":
-                list_of_commands+=(f"\nsupervisor.call_move_to_joint_position([{','.join([val.get() for val in command['joint_positions']])}])")
+                list_of_commands+=(f"\nsupervisor.call_move_to_joint_position([{','.join([command[f'joint_position_{i}'] for i in range(7)])}])")
             elif command["command_type"]=="sleep":
                 list_of_commands+=(f"\nsleep({command['duration']})")
         current_commands_label = tk.Label(self,text=list_of_commands)
@@ -879,7 +857,7 @@ def main(args=None):
             elif command["command_type"]=="rotate_single_joint":
                 main_node.write(f"\n\t\tsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
             elif command["command_type"]=="move_to_joint_position":
-                main_node.write(f"\nsupervisor.call_move_to_joint_position([{','.join([val.get() for val in command['joint_positions']])}])")
+                main_node.write(f"\nsupervisor.call_move_to_joint_position([{','.join([command[f'joint_position_{i}'] for i in range(7)])}])")
             elif command["command_type"]=="sleep":
                 main_node.write(f"\n\t\tsleep({command['duration']})")
         if conveyor_enabled:
