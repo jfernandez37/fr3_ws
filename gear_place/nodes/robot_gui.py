@@ -113,6 +113,7 @@ MOVEMENT_TYPES = ["pick_up","above"]
 CONVEYOR_DIRECTIONS = ["forward","backward"]
 JOINT_INDICES = [str(i) for i in range(7)]
 ANGLE_TYPES = ["radians","degree"]
+
 class FR3_GUI(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -714,7 +715,6 @@ class FR3_GUI(tk.Tk):
         self.pack_and_append(command_menu,5,tk.BOTTOM)
         self.pack_and_append(remove_command_label,5,tk.BOTTOM)
         
-    
     def remove_and_home(self, selection):
         del self.selected_commands[int(selection.get().split()[0])]
         self.command_counter.set(len(self.selected_commands))
