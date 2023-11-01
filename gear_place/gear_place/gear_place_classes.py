@@ -358,13 +358,13 @@ class GearPlace(Node):
                         (
                             -1 * coord[1],
                             -1 * coord[0],
-                            -1 * coord[2]
+                            -1 * coord[2]+0.16
                         )
                     )
                     updated_radius_vals[(
                             -1 * coord[1],
                             -1 * coord[0],
-                            -1 * coord[2])] = object_depth.radius_vals[coord]
+                            -1 * coord[2]+0.16)] = object_depth.radius_vals[coord]
             multiple_gears_color.destroy_node()
 
         distances_from_home = remove_identical_points(distances_from_home, updated_radius_vals)  # since gears will be repeated from different positions, repetitions are removed
