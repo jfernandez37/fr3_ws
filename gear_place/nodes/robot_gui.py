@@ -331,7 +331,7 @@ class FR3_GUI(tk.Tk):
         self.parameters["robot_moves"].set("")
         self.parameters["depth_or_color"].set(CAMERA_TYPES[0])
         self.parameters["object_width"].set("0.0095")
-        self.parameters["starting_position"].set(STARTING_POSITIONS[1])
+        self.parameters["starting_position"].set(STARTING_POSITIONS[0])
         self.parameters["yellow"].set("0")
         self.parameters["orange"].set("0")
         self.parameters["green"].set("0")
