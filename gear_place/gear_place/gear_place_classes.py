@@ -897,7 +897,7 @@ class GearPlace(Node):
 
       self.current_camera_angle = result.angle
 
-  def add_checkpoint(self):
+  def add_check_point(self):
         """
         Calls the get_camera_angle callback
         """
