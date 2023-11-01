@@ -70,7 +70,7 @@ def decimal_val(val:tk.StringVar,_,__,___):
     if tempStr.count('.')>0:
         if tempStr[0]==".":
             tempStr="0"+tempStr
-        elif tempStr[0]=="-" and tempStr["."]:
+        elif tempStr[0]=="-" and tempStr[1]==".":
             tempStr="-0"+tempStr[1:]
         for i in range(len(tempStr)):
             if tempStr[i]=='.' and perFlag==0:
