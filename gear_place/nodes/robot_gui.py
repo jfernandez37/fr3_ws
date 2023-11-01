@@ -241,6 +241,21 @@ class FR3_GUI(tk.Tk):
         self.parameters["duration"].trace('w',validate_duration)
 
         self.reset_parameters(True)
+
+        self.show_menu_dict = {
+            "cartesian_movement":self.show_cartesian_menu,
+            "scanning":self.show_scanning_menu,
+            "pick_up_single_gear":self.single_gear_pick_menu,
+            "pick_up_multiple_gears":self.multiple_gears_pick_menu,
+            "put_down_gear":self.show_put_down_menu,
+            "moving_gears":self.show_moving_gears_menu,
+            "move_to_named_pose":self.show_named_pose_menu,
+            "move_conveyor":self.show_move_conveyor_menu,
+            "rotate_single_joint":self.show_single_joint_menu,
+            "move_to_joint_position":self.show_joint_position_menu,
+            "go_to_check_point":self.show_check_point_menu,
+            "sleep":self.show_sleep_menu
+        }
     
     def pack_and_append(self, widget, pady=5, side = tk.TOP):
         widget.pack(pady=pady,side=side)
@@ -344,30 +359,10 @@ class FR3_GUI(tk.Tk):
         self.pack_and_append(self.back_button,5,tk.BOTTOM)
         self.pack_and_append(self.save_button,5,tk.BOTTOM)
         self.save_button["state"] = tk.NORMAL
-        if self.command_type.get()=="cartesian_movement":
-            self.show_cartesian_menu()
-        elif self.command_type.get()=="scanning":
-            self.show_scanning_menu()
-        elif self.command_type.get()=="pick_up_single_gear":
-            self.single_gear_pick_menu()
-        elif self.command_type.get()=="pick_up_multiple_gears":
-            self.multiple_gears_pick_menu()
-        elif self.command_type.get()=="put_down_gear":
-            self.show_put_down_menu()
-        elif self.command_type.get()=="moving_gears":
-            self.show_moving_gears_menu()
-        elif self.command_type.get()=="move_to_named_pose":
-            self.show_named_pose_menu()
-        elif self.command_type.get()=="move_conveyor":
-            self.show_move_conveyor_menu()
-        elif self.command_type.get()=="rotate_single_joint":
-            self.show_single_joint_menu()
-        elif self.command_type.get()=="move_to_joint_position":
-            self.show_joint_position_menu()
-        elif self.command_type.get()=="go_to_check_point":
-            self.show_check_point_menu()
-        elif self.command_type.get()=="sleep":
-            self.show_sleep_menu()
+        try:
+            self.show_menu_dict[self.command_type.get()]()
+        except:
+            (int)
     
     def show_cartesian_menu(self):
         cartesian_type_label = tk.Label(self, text="Select the type of cartesian movement")
