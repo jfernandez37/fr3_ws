@@ -267,7 +267,7 @@ class FR3_GUI(tk.Tk):
         for key in ["angle","joint_angle"]+["joint_position_"+str(i) for i in range(7)]:
             if self.parameters[key].get()!="0.0":
                 try:
-                    self.parameters[key].set(str(float(self.parameters[key])))
+                    self.parameters[key].set(str(float(self.parameters[key].get())))
                 except:
                     if self.parameters[key].get()=="pi":
                         self.parameters[key].set(str(round(pi,5)))
@@ -580,7 +580,7 @@ class FR3_GUI(tk.Tk):
             entrys.append(tk.Entry(self,textvariable=self.parameters[f"joint_position_{i}"]))
             self.pack_and_append(entrys[-1])
             validation_funcitons.append(partial(validate_rotation_value, self.parameters[f"joint_position_{i}"], self.save_button))
-            self.parameters[f"joint_position_{i}"].trace('w', validation_funcitons[-1])
+            self.parameters[f"joint_position_{i}"].trace('w', validation_funcitons[i])
     
     def show_check_point_menu(self):
         command_list_label = tk.Label(self, text=self.command_list_str)
