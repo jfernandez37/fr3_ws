@@ -487,6 +487,8 @@ class GearPlace(Node):
           raise Error("Unable to pick up gear")
 
   def pick_up_multiple_gears(self, distances_from_home: list, updated_radius_vals: list, object_width : float, starting_position: str, colors: list,depth_or_color: bool, put_down_type = "force", force = 0.1,put_down_pose="current"):
+      if len(colors)==0:
+          colors=["yellow","orange","green"]
       for movment in distances_from_home:
           self.get_logger().info("Movement: " + str(movment))
 
