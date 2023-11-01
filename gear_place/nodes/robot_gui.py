@@ -779,10 +779,7 @@ class FR3_GUI(tk.Tk):
         self.back_command()
 
         
-
-
-
-def main(args=None):
+def main():
     conveyor_enabled = False
     scan_already = False
     app = FR3_GUI()
