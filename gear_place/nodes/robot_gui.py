@@ -336,7 +336,7 @@ class FR3_GUI(tk.Tk):
         self.parameters["orange"].set("0")
         self.parameters["green"].set("0")
         self.parameters["put_down_type"].set(PUT_DOWN_TYPES[0])
-        self.parameters["force"].set("0.0")
+        self.parameters["force"].set("0.1")
         self.parameters["put_down_pose"].set(STARTING_POSITIONS[0])
         self.parameters["movement_type"].set(MOVEMENT_TYPES[0])
         self.parameters["name_pose"].set(STARTING_POSITIONS[1])
