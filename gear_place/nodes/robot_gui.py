@@ -452,7 +452,7 @@ class FR3_GUI(tk.Tk):
         starting_position_menu = tk.OptionMenu(self,self.parameters["starting_position"],*STARTING_POSITIONS)
         self.pack_and_append(starting_position_menu)
 
-        color_label = tk.Label(self,text="Select the colors that you would like the robot to pick up")
+        color_label = tk.Label(self,text="Select the colors that you would like the robot to pick up. If none are selected, the robot will pick up all gears found")
         self.pack_and_append(color_label)
         yellow_button = tk.Checkbutton(self, text="Yellow", variable=self.parameters["yellow"], onvalue="1", offvalue="0", height=1, width=20)
         self.pack_and_append(yellow_button)
