@@ -787,8 +787,6 @@ def main(args=None):
     scan_already = False
     app = FR3_GUI()
     app.mainloop()
-    command_order =[command['command_type'] for command in app.selected_commands]
-    print(command_order)
     if app.cancel_flag.get()=="0":
         if windows_flag:
             main_node = open('test.py','w')
