@@ -442,8 +442,9 @@ class FR3_GUI(tk.Tk):
         self.pack_and_append(starting_position_menu)
     
     def multiple_gears_pick_menu(self):
-        object_width_label = tk.Label(self, text="IMPORTANT NOTE: SCANNING MUST BE DONE BEFORE THIS OR IT WILL NOT HAVE GEARS TO PICK UP.\n\nPlease enter the object_width")
-        self.pack_and_append(object_width_label)
+        if "scanning" not in [command['command_type'] for command in self.selected_commands]:
+            object_width_label = tk.Label(self, text="IMPORTANT NOTE: SCANNING MUST BE DONE BEFORE THIS OR IT WILL NOT HAVE GEARS TO PICK UP.\n\nPlease enter the object_width")
+            self.pack_and_append(object_width_label)
         object_width_entry = tk.Entry(self, textvariable=self.parameters["object_width"])
         self.pack_and_append(object_width_entry)
 
@@ -452,7 +453,7 @@ class FR3_GUI(tk.Tk):
         starting_position_menu = tk.OptionMenu(self,self.parameters["starting_position"],*STARTING_POSITIONS)
         self.pack_and_append(starting_position_menu)
 
-        color_label = tk.Label(self,text="Select the colors that you would like the robot to pick up. If none are selected, the robot will pick up all gears found")
+        color_label = tk.Label(self,text="Select the colors that you would like the robot to pick up. If none are selected, the robot will pick up all gears found.")
         self.pack_and_append(color_label)
         yellow_button = tk.Checkbutton(self, text="Yellow", variable=self.parameters["yellow"], onvalue="1", offvalue="0", height=1, width=20)
         self.pack_and_append(yellow_button)
