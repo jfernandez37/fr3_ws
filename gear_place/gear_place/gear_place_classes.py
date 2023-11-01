@@ -83,6 +83,9 @@ class GearPlace(Node):
 
       # Camera connected
       self.connected = False
+      
+      # User check point for gui
+      self.user_check_points = []
 
     # TODO
       # Camera to end effector transform
@@ -893,7 +896,25 @@ class GearPlace(Node):
       result = future.result()
 
       self.current_camera_angle = result.angle
-    
+
+  def add_checkpoint(self):
+        """
+        Calls the get_camera_angle callback
+        """
+        self.get_logger().info("Getting joint positions")
+
+        future = self.get_joint_positions_client.call_async(GetJointPositions.Request())
+
+        rclpy.spin_until_future_complete(self,future,timeout_sec=10)
+
+        if not future.done():
+            raise Error("Timeout reached when getting joint positions")
+
+        result: GetJointPositions.Response
+        result = future.result()
+
+        self.user_check_points.append(result.joint_positions)
+
   # ===========================================================
   #               move to position/pose functions
   # ===========================================================

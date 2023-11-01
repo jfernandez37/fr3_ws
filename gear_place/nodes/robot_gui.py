@@ -1,10 +1,5 @@
-windows_flag = True
-try:
-    #!/usr/bin/env python3
-    (int)
-except:
-    windows_flag = True
-    (int)
+#!/usr/bin/env python3
+windows_flag = False
 import tkinter as tk
 from functools import partial
 import os
@@ -107,6 +102,8 @@ COMMAND_TYPES = ["open_gripper",
                  "move_conveyor",
                  "rotate_single_joint",
                  "move_to_joint_position",
+                 "add_check_point",
+                 "go_to_check_point",
                  "sleep"]
 SCAN_TYPES = ["single", "grid"]
 STARTING_POSITIONS = ["current","home","high_scan","rotate_scan_1","rotate_scan_2","above_conveyor","position_1","position_2"]
@@ -157,6 +154,7 @@ class FR3_GUI(tk.Tk):
         
         self.current_widgets = [self.add_new_command_button,self.save_all_button, self.cancel_button,self.selected_command_label,self.remove_command_button]
         
+        self.command_list_str = ""
         # tk command type variable
         self.command_type = tk.StringVar()
 
@@ -167,39 +165,25 @@ class FR3_GUI(tk.Tk):
         self.parameters["type"].set(CARTESIAN_TYPES[0])
 
         self.parameters["x"] = tk.StringVar()
-
         self.parameters["y"] = tk.StringVar()
-        
         self.parameters["z"] = tk.StringVar()
-
         self.parameters["v_max"] = tk.StringVar()
-
         self.parameters["acc"] = tk.StringVar()
-        
         self.parameters["angle"] = tk.StringVar()
 
         # tk scanning parameters
         self.parameters["scan_type"] = tk.StringVar()
-
         self.parameters["robot_moves"] = tk.StringVar()
 
         # tk pick up gear parameters
         self.parameters["depth_or_color"] = tk.StringVar()
-
         self.parameters["object_width"] = tk.StringVar()
-
         self.parameters["starting_position"] = tk.StringVar()
-
         self.parameters["yellow"] = tk.StringVar()
-
         self.parameters["orange"] = tk.StringVar()
-
         self.parameters["green"] = tk.StringVar()
-
         self.parameters["put_down_type"] = tk.StringVar()
-
         self.parameters["force"] = tk.StringVar()
-
         self.parameters["put_down_pose"] = tk.StringVar()
 
         # tk moving gear parameter
@@ -210,23 +194,22 @@ class FR3_GUI(tk.Tk):
 
         # tk conveyor parameters
         self.parameters["conveyor_speed"] = tk.StringVar()
-
         self.parameters["conveyor_direction"] = tk.StringVar()
 
         # tk rotate single joint parameters
         self.parameters['joint_index'] = tk.StringVar()
-
         self.parameters['joint_angle'] = tk.StringVar()
-
         self.parameters["angle_type"] = tk.StringVar()
 
         # tk joint positions parameters
         for i in range(7):
             self.parameters[f"joint_position_{i}"] = tk.StringVar()
 
+        # tk check point parameter
+        self.parameters["check_point"] = tk.StringVar()
+
         # tk sleep parameter
         self.parameters["duration"] = tk.StringVar()
-        self.parameters["duration"].set(0.0)
 
         #validation functions
         validate_x = partial(decimal_val,self.parameters["x"])
@@ -258,8 +241,8 @@ class FR3_GUI(tk.Tk):
 
         self.reset_parameters(True)
     
-    def pack_and_append(self, widget):
-        widget.pack(pady=5,side=tk.TOP)
+    def pack_and_append(self, widget, pady=5, side = tk.TOP):
+        widget.pack(pady=pady,side=side)
         self.current_widgets.append(widget)
 
     def cancel_function(self):  # cancels at any point in the program
@@ -372,6 +355,7 @@ class FR3_GUI(tk.Tk):
         self.command_type_menu.pack(pady=5, side=tk.TOP)
         self.back_button.pack(pady=5,side=tk.BOTTOM)
         self.save_button.pack(pady=5, side=tk.BOTTOM)
+        self.save_button["state"] = tk.NORMAL
         self.current_widgets.append(self.command_type_menu)
         self.current_widgets.append(self.save_button)
         self.current_widgets.append(self.back_button)
@@ -395,6 +379,8 @@ class FR3_GUI(tk.Tk):
             self.show_single_joint_menu()
         elif self.command_type.get()=="move_to_joint_position":
             self.show_joint_position_menu()
+        elif self.command_type.get()=="go_to_check_point":
+            self.show_check_point_menu()
         elif self.command_type.get()=="sleep":
             self.show_sleep_menu()
     
@@ -593,6 +579,25 @@ class FR3_GUI(tk.Tk):
             entrys.append(tk.Entry(self,textvariable=self.parameters[f"joint_position_{i}"]))
             self.pack_and_append(entrys[-1])
     
+    def show_check_point_menu(self):
+        command_list_label = tk.Label(self, text=self.command_list_str)
+        self.pack_and_append(command_list_label)
+        counter = 0
+        options=[]
+        for command in self.selected_commands:
+            if command["command_type"]=="add_check_point":
+                counter+=1
+                options.append(str(counter))
+        if len(options)==0:
+            self.parameters["check_point"].set("")
+            self.save_button["state"] = tk.DISABLED
+        else:
+            self.parameters["check_point"].set(options[0])
+            check_point_label = tk.Label(self,text="Please select the checkpoint you would like to move to. The number is associated with the order you choose")
+            self.pack_and_append(check_point_label,15)
+            check_point_menu = tk.OptionMenu(self,self.parameters["check_point"],*options)
+            self.pack_and_append(check_point_menu)
+
     def show_sleep_menu(self):
         sleep_label = tk.Label(self, text="Please enter duration for sleep")
         self.pack_and_append(sleep_label)
@@ -693,8 +698,13 @@ class FR3_GUI(tk.Tk):
                 updated_text+=(f"\nsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
             elif command["command_type"]=="move_to_joint_position":
                 updated_text+=(f"\nsupervisor.call_move_to_joint_position([{','.join([command[f'joint_position_{i}'] for i in range(7)])}])")
+            elif command["command_type"]=="add_check_point":
+                updated_text+=(f"\nsupervsior.add_check_point()")
+            elif command["command_type"]=="go_to_check_point":
+                updated_text+=(f"\nsupervisor.call_move_to_joint_position(self.user_check_points{str(int(command['check_point'])-1)})")
             elif command["command_type"]=="sleep":
                 updated_text+=(f"\nsleep({command['duration']})")
+        self.command_list_str = updated_text
         self.selected_command_label.config(text=updated_text)
 
     def remove_command(self):
@@ -754,6 +764,10 @@ class FR3_GUI(tk.Tk):
                 list_of_commands+=(f"\nsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
             elif command["command_type"]=="move_to_joint_position":
                 list_of_commands+=(f"\nsupervisor.call_move_to_joint_position([{','.join([command[f'joint_position_{i}'] for i in range(7)])}])")
+            elif command["command_type"]=="add_check_point":
+                list_of_commands+=(f"\nsupervsior.add_check_point()")
+            elif command["command_type"]=="go_to_check_point":
+                list_of_commands+=(f"\nsupervisor.call_move_to_joint_position(self.user_check_points{str(int(command['check_point'])-1)})")
             elif command["command_type"]=="sleep":
                 list_of_commands+=(f"\nsleep({command['duration']})")
         current_commands_label = tk.Label(self,text=list_of_commands)
@@ -857,7 +871,11 @@ def main(args=None):
             elif command["command_type"]=="rotate_single_joint":
                 main_node.write(f"\n\t\tsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
             elif command["command_type"]=="move_to_joint_position":
-                main_node.write(f"\nsupervisor.call_move_to_joint_position([{','.join([command[f'joint_position_{i}'] for i in range(7)])}])")
+                main_node.write(f"\n\t\tsupervisor.call_move_to_joint_position([{','.join([command[f'joint_position_{i}'] for i in range(7)])}])")
+            elif command["command_type"]=="add_check_point":
+                main_node.write(f"\n\t\tsupervsior.add_check_point()")
+            elif command["command_type"]=="go_to_check_point":
+                main_node.write(f"\n\t\tsupervisor.call_move_to_joint_position(self.user_check_points{str(int(command['check_point'])-1)})")
             elif command["command_type"]=="sleep":
                 main_node.write(f"\n\t\tsleep({command['duration']})")
         if conveyor_enabled:
