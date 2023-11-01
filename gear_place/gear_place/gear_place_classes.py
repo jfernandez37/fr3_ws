@@ -197,8 +197,8 @@ class GearPlace(Node):
 
       request = MoveCartesianAngle.Request()
 
-      request.x = x
-      request.y = y
+      request.x = y
+      request.y = x
       request.z = z
       request.max_velocity = v_max
       request.acceleration = acc
