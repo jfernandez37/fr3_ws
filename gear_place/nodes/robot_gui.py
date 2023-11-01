@@ -699,9 +699,9 @@ class FR3_GUI(tk.Tk):
             elif command["command_type"]=="move_to_joint_position":
                 updated_text+=(f"\nsupervisor.call_move_to_joint_position([{','.join([command[f'joint_position_{i}'] for i in range(7)])}])")
             elif command["command_type"]=="add_check_point":
-                updated_text+=(f"\nsupervsior.add_check_point()")
+                updated_text+=(f"\nsupervisor.add_check_point()")
             elif command["command_type"]=="go_to_check_point":
-                updated_text+=(f"\nsupervisor.call_move_to_joint_position(self.user_check_points[{str(int(command['check_point'])-1)}])")
+                updated_text+=(f"\nsupervisor.call_move_to_joint_position(supervisor.user_check_points[{str(int(command['check_point'])-1)}])")
             elif command["command_type"]=="sleep":
                 updated_text+=(f"\nsleep({command['duration']})")
         self.command_list_str = updated_text
@@ -765,9 +765,9 @@ class FR3_GUI(tk.Tk):
             elif command["command_type"]=="move_to_joint_position":
                 list_of_commands+=(f"\nsupervisor.call_move_to_joint_position([{','.join([command[f'joint_position_{i}'] for i in range(7)])}])")
             elif command["command_type"]=="add_check_point":
-                list_of_commands+=(f"\nsupervsior.add_check_point()")
+                list_of_commands+=(f"\nsupervisor.add_check_point()")
             elif command["command_type"]=="go_to_check_point":
-                list_of_commands+=(f"\nsupervisor.call_move_to_joint_position(self.user_check_points[{str(int(command['check_point'])-1)}])")
+                list_of_commands+=(f"\nsupervisor.call_move_to_joint_position(supervisor.user_check_points[{str(int(command['check_point'])-1)}])")
             elif command["command_type"]=="sleep":
                 list_of_commands+=(f"\nsleep({command['duration']})")
         current_commands_label = tk.Label(self,text=list_of_commands)
@@ -873,9 +873,9 @@ def main(args=None):
             elif command["command_type"]=="move_to_joint_position":
                 main_node.write(f"\n\t\tsupervisor.call_move_to_joint_position([{','.join([command[f'joint_position_{i}'] for i in range(7)])}])")
             elif command["command_type"]=="add_check_point":
-                main_node.write(f"\n\t\tsupervsior.add_check_point()")
+                main_node.write(f"\n\t\tsupervisor.add_check_point()")
             elif command["command_type"]=="go_to_check_point":
-                main_node.write(f"\n\t\tsupervisor.call_move_to_joint_position(self.user_check_points[{str(int(command['check_point'])-1)}])")
+                main_node.write(f"\n\t\tsupervisor.call_move_to_joint_position(supervisor.user_check_points[{str(int(command['check_point'])-1)}])")
             elif command["command_type"]=="sleep":
                 main_node.write(f"\n\t\tsleep({command['duration']})")
         if conveyor_enabled:
