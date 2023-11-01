@@ -635,7 +635,7 @@ class FR3_GUI(tk.Tk):
             self.remove_command_button["state"] = tk.NORMAL
         else:
             self.remove_command_button["state"] = tk.DISABLED
-        updated_text="Current code:\n\n"
+        updated_text="Current commands:\n"
         for command in self.selected_commands:
             if command["command_type"]=="open_gripper":
                 updated_text+=("\nsupervisor.call_open_gripper_service()")
@@ -697,78 +697,21 @@ class FR3_GUI(tk.Tk):
 
     def remove_command(self):
         self.clear_window()
-        list_of_commands = "Current commands:\n"
         current_commands = []
         index = 0
         for command in self.selected_commands:
             current_commands.append(str(index)+" "+command["command_type"])
             index+=1
-            if command["command_type"]=="open_gripper":
-                list_of_commands+=("\nsupervisor.call_open_gripper_service()")
-            elif command["command_type"]=="cartesian_movement":
-                if command["type"]=="standard":
-                    list_of_commands+=(f"\nsupervisor.call_move_cartesian_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
-                elif command["type"]=="angle":
-                    list_of_commands+=(f"\nsupervisor.call_move_cartesian_angle_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']},{command['angle']})")
-                else:
-                    list_of_commands+=(f"\nsupervisor.call_move_cartesian_smooth_service({command['x']},{command['y']},{command['z']},{command['v_max']},{command['acc']})")
-            elif command["command_type"]=="scanning":
-                list_of_commands+=(f"\ndistances_from_home,updated_radius_vals = supervisor.select_scan(type_scan=\"{command['scan_type']}\""+("" if command['robot_moves']=="" or command['scan_type']=="single" else f",[\"{command['robot_moves']}\"]")+")")
-            elif command["command_type"]=="pick_up_single_gear":
-                list_of_commands+=(f"\nsupervisor.call_pick_up_gear_service(\"{command['depth_or_color']}\",{command['object_width']},\"{command['starting_position']}\")")
-            elif command["command_type"]=="pick_up_multiple_gears":
-                comma_needed=False
-                color_list = "["
-                if command["yellow"]=='1':
-                    color_list+="\"yellow\""
-                    comma_needed=True
-                if command["orange"]=='1':
-                    if comma_needed:
-                        color_list+=","
-                    color_list+="\"orange\""
-                    comma_needed=True
-                if command["green"]=='1':
-                    if comma_needed:
-                        color_list+=","
-                    color_list+="\"green\""
-                color_list+="]"
-                list_of_commands+=(f"\nsupervisor.pick_up_multiple_gears(distances_from_home,updated_radius_vals,{command['object_width']},\"{command['starting_position']}\",{color_list},\"{command['depth_or_color']}\",\"{command['put_down_type']}\",{command['force']},\"{command['put_down_pose']}\")")
-            elif command["command_type"]=="put_down_gear":
-                list_of_commands+=(f"\nsupervisor.put_gear_down_choose_type(\"{command['put_down_type']}\",{command['z']},{command['force']})")
-            elif command["command_type"]=="moving_gears":
-                if command["movement_type"]=="pick_up:":
-                    list_of_commands+=(f"\nsupervisor.call_move_up_moving_gear_service({command['object_width']})")
-                else:
-                    list_of_commands+=("\nsupervisor.call_move_above_gear()")
-            elif command["command_type"]=="move_to_named_pose":
-                list_of_commands+=(f"\nsupervisor.call_move_to_named_pose_service(\"{command['name_pose']}\")")
-            elif command["command_type"]=="enable_conveyor":
-                list_of_commands+=(f"\nsupervisor.enable_conveyor_service(True)")
-            elif command["command_type"]=="disable_conveyor":
-                list_of_commands+=(f"\nsupervisor.enable_conveyor_service(False)")
-            elif command["command_type"]=="move_conveyor":
-                list_of_commands+=(f"\nsupervisor.set_conveyor_state_service({command['conveyor_speed']},{CONVEYOR_DIRECTIONS.index(command['conveyor_direction'])})")
-            elif command["command_type"]=="rotate_single_joint":
-                list_of_commands+=(f"\nsupervisor.call_rotate_single_joint({command['joint_index']}, {command['joint_angle']}, {'True' if command['angle_type']=='radians' else 'False'})")
-            elif command["command_type"]=="move_to_joint_position":
-                list_of_commands+=(f"\nsupervisor.call_move_to_joint_position([{','.join([command[f'joint_position_{i}'] for i in range(7)])}])")
-            elif command["command_type"]=="add_check_point":
-                list_of_commands+=(f"\nsupervisor.add_check_point()")
-            elif command["command_type"]=="go_to_check_point":
-                list_of_commands+=(f"\nsupervisor.call_move_to_joint_position(supervisor.user_check_points[{str(int(command['check_point'])-1)}])")
-            elif command["command_type"]=="sleep":
-                list_of_commands+=(f"\nsleep({command['duration']})")
-        current_commands_label = tk.Label(self,text=list_of_commands)
-        self.pack_and_append(current_commands_label)
-        self.pack_and_append(self.back_button,5,tk.BOTTOM)
         command_to_remove = tk.StringVar()
         command_to_remove.set(current_commands[0])
         remove_selected = partial(self.remove_and_home, command_to_remove)
         remove_button = tk.Button(self,text="Remove selection", command=remove_selected)
-        self.pack_and_append(remove_button,5,tk.BOTTOM)
         command_menu = tk.OptionMenu(self,command_to_remove, *current_commands)
-        self.pack_and_append(command_menu,5,tk.BOTTOM)
         remove_command_label = tk.Label(self,text="Select the command you would like to remove. The options are numbered in order of appearance and the index selected will be deleted.")
+        self.pack_and_append(self.selected_command_label)
+        self.pack_and_append(self.back_button,5,tk.BOTTOM)
+        self.pack_and_append(remove_button,5,tk.BOTTOM)
+        self.pack_and_append(command_menu,5,tk.BOTTOM)
         self.pack_and_append(remove_command_label,5,tk.BOTTOM)
         
     
