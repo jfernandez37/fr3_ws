@@ -415,7 +415,7 @@ class FR3_GUI(tk.Tk):
         cartesian_v_max_entry = tk.Entry(self,textvariable=self.parameters["v_max"])
         self.pack_and_append(cartesian_v_max_entry)
 
-        cartesian_angle_label = tk.Label(self, text="Enter the angle value for the cartesian movement:")
+        cartesian_angle_label = tk.Label(self, text="Enter the angle value for the cartesian movement. To use the current camera angle, enter 0.0:")
         self.pack_and_append(cartesian_angle_label)
         cartesian_angle_entry = tk.Entry(self,textvariable=self.parameters["angle"],state=tk.DISABLED)
         self.pack_and_append(cartesian_angle_entry)

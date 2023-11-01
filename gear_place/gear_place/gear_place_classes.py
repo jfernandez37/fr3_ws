@@ -190,6 +190,9 @@ class GearPlace(Node):
       """
       Calls the move_cartesian_angle callback
       """
+      if angle == 0.0:
+          self.call_get_camera_angle()
+          angle = self.current_camera_angle
       self.get_logger().info(f"Moving {x},{y},{z} at angle {angle}")
 
       request = MoveCartesianAngle.Request()
