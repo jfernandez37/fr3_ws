@@ -135,7 +135,7 @@ class FR3_GUI(tk.Tk):
         self.command_counter.trace('w',self.update_label)
 
         # label with all current commands
-        self.selected_command_label = tk.Label(self,text="Current code:\n\n")
+        self.selected_command_label = tk.Label(self,text="Past commands:\n\n")
         self.selected_command_label.pack(pady=10, side=tk.TOP)
 
         self.parameters = {}
@@ -698,7 +698,7 @@ class FR3_GUI(tk.Tk):
             entry_box["state"]=tk.DISABLED
     
     def update_label(self,_,__,___):
-        updated_text="Current commands:\n"
+        updated_text="Previous commands:\n"
         for command in self.selected_commands:
             if command["command_type"]=="open_gripper":
                 updated_text+=("\nsupervisor.call_open_gripper_service()")
