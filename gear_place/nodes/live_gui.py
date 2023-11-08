@@ -359,7 +359,7 @@ class FR3_GUI(tk.Tk):
         elif self.parameters["command_type"].get()=="move_conveyor":
             if not self.conveyor_enabled:
                 self.supervisor.enable_conveyor_service(True)
-                conveyor_enabled = True
+                self.conveyor_enabled = True
             self.supervisor.set_conveyor_state_service(float(self.parameters['conveyor_speed'].get()),CONVEYOR_DIRECTIONS.index(self.parameters['conveyor_direction'].get()))
         elif self.parameters["command_type"].get()=="rotate_single_joint":
             self.supervisor.call_rotate_single_joint(int(self.parameters['joint_index'].get()), float(self.parameters['joint_angle'].get()), 'True' if self.parameters['angle_type'].get()=='radians' else 'False')
