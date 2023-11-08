@@ -368,7 +368,7 @@ class FR3_GUI(tk.Tk):
         elif self.parameters["command_type"].get()=="add_check_point":
             self.supervisor.add_check_point()
         elif self.parameters["command_type"].get()=="go_to_check_point":
-            self.supervisor.call_move_to_joint_position(self.supervisor.user_check_points[str(int(self.parameters['check_point'].get())-1)])
+            self.supervisor.call_move_to_joint_position(self.supervisor.user_check_points[int(self.parameters['check_point'].get())-1])
         elif self.parameters["command_type"].get()=="sleep":
             sleep(self.parameters['duration'])
         self.reset_parameters(True)
