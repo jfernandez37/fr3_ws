@@ -149,12 +149,10 @@ class FR3_GUI(tk.Tk):
 
         self.exit_button = tk.Button(self, text="Exit", command = self.exit_function)
         self.exit_button.pack(pady=5, side=tk.BOTTOM)
-        self.save_all_button = tk.Button(self, text="Save all", command=self.destroy)
-        self.save_all_button.pack(pady=5, side=tk.BOTTOM)
         self.add_new_command_button = tk.Button(self,text="Select command", command=self.add_command)
         self.add_new_command_button.pack(pady=5, side=tk.BOTTOM)
         
-        self.current_widgets = [self.add_new_command_button,self.save_all_button, self.exit_button,self.selected_command_label]
+        self.current_widgets = [self.add_new_command_button, self.exit_button,self.selected_command_label]
         
         self.command_list_str = ""
         # tk command type variable
@@ -277,7 +275,7 @@ class FR3_GUI(tk.Tk):
         self.clear_window()
         self.command_type_menu = tk.OptionMenu(self,self.command_type, *COMMAND_TYPES)
         self.back_button = tk.Button(self,text="Back",command = self.back_command)
-        self.save_button = tk.Button(self,text="Save command",command = self.save_command)
+        self.save_button = tk.Button(self,text="Run command",command = self.save_command)
         self.pack_and_append(self.command_type_menu)
         self.pack_and_append(self.back_button,5,tk.BOTTOM)
         self.pack_and_append(self.save_button,5,tk.BOTTOM)
@@ -378,7 +376,6 @@ class FR3_GUI(tk.Tk):
         self.reset_parameters(True)
         self.clear_window()
         self.pack_and_append(self.exit_button, 5,tk.BOTTOM)
-        self.pack_and_append(self.save_all_button, 5,tk.BOTTOM)
         self.pack_and_append(self.add_new_command_button, 5,tk.BOTTOM)
         self.pack_and_append(self.selected_command_label, 10)
     
@@ -386,7 +383,6 @@ class FR3_GUI(tk.Tk):
         self.reset_parameters(True)
         self.clear_window()
         self.pack_and_append(self.exit_button, 5,tk.BOTTOM)
-        self.pack_and_append(self.save_all_button, 5,tk.BOTTOM)
         self.pack_and_append(self.add_new_command_button, 5,tk.BOTTOM)
         self.pack_and_append(self.selected_command_label, 10)
     
