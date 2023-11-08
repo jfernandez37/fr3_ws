@@ -147,7 +147,7 @@ class FR3_GUI(tk.Tk):
 
         self.geometry('1000x750')
 
-        self.exit_button = tk.Button(self, text="exit", command = self.exit_function)
+        self.exit_button = tk.Button(self, text="Exit", command = self.exit_function)
         self.exit_button.pack(pady=5, side=tk.BOTTOM)
         self.save_all_button = tk.Button(self, text="Save all", command=self.destroy)
         self.save_all_button.pack(pady=5, side=tk.BOTTOM)
