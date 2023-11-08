@@ -132,7 +132,7 @@ class FR3_GUI(tk.Tk):
         # command counter
         self.command_counter = tk.StringVar()
         self.command_counter.set('0')
-        self.command_counter.trace('w',self.update_label_and_remove_button)
+        self.command_counter.trace('w',self.update_label)
 
         # label with all current commands
         self.selected_command_label = tk.Label(self,text="Current code:\n\n")
@@ -151,12 +151,10 @@ class FR3_GUI(tk.Tk):
         self.exit_button.pack(pady=5, side=tk.BOTTOM)
         self.save_all_button = tk.Button(self, text="Save all", command=self.destroy)
         self.save_all_button.pack(pady=5, side=tk.BOTTOM)
-        self.remove_command_button = tk.Button(self,text="Remove command", command=self.remove_command,state=tk.DISABLED)
-        self.remove_command_button.pack(pady=5,side=tk.BOTTOM)
-        self.add_new_command_button = tk.Button(self,text="Add command", command=self.add_command)
+        self.add_new_command_button = tk.Button(self,text="Select command", command=self.add_command)
         self.add_new_command_button.pack(pady=5, side=tk.BOTTOM)
         
-        self.current_widgets = [self.add_new_command_button,self.save_all_button, self.exit_button,self.selected_command_label,self.remove_command_button]
+        self.current_widgets = [self.add_new_command_button,self.save_all_button, self.exit_button,self.selected_command_label]
         
         self.command_list_str = ""
         # tk command type variable
@@ -381,7 +379,6 @@ class FR3_GUI(tk.Tk):
         self.clear_window()
         self.pack_and_append(self.exit_button, 5,tk.BOTTOM)
         self.pack_and_append(self.save_all_button, 5,tk.BOTTOM)
-        self.pack_and_append(self.remove_command_button, 5,tk.BOTTOM)
         self.pack_and_append(self.add_new_command_button, 5,tk.BOTTOM)
         self.pack_and_append(self.selected_command_label, 10)
     
@@ -390,7 +387,6 @@ class FR3_GUI(tk.Tk):
         self.clear_window()
         self.pack_and_append(self.exit_button, 5,tk.BOTTOM)
         self.pack_and_append(self.save_all_button, 5,tk.BOTTOM)
-        self.pack_and_append(self.remove_command_button, 5,tk.BOTTOM)
         self.pack_and_append(self.add_new_command_button, 5,tk.BOTTOM)
         self.pack_and_append(self.selected_command_label, 10)
     
@@ -705,11 +701,7 @@ class FR3_GUI(tk.Tk):
         else:
             entry_box["state"]=tk.DISABLED
     
-    def update_label_and_remove_button(self,_,__,___):
-        if len(self.selected_commands)>0:
-            self.remove_command_button["state"] = tk.NORMAL
-        else:
-            self.remove_command_button["state"] = tk.DISABLED
+    def update_label(self,_,__,___):
         updated_text="Current commands:\n"
         for command in self.selected_commands:
             if command["command_type"]=="open_gripper":
@@ -769,30 +761,6 @@ class FR3_GUI(tk.Tk):
                 updated_text+=(f"\nsleep({command['duration']})")
         self.command_list_str = updated_text
         self.selected_command_label.config(text=updated_text)
-
-    def remove_command(self):
-        self.clear_window()
-        current_commands = []
-        index = 0
-        for command in self.selected_commands:
-            current_commands.append(str(index)+" "+command["command_type"])
-            index+=1
-        command_to_remove = tk.StringVar()
-        command_to_remove.set(current_commands[0])
-        remove_selected = partial(self.remove_and_home, command_to_remove)
-        remove_button = tk.Button(self,text="Remove selection", command=remove_selected)
-        command_menu = tk.OptionMenu(self,command_to_remove, *current_commands)
-        remove_command_label = tk.Label(self,text="Select the command you would like to remove. The options are numbered in order of appearance and the index selected will be deleted.")
-        self.pack_and_append(self.selected_command_label)
-        self.pack_and_append(self.back_button,5,tk.BOTTOM)
-        self.pack_and_append(remove_button,5,tk.BOTTOM)
-        self.pack_and_append(command_menu,5,tk.BOTTOM)
-        self.pack_and_append(remove_command_label,5,tk.BOTTOM)
-        
-    def remove_and_home(self, selection):
-        del self.selected_commands[int(selection.get().split()[0])]
-        self.command_counter.set(len(self.selected_commands))
-        self.back_command()
 
         
 def main(args = None):
