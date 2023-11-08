@@ -2,8 +2,7 @@
 windows_flag = False
 import tkinter as tk
 from functools import partial
-import os
-from gear_place.gear_place_classes import GearPlace, Error
+from gear_place.gear_place_classes import GearPlace
 from time import sleep
 import rclpy
 if windows_flag:
