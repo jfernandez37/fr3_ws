@@ -315,12 +315,10 @@ class FR3_GUI(tk.Tk):
                 self.supervisor.call_move_cartesian_smooth_service(float(self.parameters['x'].get()),float(self.parameters['y'].get()),float(self.parameters['z'].get()),float(self.parameters['v_max'].get()),float(self.parameters['acc'].get()))        
         elif self.parameters["command_type"].get()=="scanning":
             self.scan_already = True
-            if self.parameters["robot_moves"]=="":
+            if self.parameters["robot_moves"]=="" or self.parameters["scan_type"].get()=="single":
                 self.distances_from_home,self.updated_radius_vals = self.supervisor.select_scan(type_scan=self.parameters['scan_type'].get())
             else:
                 robot_moves = self.parameters["robot_moves"].get()
-                robot_moves.replace("[","")
-                robot_moves.replace("]","")
                 moves = [float(val) for val in robot_moves.split(",")]
                 self.distances_from_home,self.updated_radius_vals = self.supervisor.select_scan(type_scan=self.parameters['scan_type'].get(),robot_moves=moves)
         elif self.parameters["command_type"].get()=="pick_up_single_gear":
