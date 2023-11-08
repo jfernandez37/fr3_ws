@@ -61,6 +61,7 @@ nodes/point_cloud_node.py
 nodes/moving_gear_node.py
 nodes/multiple_gears_node.py
 nodes/robot_gui.py
+nodes/live_gui.py
 DESTINATION lib/${PROJECT_NAME}
 )
 install(TARGETS ${PROJECT_NAME}
